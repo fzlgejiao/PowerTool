@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="copy.png">Resources/images/copy.png</file>
+        <file alias="cut.png">Resources/images/cut.png</file>
+        <file alias="new.png">Resources/images/new.png</file>
+        <file alias="open.png">Resources/images/open.png</file>
+        <file alias="paste.png">Resources/images/paste.png</file>
+        <file alias="save.png">Resources/images/save.png</file>
+        <file alias="pointer.png">Resources/images/pointer.png</file>
+        <file alias="linepointer.png">Resources/images/linepointer.png</file>
+        <file alias="textpointer.png">Resources/images/textpointer.png</file>
+        <file>Resources/images/background1.png</file>
+        <file>Resources/images/background2.png</file>
+        <file>Resources/images/background3.png</file>
+        <file>Resources/images/background4.png</file>
+    </qresource>
+</RCC>
