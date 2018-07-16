@@ -24,14 +24,14 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
             myPolygon = path.toFillPolygon();
             break;
         case Conditional:
-            myPolygon << QPointF(-100, 0) << QPointF(0, 100)
-                      << QPointF(100, 0) << QPointF(0, -100)
-                      << QPointF(-100, 0);
+            myPolygon << QPointF(-20, 0) << QPointF(0, 20)
+                      << QPointF(20, 0) << QPointF(0, -20)
+                      << QPointF(-20, 0);
             break;
         case Step:
-            myPolygon << QPointF(-100, -100) << QPointF(100, -100)
-                      << QPointF(100, 100) << QPointF(-100, 100)
-                      << QPointF(-100, -100);
+            myPolygon << QPointF(-15, -15) << QPointF(15, -15)
+                      << QPointF(15, 15) << QPointF(-15, 15)
+                      << QPointF(-15, -15);
             break;
         default:
             myPolygon << QPointF(-120, -80) << QPointF(-70, 80)

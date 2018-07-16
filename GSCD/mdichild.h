@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include "diagramscene.h"
+#include "idoc.h"
 
 class QGraphicsScene;
 class MdiChild : public QGraphicsView
@@ -10,7 +11,7 @@ class MdiChild : public QGraphicsView
 	Q_OBJECT
 
 public:
-	MdiChild(QGraphicsScene * scene);
+	MdiChild(QGraphicsScene * scene,iDoc* doc);
 	~MdiChild();
 
     void newFile();
@@ -42,6 +43,7 @@ private:
     QString strippedName(const QString &fullFileName);
 
     DiagramScene *m_scene;
+	iDoc		 *m_doc;
 
     QString curFile;
     bool isUntitled;

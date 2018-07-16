@@ -2,12 +2,13 @@
 #include <QtGui>
 #include "mdichild.h"
 
-MdiChild::MdiChild(QGraphicsScene * scene)
+MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	: QGraphicsView(scene)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     isUntitled = true;
 	m_scene = (DiagramScene *)scene;
+	m_doc	= doc;
 
     m_scene->setItemType(DiagramItem::DiagramType::Conditional);
     m_scene->setMode(DiagramScene::InsertItem);
@@ -40,8 +41,8 @@ void MdiChild::newFile()
     curFile = tr("document%1.txt").arg(sequenceNumber++);
     setWindowTitle(curFile + "[*]");
 
-    //connect(document(), SIGNAL(contentsChanged()),
-    //        this, SLOT(documentWasModified()));
+    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
+            this, SLOT(documentWasModified()));
 }
 
 bool MdiChild::loadFile(const QString &fileName)
@@ -55,15 +56,19 @@ bool MdiChild::loadFile(const QString &fileName)
         return false;
     }
 
-    QTextStream in(&file);
+    //QTextStream in(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    //setPlainText(in.readAll());
+    
+
+	//todo: open map file and data file
+	m_doc->openMapFile(fileName);
+
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
 
-    //connect(document(), SIGNAL(contentsChanged()),
-    //        this, SLOT(documentWasModified()));
+    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
+            this, SLOT(documentWasModified()));
 
     return true;
 }
@@ -91,16 +96,18 @@ bool MdiChild::saveFile(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("MDI"),
+        QMessageBox::warning(this, tr("GWD"),
                              tr("Cannot write file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
         return false;
     }
 
-    QTextStream out(&file);
+    //QTextStream out(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    //out << toPlainText();
+    
+	//todo: save map file
+
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
@@ -123,7 +130,7 @@ void MdiChild::closeEvent(QCloseEvent *event)
 
 void MdiChild::documentWasModified()
 {
-    //setWindowModified(document()->isModified());
+	setWindowModified(true);
 }
 
 bool MdiChild::maybeSave()
@@ -149,7 +156,9 @@ void MdiChild::setCurrentFile(const QString &fileName)
 {
     curFile = QFileInfo(fileName).canonicalFilePath();
     isUntitled = false;
+
     //document()->setModified(false);
+
     setWindowModified(false);
     setWindowTitle(userFriendlyCurrentFile() + "[*]");
 }

@@ -66,7 +66,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::newFile()
 {
     MdiChild *child = createMdiChild();																//create child when new a file
-    //child->newFile();
+    child->newFile();
     child->show();
 }
 
@@ -81,18 +81,18 @@ void MainWindow::open()
         }
 
         MdiChild *child = createMdiChild();															//create child when open a file
-        //if (child->loadFile(fileName)) {
-        //    statusBar()->showMessage(tr("File loaded"), 2000);
+        if (child->loadFile(fileName)) {
+            statusBar()->showMessage(tr("File loaded"), 2000);
             child->show();
-        //} else {
-        //    child->close();
-        //}
+        } else {
+            child->close();
+        }
     }
 }
 
 void MainWindow::save()
 {
-    //if (activeMdiChild() && activeMdiChild()->save())
+    if (activeMdiChild() && activeMdiChild()->save())
         statusBar()->showMessage(tr("File saved"), 2000);
 }
 
@@ -211,7 +211,7 @@ void MainWindow::updateWindowMenu()
 
 MdiChild *MainWindow::createMdiChild()
 {
-    MdiChild *child = new MdiChild(new DiagramScene(editMenu, this));
+    MdiChild *child = new MdiChild(new DiagramScene(editMenu, this),new iDoc(this));
     mdiArea->addSubWindow(child);
 	child->showMaximized();
 
