@@ -81,6 +81,7 @@ void MainWindow::open()
         }
 
         MdiChild *child = createMdiChild();															//create child when open a file
+						
         if (child->loadFile(fileName)) {
             statusBar()->showMessage(tr("File loaded"), 2000);
             child->show();

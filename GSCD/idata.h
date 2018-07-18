@@ -19,7 +19,7 @@ public:
 	~iData();
 	int		id(){return m_ID;}
 	virtual T_DATA type()		= 0;
-
+	
 private:
 	int			m_ID;	
 };
@@ -61,6 +61,8 @@ public:
 	int		fromBUS(){return m_fromBUS;}
 	int		toBUS(){return m_toBUS;}
 	
+	void set2FromBUS(int fromvalue) { m_fromBUS= fromvalue ;}
+	void set2ToBUS(int tovalue) { m_toBUS= tovalue ;}
 
 private:
 	friend class iDoc;
