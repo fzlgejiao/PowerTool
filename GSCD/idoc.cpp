@@ -74,6 +74,7 @@ void iDoc::CloseDataFile()
 void iDoc::GetDataModel(T_DATA datatype)
 {
 	int datarows=0;		
+	int TranformerDummylines=0;
 	QString dataname;
 	if(datatype==T_BUS)
 		dataname="BUS";
@@ -81,7 +82,7 @@ void iDoc::GetDataModel(T_DATA datatype)
 		dataname="BRANCH";
 	else if(datatype==T_TRANSFORMER)
 		dataname="TRANSFORMER";
-
+	else return;
 	QTextStream stream(m_file);
 	stream.seek(0);
 	while(!stream.atEnd())
@@ -114,13 +115,24 @@ void iDoc::GetDataModel(T_DATA datatype)
 					break;
 
 					case T_BRANCH:
-						addBRANCH(new iBRANCH(datarows,this));										//the ID maybe to index
+						addBRANCH(new iBRANCH(datarows,this));										//the ID maybe to object index
 						listBRANCH[datarows]->set2FromBUS(datalist[0].toInt());
 						listBRANCH[datarows]->set2ToBUS(datalist[1].toInt());					
 					break;
 
-					case T_TRANSFORMER:
-						addTRANSFORMER(new iTRANSFORMER(datalist[0].toInt(),this));
+					case T_TRANSFORMER:																//Transformer Data Area 
+
+						addTRANSFORMER(new iTRANSFORMER(datarows,this));
+						listTRANSFORMER[datarows]->set2FromBUS(datalist[0].toInt());
+						listTRANSFORMER[datarows]->set2ToBUS(datalist[1].toInt());						
+						int k=datalist[2].toInt();
+						if(k==0)
+						{
+							TranformerDummylines=3;
+						}else TranformerDummylines=4;
+
+						for(int i=0;i<TranformerDummylines;i++)
+							stream.readLine();
 						break;
 					}
 					readline=stream.readLine();
