@@ -21,8 +21,7 @@ class QPolygonF;
 QT_END_NAMESPACE
 
 class Arrow;
-
-//! [0]
+class iData;
 class DiagramItem : public QGraphicsPolygonItem
 {
 public:
@@ -41,18 +40,19 @@ public:
     void addArrow(Arrow *arrow);
     QPixmap image() const;
     int type() const
-        { return Type;}
+		{ return Type;}
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
-    DiagramType myDiagramType;
-    QPolygonF myPolygon;
-    QMenu *myContextMenu;
-    QList<Arrow *> arrows;
+    DiagramType		myDiagramType;
+    QPolygonF		myPolygon;
+    QMenu *			myContextMenu;
+	iData *			myData;
+    QList<Arrow *>	arrows;
 };
-//! [0]
+
 
 #endif

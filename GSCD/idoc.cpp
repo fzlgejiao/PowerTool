@@ -9,7 +9,9 @@ iDoc::iDoc(QObject *parent)
 	,Suffix_keyword("0 / END OF ")
 	,ColumnName_keyword("@!")
 {
-
+	//test code
+	listBUS.insert(1,new iBUS(1,"bus1", this));
+	listBUS.insert(2,new iBUS(2,"bus2", this));
 }
 
 iDoc::~iDoc()
@@ -156,4 +158,12 @@ void iDoc::GetBRANCHData(const QString& dataname)
 void iDoc::GetTRANSMORMERData(const QString& dataname)
 {
 	
+}
+void	iDoc::getAvailableBus(QList<iBUS *>& list)
+{
+	foreach(iBUS *bus,listBUS)
+	{
+		if(bus->isAdded() == false)
+			list.append(bus);
+	}
 }

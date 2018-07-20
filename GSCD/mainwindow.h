@@ -42,6 +42,9 @@ private slots:
     void cut();
     void copy();
     void paste();
+
+	void deleteItem();
+
     void about();
     void updateMenus();
     void updateWindowMenu();
@@ -95,6 +98,10 @@ private:
     QAction *cutAct;
     QAction *copyAct;
     QAction *pasteAct;
+
+    QAction *deleteAction;
+    QAction *toFrontAction;
+    QAction *sendBackAction;
 
 	QAction *toolbarAct;
 	QAction *statusbarAct;

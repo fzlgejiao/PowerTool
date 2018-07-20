@@ -1,6 +1,8 @@
 
 #include <QtGui>
 #include "mdichild.h"
+#include "arrow.h"
+
 
 MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	: QGraphicsView(scene)
@@ -18,20 +20,20 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
     translate(oldMatrix.dx(), oldMatrix.dy());
     scale(1, 1);
 
-	m_scene->setSceneRect(QRectF(0, 0, 5000, 5000));
-	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),
-		this, SLOT(itemInserted(DiagramItem*)));
-	connect(m_scene, SIGNAL(textInserted(QGraphicsTextItem*)),
-		this, SLOT(textInserted(QGraphicsTextItem*)));
-	connect(m_scene, SIGNAL(itemSelected(QGraphicsItem*)),
-		this, SLOT(itemSelected(QGraphicsItem*)));
+	m_scene->setSceneRect(QRectF(0, 0, 1240, 1754));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç
+	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),		this, SLOT(itemInserted(DiagramItem*)));
+	connect(m_scene, SIGNAL(textInserted(QGraphicsTextItem*)),	this, SLOT(textInserted(QGraphicsTextItem*)));
+	connect(m_scene, SIGNAL(itemSelected(QGraphicsItem*)),		this, SLOT(itemSelected(QGraphicsItem*)));
 
 
 }
 
 MdiChild::~MdiChild()
 {
-
+	if(m_doc)
+		delete m_doc;
+	if(m_scene)
+		delete m_scene;
 }
 void MdiChild::newFile()
 {
@@ -179,8 +181,7 @@ void MdiChild::textInserted(QGraphicsTextItem *item)
 }
 void MdiChild::itemSelected(QGraphicsItem *item)
 {
-    DiagramTextItem *textItem =
-    qgraphicsitem_cast<DiagramTextItem *>(item);
+    DiagramTextItem *textItem = qgraphicsitem_cast<DiagramTextItem *>(item);
 
     QFont font = textItem->font();
     QColor color = textItem->defaultTextColor();
@@ -197,4 +198,24 @@ void MdiChild::OnScaleChanged(const QString &scale)
     this->resetMatrix();
     this->translate(oldMatrix.dx(), oldMatrix.dy());
     this->scale(newScale, newScale);
+}
+void MdiChild::deleteItem()
+{
+    foreach (QGraphicsItem *item, m_scene->selectedItems()) {
+        if (item->type() == Arrow::Type) {
+            m_scene->removeItem(item);
+            Arrow *arrow = qgraphicsitem_cast<Arrow *>(item);
+            arrow->startItem()->removeArrow(arrow);
+            arrow->endItem()->removeArrow(arrow);
+            delete item;
+        }
+    }
+
+    foreach (QGraphicsItem *item, m_scene->selectedItems()) {
+         if (item->type() == DiagramItem::Type) {
+             qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
+         }
+         m_scene->removeItem(item);
+         delete item;
+     }
 }

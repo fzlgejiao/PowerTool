@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include "diagramitem.h"
 #include "diagramtextitem.h"
+#include "idata.h"
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -14,8 +15,12 @@ class QGraphicsLineItem;
 class QFont;
 class QGraphicsTextItem;
 class QColor;
+class iBUS;
+class iBRANCH;
+class iTRANSFORMER;
 QT_END_NAMESPACE
 
+class iDoc;
 //! [0]
 class DiagramScene : public QGraphicsScene
 {
@@ -24,7 +29,8 @@ class DiagramScene : public QGraphicsScene
 public:
     enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
 
-    DiagramScene(QMenu *itemMenu, QObject *parent = 0);
+    DiagramScene(iDoc* doc,QObject *parent = 0);
+
     QFont font() const
         { return myFont; }
     QColor textColor() const
@@ -37,6 +43,9 @@ public:
     void setTextColor(const QColor &color);
     void setItemColor(const QColor &color);
     void setFont(const QFont &font);
+
+	void addMenu(T_DATA type,QMenu *menu){myMenus.insert(type,menu);}
+	QMenu* getMenu(T_DATA type){return myMenus.value(type,NULL);}
 
 public slots:
     void setMode(Mode mode);
@@ -53,20 +62,24 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
+	void addBUS(iBUS* bus,const QPointF& pos);
+
 private:
     bool isItemChange(int type);
 
     DiagramItem::DiagramType myItemType;
-    Mode myMode;
-    QMenu *myItemMenu;
-    bool leftButtonDown;
-    QPointF startPoint;
+    Mode		myMode;
+	iDoc*		myDoc;
+	QMap<T_DATA,QMenu *> myMenus;
+
+    bool		leftButtonDown;
+    QPointF		startPoint;
     QGraphicsLineItem *line;
-    QFont myFont;
+    QFont		myFont;
     DiagramTextItem *textItem;
-    QColor myTextColor;
-    QColor myItemColor;
-    QColor myLineColor;
+    QColor		myTextColor;
+    QColor		myItemColor;
+    QColor		myLineColor;
 };
 //! [0]
 
