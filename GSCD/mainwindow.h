@@ -5,6 +5,7 @@
 #include "ui_mainwindow.h"
 #include "diagramitem.h"
 
+
 class MdiChild;
 class DiagramScene;
 
@@ -16,8 +17,8 @@ class QMdiSubWindow;
 class QSignalMapper;
 class QButtonGroup;
 class QToolBox;
-
 QT_END_NAMESPACE
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT

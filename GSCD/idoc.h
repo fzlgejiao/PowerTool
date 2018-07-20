@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QMap>
+#include <QFile>
 #include "idata.h"
+
 
 class iDoc : public QObject
 {
@@ -33,6 +35,21 @@ private:
 	QMap<int,iBUS *>			listBUS;															//<id,iBUS*>: id is the bus id
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id
+
+	void GetBUSData(const QString& dataname="BUS");
+	void GetBRANCHData(const QString& dataname="BRANCH");
+	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");
+
+	void GetDataModel(T_DATA datatype);
+
+	bool OpenDataFile(const QString& file );
+	void CloseDataFile();
+
+	QFile *m_file;
+
+	QString Prefix_keyword;
+	QString Suffix_keyword;
+	QString	ColumnName_keyword;
 };
 
 #endif // IDOC_H
