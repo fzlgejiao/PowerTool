@@ -3,7 +3,9 @@
 iDoc::iDoc(QObject *parent)
 	: QObject(parent)
 {
-
+	//test code
+	listBUS.insert(1,new iBUS(1,"bus1", this));
+	listBUS.insert(2,new iBUS(2,"bus2", this));
 }
 
 iDoc::~iDoc()
@@ -31,4 +33,12 @@ void	iDoc::close()
 	listBRANCH.clear();
 	qDeleteAll(listTRANSFORMER);
 	listTRANSFORMER.clear();
+}
+void	iDoc::getAvailableBus(QList<iBUS *>& list)
+{
+	foreach(iBUS *bus,listBUS)
+	{
+		if(bus->isAdded() == false)
+			list.append(bus);
+	}
 }

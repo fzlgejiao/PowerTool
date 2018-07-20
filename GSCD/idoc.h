@@ -20,6 +20,8 @@ public:
 	iBRANCH*	getBRANCH(int id){return listBRANCH.value(id,NULL);}
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
 
+	void	getAvailableBus(QList<iBUS *>& list);													//to get buses which need to be show in scene
+
 protected:
 
 	void	addBUS(iBUS* bus){listBUS.insert(bus->id(),bus);}

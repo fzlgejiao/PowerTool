@@ -14,6 +14,7 @@ iBUS::iBUS(int id,const QString& name,QObject *parent)
 	: iData(id,parent)
 {
 	m_NAME = name;
+	m_bAdded = false;
 }
 iBRANCH::iBRANCH(int id,QObject *parent)
 	: iData(id,parent)

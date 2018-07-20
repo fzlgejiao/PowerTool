@@ -211,7 +211,14 @@ void MainWindow::updateWindowMenu()
 
 MdiChild *MainWindow::createMdiChild()
 {
-    MdiChild *child = new MdiChild(new DiagramScene(editMenu, this),new iDoc(this));
+	iDoc* doc = new iDoc(this);
+	DiagramScene* scene= new DiagramScene(doc,this);
+	scene->addMenu(T_NONE,editMenu);
+	scene->addMenu(T_BUS,editMenu);
+	scene->addMenu(T_BRANCH,editMenu);
+	scene->addMenu(T_TRANSFORMER,editMenu);
+
+    MdiChild *child = new MdiChild(scene,doc);
     mdiArea->addSubWindow(child);
 	child->showMaximized();
 
@@ -290,6 +297,29 @@ void MainWindow::createActions()
     pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
                               "selection"));
     connect(pasteAct, SIGNAL(triggered()), this, SLOT(paste()));
+
+
+    toFrontAction = new QAction(QIcon(":/images/bringtofront.png"),
+                                tr("Bring to &Front"), this);
+    toFrontAction->setShortcut(tr("Ctrl+F"));
+    toFrontAction->setStatusTip(tr("Bring item to front"));
+    connect(toFrontAction, SIGNAL(triggered()),
+            this, SLOT(bringToFront()));
+//! [23]
+
+    sendBackAction = new QAction(QIcon(":/images/sendtoback.png"),
+                                 tr("Send to &Back"), this);
+    sendBackAction->setShortcut(tr("Ctrl+B"));
+    sendBackAction->setStatusTip(tr("Send item to back"));
+    connect(sendBackAction, SIGNAL(triggered()),
+        this, SLOT(sendToBack()));
+
+    deleteAction = new QAction(QIcon(":/images/delete.png"),
+                               tr("&Delete"), this);
+    deleteAction->setShortcut(tr("Delete"));
+    deleteAction->setStatusTip(tr("Delete item from diagram"));
+    connect(deleteAction, SIGNAL(triggered()),
+        this, SLOT(deleteItem()));
 
 
     toolbarAct = new QAction(tr("Show &Toolbar"), this);
@@ -373,10 +403,14 @@ void MainWindow::createToolBars()
     tBar->addAction(newAct);
     tBar->addAction(openAct);
     tBar->addAction(saveAct);
-	tBar->addSeparator();
-    tBar->addAction(cutAct);
-    tBar->addAction(copyAct);
-    tBar->addAction(pasteAct);
+	//tBar->addSeparator();
+
+	tBar->addWidget(new QLabel("   "));
+
+    //tBar->addAction(cutAct);
+    //tBar->addAction(copyAct);
+    //tBar->addAction(pasteAct);
+
 	tBar->setMovable(false);
 
 	QToolButton *pointerButton = new QToolButton;
@@ -402,10 +436,21 @@ void MainWindow::createToolBars()
 	connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
 		this, SLOT(sceneScaleChanged(QString)));
 
-	tBar->addSeparator();
+    tBar->addAction(deleteAction);
+    tBar->addAction(toFrontAction);
+    tBar->addAction(sendBackAction);
+
+
+	tBar->addWidget(new QLabel("   "));
+	tBar->addWidget(sceneScaleCombo);
+
+	tBar->addWidget(new QLabel("   "));
 	tBar->addWidget(pointerButton);
 	tBar->addWidget(linePointerButton);
-	tBar->addWidget(sceneScaleCombo);
+
+	tBar->addWidget(new QLabel("   "));
+    tBar->addAction(aboutAct);
+
 
 	QList<QToolBar *> toolbars = findChildren<QToolBar *>("");
 
@@ -618,4 +663,13 @@ void MainWindow::textInserted(QGraphicsTextItem *, DiagramScene* scene)
 {
 	buttonGroup->button(InsertTextButton)->setChecked(false);
 	scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
+}
+
+void MainWindow::deleteItem()
+{
+	MdiChild* child = activeMdiChild();
+	if(!child)
+		return;
+
+	child->deleteItem();
 }

@@ -3,14 +3,16 @@
 
 #include "diagramscene.h"
 #include "arrow.h"
+#include "idoc.h"
 
 //! [0]
-DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
+DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     : QGraphicsScene(parent)
 {
-    myItemMenu = itemMenu;
-    myMode = MoveItem;
-    myItemType = DiagramItem::Step;
+	myDoc		= doc;
+    myMode		= MoveItem;
+    myItemType	= DiagramItem::Step;
+
     line = 0;
     textItem = 0;
     myItemColor = Qt::white;
@@ -101,6 +103,16 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
+	QList<iBUS*> list;
+	myDoc->getAvailableBus(list);
+	
+	if(list.isEmpty() == false)
+	{
+		iBUS* bus = list.first();
+		if(bus)
+			addBUS(bus,mouseEvent->scenePos());
+	}
+/*
     DiagramItem *item;
     switch (myMode) {
         case InsertItem:
@@ -112,8 +124,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             break;
 //! [6] //! [7]
         case InsertLine:
-            line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
-                                        mouseEvent->scenePos()));
+            line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(), mouseEvent->scenePos()));
             line->setPen(QPen(myLineColor, 2));
             addItem(line);
             break;
@@ -123,10 +134,8 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             textItem->setFont(myFont);
             textItem->setTextInteractionFlags(Qt::TextEditorInteraction);
             textItem->setZValue(1000.0);
-            connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),
-                    this, SLOT(editorLostFocus(DiagramTextItem*)));
-            connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),
-                    this, SIGNAL(itemSelected(QGraphicsItem*)));
+            connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),   this, SLOT(editorLostFocus(DiagramTextItem*)));
+            connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),this, SIGNAL(itemSelected(QGraphicsItem*)));
             addItem(textItem);
             textItem->setDefaultTextColor(myTextColor);
             textItem->setPos(mouseEvent->scenePos());
@@ -135,6 +144,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     default:
         ;
     }
+*/
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 //! [9]
@@ -199,3 +209,15 @@ bool DiagramScene::isItemChange(int type)
     return false;
 }
 //! [14]
+
+
+void DiagramScene::addBUS(iBUS* bus,const QPointF& pos)
+{
+	DiagramItem *item = new DiagramItem(DiagramItem::Conditional, getMenu(T_BUS));
+	item->setBrush(myItemColor);
+	addItem(item);
+	item->setPos(pos);
+	bus->beAdded();																					//set bus added flag
+	emit itemInserted(item);
+
+}

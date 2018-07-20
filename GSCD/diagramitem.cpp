@@ -94,7 +94,8 @@ void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     scene()->clearSelection();
     setSelected(true);
-    myContextMenu->exec(event->screenPos());
+	if(myContextMenu)
+		myContextMenu->exec(event->screenPos());
 }
 //! [5]
 

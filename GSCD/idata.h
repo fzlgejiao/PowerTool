@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <QMap>
+#include <QList>
 
-enum T_DATA{
-	T_BUS	=	0,
+typedef enum{
+	T_NONE			= 0,
+	T_BUS			= 1,
 	T_BRANCH,
 	T_TRANSFORMER,
-};
+}T_DATA;
 
 class iData : public QObject
 {

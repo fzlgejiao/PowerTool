@@ -22,6 +22,7 @@ public:
     QString userFriendlyCurrentFile();
     QString currentFile() { return curFile; }
 	DiagramScene* scene(){return m_scene;}
+	void deleteItem();
 
 protected:
     void closeEvent(QCloseEvent *event);
