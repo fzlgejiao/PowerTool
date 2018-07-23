@@ -19,8 +19,9 @@ class iData : public QObject
 public:
 	iData(int id,QObject *parent);
 	~iData();
-	int		id(){return m_ID;}
 	virtual T_DATA type()		= 0;
+	int		Id(){return m_ID;}
+	int		Uid(){(type()<<16) | Id();}
 	
 private:
 	int			m_ID;	
@@ -35,6 +36,7 @@ public:
 	iBUS(int id,const QString& name,QObject *parent);
 	~iBUS(){}
 	T_DATA type(){return T_BUS;}
+	
 	
 	QString name(){return m_NAME;}
 	void	attach(iData* data){linkDatas.append(data);}

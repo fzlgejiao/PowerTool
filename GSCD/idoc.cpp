@@ -10,8 +10,8 @@ iDoc::iDoc(QObject *parent)
 	,ColumnName_keyword("@!")
 {
 	//test code
-	listBUS.insert(1,new iBUS(1,"bus1", this));
-	listBUS.insert(2,new iBUS(2,"bus2", this));
+	//listBUS.insert(1,new iBUS(1,"bus1", this));
+	//listBUS.insert(2,new iBUS(2,"bus2", this));
 }
 
 iDoc::~iDoc()
@@ -154,4 +154,19 @@ void	iDoc::getAvailableBus(QList<iBUS *>& list)
 		if(bus->isAdded() == false)
 			list.append(bus);
 	}
+}
+iData*	iDoc::Uid2Data(int uid)
+{
+	int type = Uid2Type(uid);
+	int id	 = Uid2Id(uid);
+	switch(type)
+	{
+	case T_BUS:
+		return getBUS(id);
+	case T_BRANCH:
+		return getBRANCH(id);
+	case T_TRANSFORMER:
+		return getTRANSFORMER(id);
+	}
+	return NULL;
 }
