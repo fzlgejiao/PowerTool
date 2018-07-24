@@ -4,12 +4,18 @@
 
 #include "mainwindow.h"
 #include "mdichild.h"
-
+#include "adddialog.h"
+#include "idata.h"
 
 const int InsertTextButton = 10;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
+	,mScale(100)
+	,mScaleMax(200)
+	,mScaleMin(10)
+	,mScaleStep(10)
+	,mScaleIndex((mScaleMax-mScaleMin)/mScaleStep/2)
 {
 	ui.setupUi(this);
 
@@ -45,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 
     setWindowTitle(tr("GWD"));
     setUnifiedTitleAndToolBarOnMac(true);
-
+		
 }
 
 MainWindow::~MainWindow()
@@ -153,6 +159,41 @@ void MainWindow::paste()
     //    activeMdiChild()->paste();
 }
 
+void MainWindow::addItem()
+{
+   //To do: add hiden items
+	MdiChild *currentchild= activeMdiChild();
+	if(currentchild==NULL) return ;
+	QList<iBUS *> Buslist;
+	currentchild->GetChildDoc()->getAvailableBus(Buslist);
+	int removedcnt=0;
+
+	foreach(iBUS *bus,Buslist)
+	{
+		if(bus->isAdded() == false)
+			removedcnt++;
+	}
+
+	if(removedcnt==0)
+	{
+		QMessageBox::information(this,tr("Info"),tr("All Site is already on the Canvas"));
+	}else
+	{
+
+	AddDialog *a_dialog=new AddDialog(currentchild->GetChildDoc(),this);
+	a_dialog->show();
+
+	}
+
+}
+
+void MainWindow::addNote()
+{
+   //To do: add note in diagram
+
+
+}
+
 void MainWindow::about()
 {
    QMessageBox::about(this, tr("About GWD"),
@@ -212,14 +253,14 @@ void MainWindow::updateWindowMenu()
 
 MdiChild *MainWindow::createMdiChild()
 {
-	iDoc* doc = new iDoc(this);
-	DiagramScene* scene= new DiagramScene(doc,this);
+	iDoc *t_Doc = new iDoc(this);
+	DiagramScene* scene= new DiagramScene(t_Doc,this);
 	scene->addMenu(T_NONE,editMenu);
 	scene->addMenu(T_BUS,editMenu);
 	scene->addMenu(T_BRANCH,editMenu);
 	scene->addMenu(T_TRANSFORMER,editMenu);
 
-    MdiChild *child = new MdiChild(scene,doc);
+    MdiChild *child = new MdiChild(scene,t_Doc);
     mdiArea->addSubWindow(child);
 	child->showMaximized();
 
@@ -322,8 +363,39 @@ void MainWindow::createActions()
     connect(deleteAction, SIGNAL(triggered()),
         this, SLOT(deleteItem()));
 
+    addItemAction = new QAction(QIcon(":/images/addnet.png"),
+                              tr("&Add"), this);
+    addItemAction->setShortcut(tr("Add"));
+    addItemAction->setStatusTip(tr("Add hiden items into canvas"));
+    connect(addItemAction, SIGNAL(triggered()),
+        this, SLOT(addItem()));
 
-    toolbarAct = new QAction(tr("Show &Toolbar"), this);
+	addNoteAction = new QAction(QIcon(":/images/addcomment.png"),
+                              tr("&Note"), this);
+    addNoteAction->setShortcut(tr("Note"));
+    addNoteAction->setStatusTip(tr("Add note into canvas"));
+    connect(addNoteAction, SIGNAL(triggered()),
+        this, SLOT(addNote()));
+
+	zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
+                              tr("Zoom &Out"), this);
+    zoomOutAction->setShortcut(tr("ZommOut"));
+    zoomOutAction->setStatusTip(tr("Zoomout the canvas"));
+    connect(zoomOutAction, SIGNAL(triggered()),this, SLOT(OnZoomOut()));
+
+	zoomInAction = new QAction(QIcon(":/images/zoomin.png"),
+                              tr("Zoom &In"), this);
+    zoomInAction->setShortcut(tr("ZommIn"));
+    zoomInAction->setStatusTip(tr("Zoomin the canvas"));
+    connect(zoomInAction, SIGNAL(triggered()),this, SLOT(OnZoomIn()));
+
+	zoomResetAction = new QAction(QIcon(":/images/reset.png"),
+                              tr("Zoom &Reset"), this);
+    zoomResetAction->setShortcut(tr("ZommReset"));
+    zoomResetAction->setStatusTip(tr("Zoom Reset to 100& for canvas"));
+    connect(zoomResetAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
+	
+	toolbarAct = new QAction(tr("Show &Toolbar"), this);
     toolbarAct->setStatusTip(tr("Show or hide Toolbar"));
     connect(toolbarAct, SIGNAL(triggered()),
             mdiArea, SLOT(showToolbar()));
@@ -354,7 +426,7 @@ void MainWindow::createActions()
     separatorAct = new QAction(this);
     separatorAct->setSeparator(true);
 
-    aboutAct = new QAction(tr("&About"), this);
+    aboutAct = new QAction(QIcon(":/images/about.png"),tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
@@ -399,19 +471,26 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-
     tBar = addToolBar(tr("File"));
     tBar->addAction(newAct);
     tBar->addAction(openAct);
     tBar->addAction(saveAct);
 	//tBar->addSeparator();
+	tBar->addAction(addItemAction);
+	tBar->addAction(addNoteAction);
+	tBar->addAction(zoomOutAction);
+	tBar->addAction(zoomResetAction);
+	tBar->addAction(zoomInAction);
+	
+	currentScale=new QLabel("100%");
+	tBar->addWidget(currentScale);
 
 	tBar->addWidget(new QLabel("   "));
 
     //tBar->addAction(cutAct);
     //tBar->addAction(copyAct);
     //tBar->addAction(pasteAct);
-
+	tBar->setIconSize(QSize(32,32));
 	tBar->setMovable(false);
 
 	QToolButton *pointerButton = new QToolButton;
@@ -429,21 +508,21 @@ void MainWindow::createToolBars()
 	connect(pointerTypeGroup, SIGNAL(buttonClicked(int)),
 		this, SLOT(pointerGroupClicked(int)));
 
-	sceneScaleCombo = new QComboBox;
+	/*sceneScaleCombo = new QComboBox;
+	
 	QStringList scales;
-	scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
-	sceneScaleCombo->addItems(scales);
-	sceneScaleCombo->setCurrentIndex(2);
-	connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),
-		this, SLOT(sceneScaleChanged(QString)));
-
+	scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");	
+		sceneScaleCombo->addItems(scales);
+	sceneScaleCombo->setCurrentIndex((mScaleMax-mScaleMin)/mScaleStep/2);
+	connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),this, SLOT(sceneScaleChanged(QString)));
+*/
     tBar->addAction(deleteAction);
     tBar->addAction(toFrontAction);
     tBar->addAction(sendBackAction);
 
 
 	tBar->addWidget(new QLabel("   "));
-	tBar->addWidget(sceneScaleCombo);
+	//tBar->addWidget(sceneScaleCombo);
 
 	tBar->addWidget(new QLabel("   "));
 	tBar->addWidget(pointerButton);
@@ -528,8 +607,7 @@ void MainWindow::createToolBox()
 QWidget *MainWindow::createCellWidget(const QString &text,
 	DiagramItem::DiagramType type)
 {
-
-	DiagramItem item(type);
+	DiagramItem item(type); 
 	QIcon icon(item.image());
 
 	QToolButton *button = new QToolButton;
@@ -655,6 +733,34 @@ void MainWindow::sceneScaleChanged(const QString &scale)
 {
 	emit scaleChanged(scale);
 }
+
+void MainWindow::OnScaleReset()
+{
+	mScale=100;
+	currentScale->setText("100%");
+	sceneScaleChanged("100%");
+}
+
+void MainWindow::OnZoomOut()
+{
+	if(activeMdiChild()==NULL) return;
+	if(mScale==10) return;
+	mScale-=10;
+	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
+	currentScale->setText(scaletxt);
+	sceneScaleChanged(scaletxt);
+}
+
+void MainWindow::OnZoomIn()
+{
+	if(activeMdiChild()==NULL) return;
+	if(mScale==200) return;
+	mScale+=10;
+	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
+	currentScale->setText(scaletxt);
+	sceneScaleChanged(scaletxt);
+}
+
 void MainWindow::itemInserted(DiagramItem *item, DiagramScene* scene)
 {
 	pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
