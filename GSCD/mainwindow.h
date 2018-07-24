@@ -50,8 +50,8 @@ private slots:
     void updateWindowMenu();
     MdiChild *createMdiChild();
     void setActiveSubWindow(QWidget *window);
-	void buttonGroupClicked(int id);
-	void pointerGroupClicked(int id);
+	//void buttonGroupClicked(int id);
+	//void pointerGroupClicked(int id);
 	void itemInserted(DiagramItem *item,DiagramScene* scene);
 	void textInserted(QGraphicsTextItem *item, DiagramScene* scene);
 	void sceneScaleChanged(const QString &scale);
@@ -69,10 +69,10 @@ private:
     void writeSettings();
     MdiChild *activeMdiChild();
     QMdiSubWindow *findMdiChild(const QString &fileName);
-	QWidget *createCellWidget(const QString &text,
-		DiagramItem::DiagramType type);
-	QWidget *createBackgroundCellWidget(const QString &text,
-		const QString &image);
+	//QWidget *createCellWidget(const QString &text,
+	//	DiagramItem::DiagramType type);
+	//QWidget *createBackgroundCellWidget(const QString &text,
+	//	const QString &image);
 
 	Ui::MainWindowClass ui;
     QMdiArea *mdiArea;

@@ -12,8 +12,6 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	m_scene = (DiagramScene *)scene;
 	m_doc	= doc;
 
-    m_scene->setItemType(DiagramItem::DiagramType::Conditional);
-    m_scene->setMode(DiagramScene::InsertItem);
 
     QMatrix oldMatrix = matrix();
     resetMatrix();
@@ -42,6 +40,9 @@ void MdiChild::newFile()
     isUntitled = true;
     curFile = tr("document%1.txt").arg(sequenceNumber++);
     setWindowTitle(curFile + "[*]");
+
+	//test code
+	m_doc->test();
 
     connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
             this, SLOT(documentWasModified()));
@@ -216,6 +217,11 @@ void MdiChild::deleteItem()
              qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
          }
          m_scene->removeItem(item);
+		 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->data();
+		 if(data && data->type() == T_BUS)
+		 {
+			 ((iBUS *)data)->itemRemoved();
+		 }
          delete item;
      }
 }

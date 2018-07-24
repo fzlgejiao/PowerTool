@@ -23,10 +23,11 @@ public:
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
 
 	void	getAvailableBus(QList<iBUS *>& list);													//to get buses which need to be show in scene
-	int		Uid2Type(int uid){return (uid >> 16);}
-	int		Uid2Id(int uid){return (uid & 0xFFFF);}
+
 	iData*	Uid2Data(int uid);
 
+	//test func
+	void	test();
 protected:
 
 	void	addBUS(iBUS* bus){listBUS.insert(bus->Id(),bus);}

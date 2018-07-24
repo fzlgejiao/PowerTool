@@ -26,28 +26,26 @@ class DiagramItem : public QGraphicsPolygonItem
 {
 public:
     enum { Type = UserType + 15 };
-    enum DiagramType { Step, Conditional, StartEnd, Io };
 
-    DiagramItem(DiagramType diagramType, QMenu *contextMenu = 0,
+    DiagramItem(iData* data, QMenu *contextMenu = 0,
         QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
     void removeArrow(Arrow *arrow);
     void removeArrows();
-    DiagramType diagramType() const
-        { return myDiagramType; }
+
     QPolygonF polygon() const
         { return myPolygon; }
     void addArrow(Arrow *arrow);
     QPixmap image() const;
     int type() const
 		{ return Type;}
+	iData* data(){return myData;}
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
-    DiagramType		myDiagramType;
     QPolygonF		myPolygon;
     QMenu *			myContextMenu;
 	iData *			myData;

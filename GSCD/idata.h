@@ -12,6 +12,9 @@ typedef enum{
 	T_TRANSFORMER,
 }T_DATA;
 
+#define Uid2Type(uid)	((uid) >> 16)
+#define	Uid2Id(uid)		((uid) & 0xFFFF)
+
 class iData : public QObject
 {
 	Q_OBJECT
@@ -21,15 +24,26 @@ public:
 	~iData();
 	virtual T_DATA type()		= 0;
 	int		Id(){return m_ID;}
-	int		Uid(){(type()<<16) | Id();}
+	int		Uid(){return (type()<<16) | Id();}
 	
 private:
 	int			m_ID;	
 };
+class iLinkData : public iData
+{
+public:
+	iLinkData(int id,int from,int to,QObject *parent);
+	~iLinkData(){}
+	virtual T_DATA type()		= 0;
+	int fromId(){return m_fromId;}
+	int toId(){return m_toId;}
 
+protected:
+	int			m_fromId;
+	int			m_toId;
+};
 
-class iBRANCH;
-class iTRANSFORMER;
+class DiagramItem;
 class iBUS : public iData
 {
 public:
@@ -39,57 +53,52 @@ public:
 	
 	
 	QString name(){return m_NAME;}
-	void	attach(iData* data){linkDatas.append(data);}
+	void	addLink(iLinkData* data){m_linkDatas.append(data);}
+	QList<iLinkData *>& linkDatas(){return m_linkDatas;}
 
-	void	beAdded(){m_bAdded = true;}
-	void	beRemoved(){m_bAdded = false;}
+	void	itemAdded(DiagramItem* item){m_bAdded = true;m_item = item;}
+	void	itemRemoved(){m_bAdded = false;m_item=NULL;}
 	bool	isAdded(){return m_bAdded;}
+	DiagramItem* myItem(){return m_item;}
 
 private:
 	friend class iDoc;
 
-	QString		m_NAME;
+	QString			m_NAME;
 
-	QList<iData *>			linkDatas;																//branchs/transformers connected to this bus
-	bool		m_bAdded;																			//flag for added to scene or not
+	QList<iLinkData *>	m_linkDatas;																//branchs/transformers connected to this bus
+	bool			m_bAdded;																		//flag for added to scene or not
+	DiagramItem*	m_item;																			//pointer to item on scene for bus	
 
 };
 
-class iBRANCH : public iData
+class iBRANCH : public iLinkData
 {
 public:
-	iBRANCH(int id,QObject *parent);
+	iBRANCH(int id,int from,int to,QObject *parent);
 	~iBRANCH(){}
 	T_DATA type(){return T_BRANCH;}
 	
-	int		fromBUS(){return m_fromBUS;}
-	int		toBUS(){return m_toBUS;}
-	
-	void set2FromBUS(int fromvalue) { m_fromBUS= fromvalue ;}
-	void set2ToBUS(int tovalue) { m_toBUS= tovalue ;}
 
 private:
 	friend class iDoc;
-	int			m_fromBUS;
-	int			m_toBUS;
+
 
 };
 
-class iTRANSFORMER : public iData
+class iTRANSFORMER : public iLinkData
 {
 public:
-	iTRANSFORMER(int id,QObject *parent);
+	iTRANSFORMER(int id,int from,int to,QObject *parent);
 	~iTRANSFORMER(){}
 	T_DATA type(){return T_TRANSFORMER;}
 	
-	int		fromBUS(){return m_fromBUS;}
-	int		toBUS(){return m_toBUS;}
+
 	
 
 private:
 	friend class iDoc;
-	int			m_fromBUS;
-	int			m_toBUS;
+
 
 };
 #endif // IDATA_H

@@ -48,8 +48,6 @@ public:
 	QMenu* getMenu(T_DATA type){return myMenus.value(type,NULL);}
 
 public slots:
-    void setMode(Mode mode);
-    void setItemType(DiagramItem::DiagramType type);
     void editorLostFocus(DiagramTextItem *item);
 
 signals:
@@ -67,7 +65,6 @@ protected:
 private:
     bool isItemChange(int type);
 
-    DiagramItem::DiagramType myItemType;
     Mode		myMode;
 	iDoc*		myDoc;
 	QMap<T_DATA,QMenu *> myMenus;

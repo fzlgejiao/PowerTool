@@ -32,10 +32,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
     readSettings();
 
 
-	createToolBox();
+	//createToolBox();
 
 	QHBoxLayout *layout = new QHBoxLayout;
-	layout->addWidget(toolBox);
+	//layout->addWidget(toolBox);
 	layout->addWidget(mdiArea);
 
 	QWidget *widget = new QWidget;
@@ -461,7 +461,7 @@ void MainWindow::createStatusBar()
 {
     statusBar()->showMessage(tr("Ready"));
 }
-
+/*
 void MainWindow::createToolBox()
 {
 	buttonGroup = new QButtonGroup(this);
@@ -566,6 +566,7 @@ QWidget *MainWindow::createBackgroundCellWidget(const QString &text,
 
 	return widget;
 }
+*/
 void MainWindow::readSettings()
 {
     QSettings settings("Qt", "GSCD");
@@ -607,7 +608,7 @@ void MainWindow::setActiveSubWindow(QWidget *window)
         return;
     mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
 }
-
+/*
 void MainWindow::buttonGroupClicked(int id)
 {
 	QList<QAbstractButton *> buttons = buttonGroup->buttons();
@@ -649,6 +650,7 @@ void MainWindow::pointerGroupClicked(int id)
 		scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 	}
 }
+*/
 void MainWindow::sceneScaleChanged(const QString &scale)
 {
 	emit scaleChanged(scale);
@@ -656,14 +658,14 @@ void MainWindow::sceneScaleChanged(const QString &scale)
 void MainWindow::itemInserted(DiagramItem *item, DiagramScene* scene)
 {
 	pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-	scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-	buttonGroup->button(int(item->diagramType()))->setChecked(false);
+	//scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
+	//buttonGroup->button(int(item->diagramType()))->setChecked(false);
 }
 
 void MainWindow::textInserted(QGraphicsTextItem *, DiagramScene* scene)
 {
 	buttonGroup->button(InsertTextButton)->setChecked(false);
-	scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
+	//scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 }
 
 void MainWindow::deleteItem()

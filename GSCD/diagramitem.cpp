@@ -3,18 +3,19 @@
 
 #include "diagramitem.h"
 #include "arrow.h"
+#include "idata.h"
 
 //! [0]
-DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
+DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
              QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsPolygonItem(parent, scene)
 {
-    myDiagramType = diagramType;
     myContextMenu = contextMenu;
+	myData		  = data;
 
     QPainterPath path;
-    switch (myDiagramType) {
-        case StartEnd:
+	switch (data->type()) {
+ /*       case StartEnd:
             path.moveTo(200, 50);
             path.arcTo(150, 0, 50, 50, 0, 90);
             path.arcTo(50, 0, 50, 50, 90, 90);
@@ -22,13 +23,13 @@ DiagramItem::DiagramItem(DiagramType diagramType, QMenu *contextMenu,
             path.arcTo(150, 50, 50, 50, 270, 90);
             path.lineTo(200, 25);
             myPolygon = path.toFillPolygon();
-            break;
-        case Conditional:
+            break;*/
+        case T_BUS:
             myPolygon << QPointF(-20, 0) << QPointF(0, 20)
                       << QPointF(20, 0) << QPointF(0, -20)
                       << QPointF(-20, 0);
             break;
-        case Step:
+		case T_BRANCH:
             myPolygon << QPointF(-15, -15) << QPointF(15, -15)
                       << QPointF(15, 15) << QPointF(-15, 15)
                       << QPointF(-15, -15);

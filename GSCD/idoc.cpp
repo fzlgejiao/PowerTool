@@ -9,16 +9,31 @@ iDoc::iDoc(QObject *parent)
 	,Suffix_keyword("0 / END OF ")
 	,ColumnName_keyword("@!")
 {
-	//test code
-	//listBUS.insert(1,new iBUS(1,"bus1", this));
-	//listBUS.insert(2,new iBUS(2,"bus2", this));
+
 }
 
 iDoc::~iDoc()
 {
 
 }
+void iDoc::test()
+{
+	//test code
+	iBUS* bus1 = new iBUS(1,"bus1", this);
+	iBUS* bus2 = new iBUS(2,"bus2", this);
+	iBUS* bus3 = new iBUS(3,"bus3", this);
+	iBRANCH* branch1 = new iBRANCH(1,1,3,this);														//branch1: bus1->bus3
+	bus1->addLink(branch1);
+	bus3->addLink(branch1);
 
+	iBRANCH* branch2 = new iBRANCH(2,3,2,this);														//branch2: bus3->bus2
+	bus3->addLink(branch2);
+	bus2->addLink(branch2);
+
+	listBUS.insert(1,bus1);
+	listBUS.insert(2,bus2);
+	listBUS.insert(3,bus3);
+}
 
 bool iDoc::openDataFile(const QString& file)
 {
@@ -116,13 +131,11 @@ void iDoc::GetDataModel(T_DATA datatype)
 					break;
 
 					case T_BRANCH:
-						addBRANCH(new iBRANCH(datarows,this));										//the ID maybe to index
-						listBRANCH[datarows]->set2FromBUS(datalist[0].toInt());
-						listBRANCH[datarows]->set2ToBUS(datalist[1].toInt());					
+						addBRANCH(new iBRANCH(datarows,datalist[0].toInt(),datalist[1].toInt(),this));										//the ID maybe to index		
 					break;
 
 					case T_TRANSFORMER:
-						addTRANSFORMER(new iTRANSFORMER(datalist[0].toInt(),this));
+						//addTRANSFORMER(new iTRANSFORMER(datalist[0].toInt(),this));
 						break;
 					}
 					readline=stream.readLine();

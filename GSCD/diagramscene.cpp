@@ -11,7 +11,6 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 {
 	myDoc		= doc;
     myMode		= MoveItem;
-    myItemType	= DiagramItem::Step;
 
     line = 0;
     textItem = 0;
@@ -73,15 +72,6 @@ void DiagramScene::setFont(const QFont &font)
 }
 //! [4]
 
-void DiagramScene::setMode(Mode mode)
-{
-    myMode = mode;
-}
-
-void DiagramScene::setItemType(DiagramItem::DiagramType type)
-{
-    myItemType = type;
-}
 
 //! [5]
 void DiagramScene::editorLostFocus(DiagramTextItem *item)
@@ -213,11 +203,41 @@ bool DiagramScene::isItemChange(int type)
 
 void DiagramScene::addBUS(iBUS* bus,const QPointF& pos)
 {
-	DiagramItem *item = new DiagramItem(DiagramItem::Conditional, getMenu(T_BUS));
+	DiagramItem *item = new DiagramItem(bus, getMenu(T_BUS));
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
-	bus->beAdded();																					//set bus added flag
+	bus->itemAdded(item);																			//set bus added flag
+
+	//to check if both fromBus and toBus of the attached data to this bus are already added
+	foreach(iLinkData* data,bus->linkDatas())
+	{
+		if(!data)
+			break;
+
+		int from = data->fromId();
+		int to	 = data->toId();
+		iBUS* bus1 = myDoc->getBUS(from);
+		iBUS* bus2 = myDoc->getBUS(to);
+		if(!bus1 || !bus2)
+			break;
+		if(bus1->isAdded() == false || bus2->isAdded() == false)
+			break;
+		DiagramItem *startItem	= bus1->myItem();
+		DiagramItem *endItem	= bus2->myItem();
+		if(data->type() == T_BRANCH)
+		{
+			Arrow *arrow = new Arrow(startItem, endItem);
+            arrow->setColor(myLineColor);
+            startItem->addArrow(arrow);
+            endItem->addArrow(arrow);
+            arrow->setZValue(-1000.0);
+            addItem(arrow);
+            arrow->updatePosition();
+		}
+	}
+
+
 	emit itemInserted(item);
 
 }
