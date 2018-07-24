@@ -23,12 +23,15 @@ public:
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
 
 	void	getAvailableBus(QList<iBUS *>& list);													//to get buses which need to be show in scene
+	int		Uid2Type(int uid){return (uid >> 16);}
+	int		Uid2Id(int uid){return (uid & 0xFFFF);}
+	iData*	Uid2Data(int uid);
 
 protected:
 
-	void	addBUS(iBUS* bus){listBUS.insert(bus->id(),bus);}
-	void	addBRANCH(iBRANCH* branch){listBRANCH.insert(branch->id(),branch);}
-	void	addTRANSFORMER(iTRANSFORMER* transformer){listTRANSFORMER.insert(transformer->id(),transformer);}
+	void	addBUS(iBUS* bus){listBUS.insert(bus->Id(),bus);}
+	void	addBRANCH(iBRANCH* branch){listBRANCH.insert(branch->Id(),branch);}
+	void	addTRANSFORMER(iTRANSFORMER* transformer){listTRANSFORMER.insert(transformer->Id(),transformer);}
 
 
 private:

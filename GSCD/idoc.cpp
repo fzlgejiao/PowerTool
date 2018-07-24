@@ -10,10 +10,8 @@ iDoc::iDoc(QObject *parent)
 	,ColumnName_keyword("@!")
 {
 	//test code
-#if 0
-	listBUS.insert(1,new iBUS(1,"bus1", this));
-	listBUS.insert(2,new iBUS(2,"bus2", this));
-#endif
+	//listBUS.insert(1,new iBUS(1,"bus1", this));
+	//listBUS.insert(2,new iBUS(2,"bus2", this));
 }
 
 iDoc::~iDoc()
@@ -78,7 +76,6 @@ void iDoc::CloseDataFile()
 void iDoc::GetDataModel(T_DATA datatype)
 {
 	int datarows=0;		
-	int TranformerDummylines=0;
 	QString dataname;
 	if(datatype==T_BUS)
 		dataname="BUS";
@@ -86,7 +83,7 @@ void iDoc::GetDataModel(T_DATA datatype)
 		dataname="BRANCH";
 	else if(datatype==T_TRANSFORMER)
 		dataname="TRANSFORMER";
-	else return;
+
 	QTextStream stream(m_file);
 	stream.seek(0);
 	while(!stream.atEnd())
@@ -119,24 +116,13 @@ void iDoc::GetDataModel(T_DATA datatype)
 					break;
 
 					case T_BRANCH:
-						addBRANCH(new iBRANCH(datarows,this));										//the ID maybe to object index
+						addBRANCH(new iBRANCH(datarows,this));										//the ID maybe to index
 						listBRANCH[datarows]->set2FromBUS(datalist[0].toInt());
 						listBRANCH[datarows]->set2ToBUS(datalist[1].toInt());					
 					break;
 
-					case T_TRANSFORMER:																//Transformer Data Area 
-
-						addTRANSFORMER(new iTRANSFORMER(datarows,this));
-						listTRANSFORMER[datarows]->set2FromBUS(datalist[0].toInt());
-						listTRANSFORMER[datarows]->set2ToBUS(datalist[1].toInt());						
-						int k=datalist[2].toInt();
-						if(k==0)
-						{
-							TranformerDummylines=3;
-						}else TranformerDummylines=4;
-
-						for(int i=0;i<TranformerDummylines;i++)
-							stream.readLine();
+					case T_TRANSFORMER:
+						addTRANSFORMER(new iTRANSFORMER(datalist[0].toInt(),this));
 						break;
 					}
 					readline=stream.readLine();
@@ -168,4 +154,19 @@ void	iDoc::getAvailableBus(QList<iBUS *>& list)
 		if(bus->isAdded() == false)
 			list.append(bus);
 	}
+}
+iData*	iDoc::Uid2Data(int uid)
+{
+	int type = Uid2Type(uid);
+	int id	 = Uid2Id(uid);
+	switch(type)
+	{
+	case T_BUS:
+		return getBUS(id);
+	case T_BRANCH:
+		return getBRANCH(id);
+	case T_TRANSFORMER:
+		return getTRANSFORMER(id);
+	}
+	return NULL;
 }
