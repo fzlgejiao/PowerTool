@@ -8,6 +8,7 @@
 
 class MdiChild;
 class DiagramScene;
+class iDoc;
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -17,6 +18,7 @@ class QMdiSubWindow;
 class QSignalMapper;
 class QButtonGroup;
 class QToolBox;
+class QLabel;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -43,6 +45,8 @@ private slots:
     void copy();
     void paste();
 
+	void addItem();
+	void addNote();
 	void deleteItem();
 
     void about();
@@ -55,6 +59,9 @@ private slots:
 	void itemInserted(DiagramItem *item,DiagramScene* scene);
 	void textInserted(QGraphicsTextItem *item, DiagramScene* scene);
 	void sceneScaleChanged(const QString &scale);
+	void OnScaleReset();
+	void OnZoomOut();
+	void OnZoomIn();
 
 signals:
     void scaleChanged(const QString &scale);
@@ -99,6 +106,12 @@ private:
     QAction *copyAct;
     QAction *pasteAct;
 
+	QAction *addItemAction;
+	QAction *addNoteAction;
+	QAction *zoomOutAction;
+	QAction *zoomInAction;
+	QAction *zoomResetAction;
+
     QAction *deleteAction;
     QAction *toFrontAction;
     QAction *sendBackAction;
@@ -116,7 +129,8 @@ private:
     QAction *aboutQtAct;
 
 	QButtonGroup *pointerTypeGroup;
-	QComboBox *sceneScaleCombo;
+	//QComboBox *sceneScaleCombo;
+	QLabel *currentScale;
 
 	QToolBox *toolBox;
 	QButtonGroup *buttonGroup;
@@ -124,6 +138,12 @@ private:
 
     enum { MaxRecentFiles = 5 };
     QAction *recentFileActs[MaxRecentFiles];
+		
+	int mScale;
+	int mScaleMax;
+	int mScaleMin;;
+	int mScaleStep;
+	int mScaleIndex;
 };
 
 #endif // MAINWINDOW_H

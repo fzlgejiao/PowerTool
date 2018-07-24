@@ -1,20 +1,26 @@
 <RCC>
-  <qresource prefix="/images">
-    <file alias="bringtofront.png">Resources/images/bringtofront.png</file>
-    <file alias="sendtoback.png">Resources/images/sendtoback.png</file>
-    <file alias="delete.png">Resources/images/delete.png</file>
-    <file alias="copy.png">Resources/images/copy.png</file>
-    <file alias="cut.png">Resources/images/cut.png</file>
-    <file alias="new.png">Resources/images/new.png</file>
-    <file alias="open.png">Resources/images/open.png</file>
-    <file alias="paste.png">Resources/images/paste.png</file>
-    <file alias="save.png">Resources/images/save.png</file>
-    <file alias="pointer.png">Resources/images/pointer.png</file>
-    <file alias="linepointer.png">Resources/images/linepointer.png</file>
-    <file alias="textpointer.png">Resources/images/textpointer.png</file>
-    <file>Resources/images/background1.png</file>
-    <file>Resources/images/background2.png</file>
-    <file>Resources/images/background3.png</file>
-    <file>Resources/images/background4.png</file>
-  </qresource>
+    <qresource prefix="/images">
+        <file alias="bringtofront.png">Resources/images/bringtofront.png</file>
+        <file alias="sendtoback.png">Resources/images/sendtoback.png</file>
+        <file alias="copy.png">Resources/images/copy.png</file>
+        <file alias="cut.png">Resources/images/cut.png</file>
+        <file alias="new.png">Resources/images/new.png</file>
+        <file alias="open.png">Resources/images/open.png</file>
+        <file alias="paste.png">Resources/images/paste.png</file>
+        <file alias="save.png">Resources/images/save.png</file>
+        <file alias="pointer.png">Resources/images/pointer.png</file>
+        <file alias="linepointer.png">Resources/images/linepointer.png</file>
+        <file alias="textpointer.png">Resources/images/textpointer.png</file>
+        <file>Resources/images/background1.png</file>
+        <file>Resources/images/background2.png</file>
+        <file>Resources/images/background3.png</file>
+        <file>Resources/images/background4.png</file>
+        <file alias="addcomment.png">Resources/images/addcomment.png</file>
+        <file alias="addnet.png">Resources/images/addnet.png</file>
+        <file alias="delete.png">Resources/images/delete.png</file>
+        <file alias="about.png">Resources/images/about.png</file>
+        <file alias="zoomin.png">Resources/images/zoomin.png</file>
+        <file alias="zoomout.png">Resources/images/zoomout.png</file>
+        <file alias="reset.png">Resources/images/reset.png</file>
+    </qresource>
 </RCC>

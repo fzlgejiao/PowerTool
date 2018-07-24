@@ -22,6 +22,7 @@ public:
     QString userFriendlyCurrentFile();
     QString currentFile() { return curFile; }
 	DiagramScene* scene(){return m_scene;}
+	iDoc *GetChildDoc(){return m_doc;}
 	void deleteItem();
 
 protected:

@@ -10,8 +10,10 @@ iDoc::iDoc(QObject *parent)
 	,ColumnName_keyword("@!")
 {
 	//test code
+#if 0
 	listBUS.insert(1,new iBUS(1,"bus1", this));
 	listBUS.insert(2,new iBUS(2,"bus2", this));
+#endif
 }
 
 iDoc::~iDoc()
