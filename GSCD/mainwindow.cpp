@@ -734,6 +734,7 @@ void MainWindow::sceneScaleChanged(const QString &scale)
 
 void MainWindow::OnScaleReset()
 {
+	mScale=100;
 	currentScale->setText("100%");
 	sceneScaleChanged("100%");
 }
