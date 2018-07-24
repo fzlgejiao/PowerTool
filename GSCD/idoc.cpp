@@ -132,20 +132,48 @@ void iDoc::GetDataModel(T_DATA datatype)
 					break;
 
 					case T_BRANCH:
-						addBRANCH(new iBRANCH(datarows,datalist[0].toInt(),datalist[1].toInt(),this));										//the ID maybe to index		
+						{
+							int from,to;
+							from = datalist[0].toInt();
+							to   = datalist[1].toInt();
+							iBRANCH* branch = new iBRANCH(datarows,from,to,this);					//row index is the branch id
+
+							//add branch into bus link list
+							iBUS* bus1 = getBUS(from);
+							if(bus1)
+								bus1->addLink(branch);
+							iBUS* bus2 = getBUS(to);
+							if(bus2)
+								bus2->addLink(branch);
+							addBRANCH(branch);														//add branch into branch list
+						}
 					break;
 
 					case T_TRANSFORMER:																//Transformer Data Area 
-						addTRANSFORMER(new iTRANSFORMER(datarows,datalist[0].toInt(),datalist[1].toInt(),this));
-				
-						int k=datalist[2].toInt();
-						if(k==0)
 						{
-							TranformerDummylines=3;
-						}else TranformerDummylines=4;
+							int from,to;
+							from = datalist[0].toInt();
+							to   = datalist[1].toInt();
+							iTRANSFORMER* transformer = new iTRANSFORMER(datarows,from,to,this);	//row index is the transformer id
 
-						for(int i=0;i<TranformerDummylines;i++)
-							stream.readLine();
+							//add transformer into bus link list
+							iBUS* bus1 = getBUS(from);
+							if(bus1)
+								bus1->addLink(transformer);
+							iBUS* bus2 = getBUS(to);
+							if(bus2)
+								bus2->addLink(transformer);
+							addTRANSFORMER(transformer);											//add transformer into transformer list
+				
+							int k=datalist[2].toInt();
+							if(k==0)
+							{
+								TranformerDummylines=3;
+							}else TranformerDummylines=4;
+
+							for(int i=0;i<TranformerDummylines;i++)
+								stream.readLine();
+						}
 						break;
 					}
 					readline=stream.readLine();
