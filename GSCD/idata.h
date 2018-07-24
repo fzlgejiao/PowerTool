@@ -21,7 +21,7 @@ public:
 	~iData();
 	virtual T_DATA type()		= 0;
 	int		Id(){return m_ID;}
-	int		Uid(){(type()<<16) | Id();}
+	int		Uid(){return ((type()<<16) | Id());}
 	
 private:
 	int			m_ID;	
