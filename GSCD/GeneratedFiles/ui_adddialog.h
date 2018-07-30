@@ -15,11 +15,14 @@
 #include <QtGui/QButtonGroup>
 #include <QtGui/QDialog>
 #include <QtGui/QDialogButtonBox>
+#include <QtGui/QFrame>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
-#include <QtGui/QListView>
+#include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
+#include <QtGui/QSpacerItem>
+#include <QtGui/QTableWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
 
@@ -28,28 +31,30 @@ QT_BEGIN_NAMESPACE
 class Ui_AddDialog
 {
 public:
-    QDialogButtonBox *buttonBox;
     QWidget *horizontalLayoutWidget;
     QHBoxLayout *horizontalLayout;
-    QListView *listView_hidenitems;
+    QTableWidget *tableWidget_hidden;
     QVBoxLayout *verticalLayout;
     QPushButton *pushButton_add;
     QPushButton *pushButton_addall;
     QPushButton *pushButton_remove;
     QPushButton *pushButton_removeall;
-    QListView *listView_showitems;
+    QTableWidget *tableWidget_added;
     QLabel *label;
     QLabel *label_2;
+    QWidget *horizontalLayoutWidget_2;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *label_3;
+    QLineEdit *lineEdit_name;
+    QSpacerItem *horizontalSpacer;
+    QDialogButtonBox *buttonBox;
+    QFrame *line;
 
     void setupUi(QDialog *AddDialog)
     {
         if (AddDialog->objectName().isEmpty())
             AddDialog->setObjectName(QString::fromUtf8("AddDialog"));
-        AddDialog->resize(674, 476);
-        buttonBox = new QDialogButtonBox(AddDialog);
-        buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
-        buttonBox->setGeometry(QRect(440, 400, 156, 23));
-        buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+        AddDialog->resize(674, 438);
         horizontalLayoutWidget = new QWidget(AddDialog);
         horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
         horizontalLayoutWidget->setGeometry(QRect(50, 80, 551, 301));
@@ -58,10 +63,18 @@ public:
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        listView_hidenitems = new QListView(horizontalLayoutWidget);
-        listView_hidenitems->setObjectName(QString::fromUtf8("listView_hidenitems"));
+        tableWidget_hidden = new QTableWidget(horizontalLayoutWidget);
+        if (tableWidget_hidden->columnCount() < 3)
+            tableWidget_hidden->setColumnCount(3);
+        QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        tableWidget_hidden->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
+        tableWidget_hidden->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        QTableWidgetItem *__qtablewidgetitem2 = new QTableWidgetItem();
+        tableWidget_hidden->setHorizontalHeaderItem(2, __qtablewidgetitem2);
+        tableWidget_hidden->setObjectName(QString::fromUtf8("tableWidget_hidden"));
 
-        horizontalLayout->addWidget(listView_hidenitems);
+        horizontalLayout->addWidget(tableWidget_hidden);
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
@@ -91,14 +104,22 @@ public:
 
         horizontalLayout->addLayout(verticalLayout);
 
-        listView_showitems = new QListView(horizontalLayoutWidget);
-        listView_showitems->setObjectName(QString::fromUtf8("listView_showitems"));
+        tableWidget_added = new QTableWidget(horizontalLayoutWidget);
+        if (tableWidget_added->columnCount() < 3)
+            tableWidget_added->setColumnCount(3);
+        QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
+        tableWidget_added->setHorizontalHeaderItem(0, __qtablewidgetitem3);
+        QTableWidgetItem *__qtablewidgetitem4 = new QTableWidgetItem();
+        tableWidget_added->setHorizontalHeaderItem(1, __qtablewidgetitem4);
+        QTableWidgetItem *__qtablewidgetitem5 = new QTableWidgetItem();
+        tableWidget_added->setHorizontalHeaderItem(2, __qtablewidgetitem5);
+        tableWidget_added->setObjectName(QString::fromUtf8("tableWidget_added"));
 
-        horizontalLayout->addWidget(listView_showitems);
+        horizontalLayout->addWidget(tableWidget_added);
 
         label = new QLabel(AddDialog);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(50, 60, 111, 20));
+        label->setGeometry(QRect(50, 60, 141, 20));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\256\213\344\275\223"));
         font.setPointSize(11);
@@ -107,8 +128,47 @@ public:
         label->setFont(font);
         label_2 = new QLabel(AddDialog);
         label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setGeometry(QRect(370, 60, 81, 16));
+        label_2->setGeometry(QRect(370, 60, 141, 16));
         label_2->setFont(font);
+        horizontalLayoutWidget_2 = new QWidget(AddDialog);
+        horizontalLayoutWidget_2->setObjectName(QString::fromUtf8("horizontalLayoutWidget_2"));
+        horizontalLayoutWidget_2->setGeometry(QRect(50, 10, 551, 41));
+        horizontalLayout_2 = new QHBoxLayout(horizontalLayoutWidget_2);
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        label_3 = new QLabel(horizontalLayoutWidget_2);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        QFont font1;
+        font1.setFamily(QString::fromUtf8("Arial"));
+        font1.setPointSize(8);
+        font1.setBold(true);
+        font1.setWeight(75);
+        label_3->setFont(font1);
+
+        horizontalLayout_2->addWidget(label_3);
+
+        lineEdit_name = new QLineEdit(horizontalLayoutWidget_2);
+        lineEdit_name->setObjectName(QString::fromUtf8("lineEdit_name"));
+
+        horizontalLayout_2->addWidget(lineEdit_name);
+
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer);
+
+        buttonBox = new QDialogButtonBox(horizontalLayoutWidget_2);
+        buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+
+        horizontalLayout_2->addWidget(buttonBox);
+
+        line = new QFrame(AddDialog);
+        line->setObjectName(QString::fromUtf8("line"));
+        line->setGeometry(QRect(50, 50, 551, 16));
+        line->setFrameShape(QFrame::HLine);
+        line->setFrameShadow(QFrame::Sunken);
 
         retranslateUi(AddDialog);
 
@@ -117,13 +177,30 @@ public:
 
     void retranslateUi(QDialog *AddDialog)
     {
-        AddDialog->setWindowTitle(QApplication::translate("AddDialog", "\346\267\273\345\212\240\347\253\231\347\202\271", 0, QApplication::UnicodeUTF8));
+        AddDialog->setWindowTitle(QApplication::translate("AddDialog", "Add New Site:", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_WHATSTHIS
+        AddDialog->setWhatsThis(QApplication::translate("AddDialog", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt; font-weight:600;\">This Dialog is for Add a new Site </span></p></body></html>", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_WHATSTHIS
+        QTableWidgetItem *___qtablewidgetitem = tableWidget_hidden->horizontalHeaderItem(0);
+        ___qtablewidgetitem->setText(QApplication::translate("AddDialog", "Type", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem1 = tableWidget_hidden->horizontalHeaderItem(1);
+        ___qtablewidgetitem1->setText(QApplication::translate("AddDialog", "ID", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem2 = tableWidget_hidden->horizontalHeaderItem(2);
+        ___qtablewidgetitem2->setText(QApplication::translate("AddDialog", "Name", 0, QApplication::UnicodeUTF8));
         pushButton_add->setText(QApplication::translate("AddDialog", "Insert>", 0, QApplication::UnicodeUTF8));
-        pushButton_addall->setText(QApplication::translate("AddDialog", "Inser All>>", 0, QApplication::UnicodeUTF8));
+        pushButton_addall->setText(QApplication::translate("AddDialog", "Insert All>>", 0, QApplication::UnicodeUTF8));
         pushButton_remove->setText(QApplication::translate("AddDialog", "<Revoke", 0, QApplication::UnicodeUTF8));
         pushButton_removeall->setText(QApplication::translate("AddDialog", "<<Revoke All", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("AddDialog", " \346\234\252\347\273\230\345\210\266\347\232\204\347\253\231\347\202\271:", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("AddDialog", "\345\233\276\344\270\255\347\253\231\347\202\271:", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem3 = tableWidget_added->horizontalHeaderItem(0);
+        ___qtablewidgetitem3->setText(QApplication::translate("AddDialog", "Type", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem4 = tableWidget_added->horizontalHeaderItem(1);
+        ___qtablewidgetitem4->setText(QApplication::translate("AddDialog", "ID", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem5 = tableWidget_added->horizontalHeaderItem(2);
+        ___qtablewidgetitem5->setText(QApplication::translate("AddDialog", "Name", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("AddDialog", "HiddenItemList:", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("AddDialog", "AddedItemList:", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("AddDialog", "Site Name:", 0, QApplication::UnicodeUTF8));
+        lineEdit_name->setText(QString());
     } // retranslateUi
 
 };
