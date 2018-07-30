@@ -206,6 +206,7 @@ void	iDoc::getAvailableBus(QList<iBUS *>& list)
 			list.append(bus);
 	}
 }
+
 iData*	iDoc::Uid2Data(int uid)
 {
 	int type = Uid2Type(uid);
