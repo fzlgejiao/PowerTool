@@ -18,6 +18,21 @@ public:
 	bool	openDataFile(const QString& file);
 	bool	openMapFile(const QString& file);
 	void	close();
+
+	int		STAT_getId();																			//get available station id
+	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
+	void	STAT_delete(int id)
+	{
+		iSTAT* stat = STAT_get(id);
+		if(stat)
+			delete stat;
+		listSTAT.remove(id);
+	}
+
+
+	iNodeData* getNode(int uid);
+	iNodeData* getNode(int type,int id);
+
 	iBUS*	getBUS(int id){return listBUS.value(id,NULL);}
 	iBRANCH*	getBRANCH(int id){return listBRANCH.value(id,NULL);}
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
@@ -28,7 +43,17 @@ public:
 
 	//test func
 	void	test();
+	iSTAT*	getFreeSTAT()
+	{
+		foreach(iSTAT* stat,listSTAT)
+		{
+			if(!stat->myItem())
+				return stat;
+		}
+		return NULL;
+	}
 protected:
+	void	STAT_add(iSTAT* stat){listSTAT.insert(stat->Id(),stat);}
 
 	void	addBUS(iBUS* bus){listBUS.insert(bus->Id(),bus);}
 	void	addBRANCH(iBRANCH* branch){listBRANCH.insert(branch->Id(),branch);}
@@ -36,6 +61,7 @@ protected:
 
 
 private:
+	QMap<int,iSTAT *>			listSTAT;															//<id,iSTAT*>: id is the station id
 	QMap<int,iBUS *>			listBUS;															//<id,iBUS*>: id is the bus id
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id

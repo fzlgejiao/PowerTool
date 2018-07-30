@@ -22,17 +22,32 @@ void iDoc::test()
 	iBUS* bus1 = new iBUS(1,"bus1", this);
 	iBUS* bus2 = new iBUS(2,"bus2", this);
 	iBUS* bus3 = new iBUS(3,"bus3", this);
-	iBRANCH* branch1 = new iBRANCH(1,1,3,this);														//branch1: bus1->bus3
+	iBRANCH* branch1 = new iBRANCH(1,bus1->Uid(),bus3->Uid(),this);									//branch1: bus1->bus3
 	bus1->addLink(branch1);
 	bus3->addLink(branch1);
 
-	iBRANCH* branch2 = new iBRANCH(2,3,2,this);														//branch2: bus3->bus2
+	iBRANCH* branch2 = new iBRANCH(2,bus3->Uid(),bus2->Uid(),this);									//branch2: bus3->bus2
 	bus3->addLink(branch2);
 	bus2->addLink(branch2);
 
 	listBUS.insert(1,bus1);
 	listBUS.insert(2,bus2);
 	listBUS.insert(3,bus3);
+
+	iSTAT* stat1 = new iSTAT(1,"STAT1",this);
+	iSTAT* stat2 = new iSTAT(2,"STAT2",this);
+
+	QList<iNodeData*> listNodes1;
+	listNodes1.append(bus1);
+	stat1->addNodes(listNodes1);
+
+	QList<iNodeData*> listNodes2;
+	listNodes2.append(bus2);
+	listNodes2.append(bus3);
+	stat2->addNodes(listNodes2);
+
+	STAT_add(stat1);
+	STAT_add(stat2);
 }
 
 bool iDoc::openDataFile(const QString& file)
@@ -202,7 +217,7 @@ void	iDoc::getAvailableBus(QList<iBUS *>& list)
 {
 	foreach(iBUS *bus,listBUS)
 	{
-		if(bus->isAdded() == false)
+		if(bus->statId() == 0)
 			list.append(bus);
 	}
 }
@@ -220,4 +235,33 @@ iData*	iDoc::Uid2Data(int uid)
 		return getTRANSFORMER(id);
 	}
 	return NULL;
+}
+
+int	iDoc::STAT_getId()
+{
+	int id = 1;
+	if(listSTAT.isEmpty())
+		return id;
+	foreach(iSTAT* stat, listSTAT)
+	{
+		if(stat->Id() > id)
+			id = stat->Id();
+	}
+	return id+1;
+}
+iNodeData* iDoc::getNode(int uid)
+{
+	int type = Uid2Type(uid);
+	if(type == T_NONE)
+		return NULL;
+
+	int id = Uid2Id(uid);
+	return getNode(type,id);
+}
+iNodeData* iDoc::getNode(int type,int id)
+{
+	if(type == T_BUS)
+		return getBUS(id);
+	else
+		return NULL;
 }

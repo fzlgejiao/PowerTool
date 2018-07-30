@@ -45,7 +45,7 @@ private slots:
     void copy();
     void paste();
 
-	void addItem();
+	void addStation();
 	void addNote();
 	void deleteItem();
 

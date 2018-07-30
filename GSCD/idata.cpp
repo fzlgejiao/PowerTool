@@ -11,24 +11,53 @@ iData::~iData()
 {
 
 }
-iLinkData::iLinkData(int id,int from,int to,QObject *parent)
-	: iData(id,parent),m_fromId(from),m_toId(to)
+iLinkData::iLinkData(int id,int fromUid,int toUid,QObject *parent)
+	: iData(id,parent),m_fromUid(fromUid),m_toUid(toUid)
 {
 
 }
+iNodeData::iNodeData(int id,QObject *parent)
+	: iData(id,parent),m_statId(0)
+{
+
+}
+//--------------------------------------------------------------------------------------------------
+//	iSTAT funcs
+//--------------------------------------------------------------------------------------------------
+iSTAT::iSTAT(int id,const QString& name,QObject *parent)
+	:iData(id,parent)
+{
+	m_name = name;
+	m_item = NULL;
+}
+iSTAT::~iSTAT()
+{
+	foreach(iNodeData* node,m_nodeDatas)
+	{
+		node->statRemoved();
+	}
+}
+void iSTAT::addNodes(const QList<iNodeData *>& listNodes)
+{
+	foreach(iNodeData* node,listNodes)
+		node->statAdded(Id());
+	m_nodeDatas.append(listNodes);
+}
+//--------------------------------------------------------------------------------------------------
+//	iBUS funcs
+//--------------------------------------------------------------------------------------------------
 iBUS::iBUS(int id,const QString& name,QObject *parent)
-	: iData(id,parent)
+	: iNodeData(id,parent)
 {
 	m_NAME = name;
-	m_bAdded = false;
 }
-iBRANCH::iBRANCH(int id,int from,int to,QObject *parent)
-	: iLinkData(id,from,to,parent)
+iBRANCH::iBRANCH(int id,int fromUid,int toUid,QObject *parent)
+	: iLinkData(id,fromUid,toUid,parent)
 {
 
 }
-iTRANSFORMER::iTRANSFORMER(int id,int from,int to,QObject *parent)
-	: iLinkData(id,from,to,parent)
+iTRANSFORMER::iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent)
+	: iLinkData(id,fromUid,toUid,parent)
 {
 
 }

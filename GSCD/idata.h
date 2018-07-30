@@ -7,13 +7,15 @@
 
 typedef enum{
 	T_NONE			= 0,
-	T_BUS			= 1,
+	T_STAT,
+	T_BUS,
 	T_BRANCH,
 	T_TRANSFORMER,
 }T_DATA;
 
 #define Uid2Type(uid)	((uid) >> 16)
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
+#define	UID(type,id)	(((type)<<16)|(id))
 
 class iData : public QObject
 {
@@ -32,19 +34,62 @@ private:
 class iLinkData : public iData
 {
 public:
-	iLinkData(int id,int from,int to,QObject *parent);
+	iLinkData(int id,int fromUid,int toUid,QObject *parent);
 	~iLinkData(){}
 	virtual T_DATA type()		= 0;
-	int fromId(){return m_fromId;}
-	int toId(){return m_toId;}
+	int fromUid(){return m_fromUid;}
+	int toUid(){return m_toUid;}
 
 protected:
-	int			m_fromId;
-	int			m_toId;
+	int			m_fromUid;																			//uid of from node
+	int			m_toUid;																			//uid of to node
+};
+
+class iNodeData : public iData
+{
+public:
+	iNodeData(int id,QObject *parent);
+	~iNodeData(){}
+	virtual T_DATA type()		= 0;
+	int		statId(){return m_statId;}
+	void	statAdded(int id){m_statId = id;}
+	void	statRemoved(){m_statId=0;}
+
+	void	addLink(iLinkData* data){m_linkDatas.append(data);}
+	QList<iLinkData *>& linkDatas(){return m_linkDatas;}
+
+
+protected:
+	int			m_statId;																			//station id(0: not assigned to a station, x: station id)
+
+	QList<iLinkData *>	m_linkDatas;																//branchs/transformers connected to this node
 };
 
 class DiagramItem;
-class iBUS : public iData
+class iSTAT : public iData
+{
+public:
+	iSTAT(int id,const QString& name,QObject *parent);
+	~iSTAT();
+	T_DATA type(){return T_STAT;}
+	QString name(){return m_name;}
+
+	void	addNodes(const QList<iNodeData *>& listNodes);
+	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
+
+	void	itemAdded(DiagramItem* item){m_item = item;}
+	void	itemRemoved(){m_item=NULL;}
+	DiagramItem* myItem(){return m_item;}
+
+private:
+	QString			m_name;
+	DiagramItem*	m_item;																			//pointer to item on scene for station	
+
+	QList<iNodeData *>	m_nodeDatas;
+};
+
+
+class iBUS : public iNodeData
 {
 public:
 	iBUS(int id,const QString& name,QObject *parent);
@@ -53,29 +98,18 @@ public:
 	
 	
 	QString name(){return m_NAME;}
-	void	addLink(iLinkData* data){m_linkDatas.append(data);}
-	QList<iLinkData *>& linkDatas(){return m_linkDatas;}
-
-	void	itemAdded(DiagramItem* item){m_bAdded = true;m_item = item;}
-	void	itemRemoved(){m_bAdded = false;m_item=NULL;}
-	bool	isAdded(){return m_bAdded;}
-	DiagramItem* myItem(){return m_item;}
 
 private:
 	friend class iDoc;
 
+	//properties
 	QString			m_NAME;
-
-	QList<iLinkData *>	m_linkDatas;																//branchs/transformers connected to this bus
-	bool			m_bAdded;																		//flag for added to scene or not
-	DiagramItem*	m_item;																			//pointer to item on scene for bus	
-
 };
 
 class iBRANCH : public iLinkData
 {
 public:
-	iBRANCH(int id,int from,int to,QObject *parent);
+	iBRANCH(int id,int fromUid,int toUid,QObject *parent);
 	~iBRANCH(){}
 	T_DATA type(){return T_BRANCH;}
 	
@@ -83,13 +117,13 @@ public:
 private:
 	friend class iDoc;
 
-
+	//properties
 };
 
 class iTRANSFORMER : public iLinkData
 {
 public:
-	iTRANSFORMER(int id,int from,int to,QObject *parent);
+	iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent);
 	~iTRANSFORMER(){}
 	T_DATA type(){return T_TRANSFORMER;}
 	
@@ -99,6 +133,6 @@ public:
 private:
 	friend class iDoc;
 
-
+	//properties
 };
 #endif // IDATA_H

@@ -159,7 +159,7 @@ void MainWindow::paste()
     //    activeMdiChild()->paste();
 }
 
-void MainWindow::addItem()
+void MainWindow::addStation()
 {
    //To do: add hiden items
 	MdiChild *currentchild= activeMdiChild();
@@ -168,11 +168,11 @@ void MainWindow::addItem()
 	currentchild->GetChildDoc()->getAvailableBus(Buslist);
 	int removedcnt=0;
 
-	foreach(iBUS *bus,Buslist)
-	{
-		if(bus->isAdded() == false)
-			removedcnt++;
-	}
+	//foreach(iBUS *bus,Buslist)
+	//{
+	//	if(bus->isAdded() == false)
+	//		removedcnt++;
+	//}
 
 	if(removedcnt==0)
 	{
@@ -368,7 +368,7 @@ void MainWindow::createActions()
     addItemAction->setShortcut(tr("Add"));
     addItemAction->setStatusTip(tr("Add hiden items into canvas"));
     connect(addItemAction, SIGNAL(triggered()),
-        this, SLOT(addItem()));
+        this, SLOT(addStation()));
 
 	addNoteAction = new QAction(QIcon(":/images/addcomment.png"),
                               tr("&Note"), this);
