@@ -93,15 +93,19 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
-	QList<iBUS*> list;
-	myDoc->getAvailableBus(list);
-	
-	if(list.isEmpty() == false)
-	{
-		iBUS* bus = list.first();
-		if(bus)
-			addBUS(bus,mouseEvent->scenePos());
-	}
+	//QList<iBUS*> list;
+	//myDoc->getAvailableBus(list);
+	//
+	//if(list.isEmpty() == false)
+	//{
+	//	iBUS* bus = list.first();
+	//	if(bus)
+	//		addBUS(bus,mouseEvent->scenePos());
+	//}
+	iSTAT* stat = myDoc->getFreeSTAT();
+	if(stat)
+		addSTAT(stat,mouseEvent->scenePos());
+
 /*
     DiagramItem *item;
     switch (myMode) {
@@ -201,43 +205,57 @@ bool DiagramScene::isItemChange(int type)
 //! [14]
 
 
-void DiagramScene::addBUS(iBUS* bus,const QPointF& pos)
+void DiagramScene::addSTAT(iSTAT* stat,const QPointF& pos)
 {
-	DiagramItem *item = new DiagramItem(bus, getMenu(T_BUS));
+	DiagramItem *item = new DiagramItem(stat, getMenu(T_STAT));
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
-	bus->itemAdded(item);																			//set bus added flag
+	stat->itemAdded(item);																			//set item to station
 
-	//to check if both fromBus and toBus of the attached data to this bus are already added
-	foreach(iLinkData* data,bus->linkDatas())
+	foreach(iNodeData* node,stat->nodeDatas())
 	{
-		if(!data)
+		if(!node)
 			break;
 
-		int from = data->fromId();
-		int to	 = data->toId();
-		iBUS* bus1 = myDoc->getBUS(from);
-		iBUS* bus2 = myDoc->getBUS(to);
-		if(!bus1 || !bus2)
-			break;
-		if(bus1->isAdded() == false || bus2->isAdded() == false)
-			break;
-		DiagramItem *startItem	= bus1->myItem();
-		DiagramItem *endItem	= bus2->myItem();
-		if(data->type() == T_BRANCH)
+		//to check if both fromBus and toBus of the attached data to this bus are already added
+		foreach(iLinkData* data,node->linkDatas())
 		{
-			Arrow *arrow = new Arrow(startItem, endItem);
-            arrow->setColor(myLineColor);
-            startItem->addArrow(arrow);
-            endItem->addArrow(arrow);
-            arrow->setZValue(-1000.0);
-            addItem(arrow);
-            arrow->updatePosition();
+			if(!data)
+				break;
+
+			int from = data->fromUid();
+			int to	 = data->toUid();
+			iNodeData* node1 = myDoc->getNode(from);
+			iNodeData* node2 = myDoc->getNode(to);
+			if(!node1 || !node2)
+				break;
+			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
+				break;
+
+			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
+			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
+			if(!stat1 || !stat2)
+				break;
+
+			DiagramItem *startItem	= stat1->myItem();
+			DiagramItem *endItem	= stat2->myItem();
+			if(!startItem || !endItem)
+				break;
+
+			if(data->type() == T_BRANCH)
+			{
+				Arrow *arrow = new Arrow(startItem, endItem);
+				arrow->setColor(myLineColor);
+				startItem->addArrow(arrow);
+				endItem->addArrow(arrow);
+				arrow->setZValue(-1000.0);
+				addItem(arrow);
+				arrow->updatePosition();
+			}
 		}
+
 	}
 
-
 	emit itemInserted(item);
-
 }

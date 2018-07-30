@@ -60,7 +60,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
-	void addBUS(iBUS* bus,const QPointF& pos);
+	void addSTAT(iSTAT* stat,const QPointF& pos);
 
 private:
     bool isItemChange(int type);

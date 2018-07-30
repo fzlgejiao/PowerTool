@@ -202,26 +202,29 @@ void MdiChild::OnScaleChanged(const QString &scale)
 }
 void MdiChild::deleteItem()
 {
-    foreach (QGraphicsItem *item, m_scene->selectedItems()) {
-        if (item->type() == Arrow::Type) {
-            m_scene->removeItem(item);
-            Arrow *arrow = qgraphicsitem_cast<Arrow *>(item);
-            arrow->startItem()->removeArrow(arrow);
-            arrow->endItem()->removeArrow(arrow);
-            delete item;
-        }
-    }
+    //foreach (QGraphicsItem *item, m_scene->selectedItems()) {
+    //    if (item->type() == Arrow::Type) {
+    //        m_scene->removeItem(item);
+    //        Arrow *arrow = qgraphicsitem_cast<Arrow *>(item);
+    //        arrow->startItem()->removeArrow(arrow);
+    //        arrow->endItem()->removeArrow(arrow);
+    //        delete item;
+    //    }
+    //}
 
     foreach (QGraphicsItem *item, m_scene->selectedItems()) {
-         if (item->type() == DiagramItem::Type) {
-             qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
-         }
-         m_scene->removeItem(item);
-		 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->data();
-		 if(data && data->type() == T_BUS)
+         if (item->type() == DiagramItem::Type) 
 		 {
-			 ((iBUS *)data)->itemRemoved();
-		 }
-         delete item;
+             qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
+
+			 m_scene->removeItem(item);
+			 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->data();
+			 if(data && data->type() == T_STAT)
+			 {
+				 ((iSTAT *)data)->itemRemoved();
+				 m_doc->STAT_delete(data->Id());
+			 }
+			 delete item;
+		}
      }
 }

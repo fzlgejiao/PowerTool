@@ -24,7 +24,7 @@ DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
             path.lineTo(200, 25);
             myPolygon = path.toFillPolygon();
             break;*/
-        case T_BUS:
+        case T_STAT:
             myPolygon << QPointF(-20, 0) << QPointF(0, 20)
                       << QPointF(20, 0) << QPointF(0, -20)
                       << QPointF(-20, 0);

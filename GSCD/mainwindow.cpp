@@ -160,7 +160,7 @@ void MainWindow::paste()
 	//    activeMdiChild()->paste();
 }
 
-void MainWindow::addItem()
+void MainWindow::addStation()
 {
 	//To do: add hiden items
 	MdiChild *currentchild= activeMdiChild();
@@ -359,12 +359,12 @@ void MainWindow::createActions()
 	connect(deleteAction, SIGNAL(triggered()),
 		this, SLOT(deleteItem()));
 
-	addItemAction = new QAction(QIcon(":/images/addnet.png"),
-		tr("&Add"), this);
-	addItemAction->setShortcut(tr("Add"));
-	addItemAction->setStatusTip(tr("Add hiden items into canvas"));
-	connect(addItemAction, SIGNAL(triggered()),
-		this, SLOT(addItem()));
+    addItemAction = new QAction(QIcon(":/images/addnet.png"),
+                              tr("&Add"), this);
+    addItemAction->setShortcut(tr("Add"));
+    addItemAction->setStatusTip(tr("Add hiden items into canvas"));
+    connect(addItemAction, SIGNAL(triggered()),
+        this, SLOT(addStation()));
 
 	addNoteAction = new QAction(QIcon(":/images/addcomment.png"),
 		tr("&Note"), this);
