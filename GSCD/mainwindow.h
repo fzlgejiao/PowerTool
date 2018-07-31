@@ -48,6 +48,7 @@ private slots:
 	void addStation();
 	void addNote();
 	void deleteItem();
+	void showparameter();
 
     void about();
     void updateMenus();
@@ -118,6 +119,7 @@ private:
 
 	QAction *toolbarAct;
 	QAction *statusbarAct;
+	QAction *parameterAct;
 
     QAction *closeAct;
     QAction *closeAllAct;

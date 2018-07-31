@@ -166,7 +166,8 @@ void MainWindow::addStation()
 	MdiChild *currentchild= activeMdiChild();
 	if(currentchild==NULL) return ;
 	QList<iBUS *> Buslist;
-	currentchild->GetChildDoc()->getAvailableBus(Buslist);
+	iDoc *currentdoc=currentchild->GetChildDoc();
+	currentdoc->getAvailableBus(Buslist);
 
 	if(Buslist.count()==0)
 	{
@@ -179,6 +180,14 @@ void MainWindow::addStation()
 			if(!addDialog->IsAddSite()) return;
 			//To do : add new site
 			QString name=addDialog->NewSiteName();
+			iSTAT* newstation= new iSTAT(currentdoc->GetStatCnt()+1,name,this);
+			QList<iNodeData *> newstatnode;
+			foreach(iBUS *bus,addDialog->GetAddedbus())
+			{
+				newstation->addNode(bus);
+			}
+			currentchild->GetChildDoc()->STAT_add(newstation);
+			
 		}
 	}
 }
@@ -187,6 +196,12 @@ void MainWindow::addNote()
 {
 	//To do: add note in diagram
 
+
+}
+
+
+void MainWindow::showparameter()
+{
 
 }
 
@@ -401,6 +416,11 @@ void MainWindow::createActions()
 	connect(statusbarAct, SIGNAL(triggered()),
 		mdiArea, SLOT(showStatusbar()));
 
+	parameterAct = new QAction(tr("&Parameter"), this);
+	parameterAct->setStatusTip(tr("Show the Site Parameter"));
+	connect(parameterAct, SIGNAL(triggered()),
+		mdiArea, SLOT(showparameter()));
+
 	closeAct = new QAction(tr("Cl&ose"), this);
 	closeAct->setStatusTip(tr("Close the active window"));
 	connect(closeAct, SIGNAL(triggered()),
@@ -453,6 +473,7 @@ void MainWindow::createMenus()
 	viewMenu->addAction(toolbarAct);
 	viewMenu->addAction(statusbarAct);
 	viewMenu->addSeparator();
+	viewMenu->addAction(parameterAct);
 
 	windowMenu = menuBar()->addMenu(tr("&Window"));
 	updateWindowMenu();

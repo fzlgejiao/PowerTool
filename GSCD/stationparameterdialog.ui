@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ParameterDialog</class>
- <widget class="QDialog" name="ParameterDialog">
+ <class>StationParameterDialog</class>
+ <widget class="QDialog" name="StationParameterDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>642</width>
-    <height>416</height>
+    <width>638</width>
+    <height>456</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SIte</string>
+   <string>StationParameterDialog</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>40</y>
+     <x>80</x>
+     <y>50</y>
      <width>501</width>
      <height>331</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetFixedSize</enum>
+    </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>

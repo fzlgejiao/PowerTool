@@ -75,6 +75,7 @@ public:
 	QString name(){return m_name;}
 
 	void	addNodes(const QList<iNodeData *>& listNodes);
+	void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
 	void	itemAdded(DiagramItem* item){m_item = item;}

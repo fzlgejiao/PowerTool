@@ -70,6 +70,14 @@ bool AddDialog::IsAddSite()
 	else return false;
 }
 
+QString AddDialog::NewSiteName()
+{
+	if(addedbuslist.count()==0) return NULL;
+	QString nametxt=ui.lineEdit_name->text().trimmed();
+	if(nametxt==NULL) return addedbuslist[0]->name();
+	else return nametxt;
+}
+
 void AddDialog::OnHiddenTableActived(int row,int column)
 {
 	ui.pushButton_add->setEnabled(true);
@@ -92,7 +100,7 @@ void AddDialog::OnAdd()
 		iBUS *bus= GetiBUSfromID(item->text().toInt(),hiddenbuslist);
 		if(bus==NULL) return;
 		addedbuslist.append(bus);
-
+		
 		addBus2Rows(ui.tableWidget_added,bus);
 		//remove the row		
 		int selectrow=ui.tableWidget_hidden->row(items.at(row*columncnt));

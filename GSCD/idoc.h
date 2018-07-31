@@ -28,8 +28,8 @@ public:
 			delete stat;
 		listSTAT.remove(id);
 	}
-
-
+	void	STAT_add(iSTAT* stat){listSTAT.insert(stat->Id(),stat);}
+	int GetStatCnt(){return listSTAT.count();}
 	iNodeData* getNode(int uid);
 	iNodeData* getNode(int type,int id);
 
@@ -38,7 +38,7 @@ public:
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
 
 	void	getAvailableBus(QList<iBUS *>& list);													//to get buses which need to be show in scene
-
+	
 	iData*	Uid2Data(int uid);
 
 	//test func
@@ -53,7 +53,7 @@ public:
 		return NULL;
 	}
 protected:
-	void	STAT_add(iSTAT* stat){listSTAT.insert(stat->Id(),stat);}
+	
 
 	void	addBUS(iBUS* bus){listBUS.insert(bus->Id(),bus);}
 	void	addBRANCH(iBRANCH* branch){listBRANCH.insert(branch->Id(),branch);}

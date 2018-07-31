@@ -72,6 +72,8 @@ bool	iDoc::openMapFile(const QString& file)
 }
 void	iDoc::close()
 {
+	qDeleteAll(listSTAT);
+	listSTAT.clear();
 	qDeleteAll(listBUS);
 	listBUS.clear();
 	qDeleteAll(listBRANCH);
@@ -143,7 +145,13 @@ void iDoc::GetDataModel(T_DATA datatype)
 					switch(datatype)
 					{
 					case T_BUS:
-						addBUS(new iBUS(datalist[0].toInt(),datalist[1].replace(QString("'"),QString("")).trimmed(),this));
+						{
+						iBUS *bus=new iBUS(datalist[0].toInt(),datalist[1].replace(QString("'"),QString("")).trimmed(),this);
+						addBUS(bus);
+						iSTAT* newstat = new iSTAT(datarows,bus->name(),this);				//station id is the index	,defualt every bus is one station
+						newstat->addNode(bus);
+						STAT_add(newstat);
+						}
 					break;
 
 					case T_BRANCH:
@@ -151,16 +159,17 @@ void iDoc::GetDataModel(T_DATA datatype)
 							int from,to;
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
-							iBRANCH* branch = new iBRANCH(datarows,from,to,this);					//row index is the branch id
+							iBUS* frombus = getBUS(from);
+							iBUS* tobus = getBUS(to);
+							if((frombus!=NULL)&&(tobus!=NULL))
+							{
+								iBRANCH* branch = new iBRANCH(datarows,frombus->Uid(),tobus->Uid(),this);					//row index is the branch id
 
-							//add branch into bus link list
-							iBUS* bus1 = getBUS(from);
-							if(bus1)
-								bus1->addLink(branch);
-							iBUS* bus2 = getBUS(to);
-							if(bus2)
-								bus2->addLink(branch);
-							addBRANCH(branch);														//add branch into branch list
+									//add branch into bus link list	
+								frombus->addLink(branch);	
+								tobus->addLink(branch);
+								addBRANCH(branch);														//add branch into branch list
+							}
 						}
 					break;
 
