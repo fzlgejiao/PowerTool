@@ -21,6 +21,7 @@ class iTRANSFORMER;
 QT_END_NAMESPACE
 
 class iDoc;
+class iData;
 //! [0]
 class DiagramScene : public QGraphicsScene
 {
@@ -54,6 +55,7 @@ signals:
     void itemInserted(DiagramItem *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
+	void itemDBClicked(iData *);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);

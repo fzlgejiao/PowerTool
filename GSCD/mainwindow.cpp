@@ -252,7 +252,7 @@ MdiChild *MainWindow::createMdiChild()
 	iDoc *t_Doc = new iDoc(this);
 	DiagramScene* scene= new DiagramScene(t_Doc,this);
 	scene->addMenu(T_NONE,editMenu);
-	scene->addMenu(T_BUS,editMenu);
+	scene->addMenu(T_STAT,editMenu);
 	scene->addMenu(T_BRANCH,editMenu);
 	scene->addMenu(T_TRANSFORMER,editMenu);
 

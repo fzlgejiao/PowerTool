@@ -14,7 +14,10 @@ iDoc::iDoc(QObject *parent)
 
 iDoc::~iDoc()
 {
-
+	qDeleteAll(listSTAT);
+	qDeleteAll(listBUS);
+	qDeleteAll(listBRANCH);
+	qDeleteAll(listTRANSFORMER);
 }
 void iDoc::test()
 {

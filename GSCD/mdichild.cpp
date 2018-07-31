@@ -28,10 +28,10 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 
 MdiChild::~MdiChild()
 {
+	if(m_scene)
+		delete m_scene;	
 	if(m_doc)
 		delete m_doc;
-	if(m_scene)
-		delete m_scene;
 }
 void MdiChild::newFile()
 {
