@@ -43,6 +43,7 @@ public:
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+	void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
@@ -50,6 +51,9 @@ private:
     QMenu *			myContextMenu;
 	iData *			myData;
     QList<Arrow *>	arrows;
+
+signals:
+	void itemDBClicked(iData *);
 };
 
 
