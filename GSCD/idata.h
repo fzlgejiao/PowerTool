@@ -17,6 +17,8 @@ typedef enum{
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
 #define	UID(type,id)	(((type)<<16)|(id))
 
+#define ITEM_DATA	0
+
 class iData : public QObject
 {
 	Q_OBJECT

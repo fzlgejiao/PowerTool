@@ -3,22 +3,29 @@
 
 #include "arrow.h"
 #include <math.h>
+#include "idata.h"
+#include "diagramscene.h"
 
 const qreal Pi = 3.14;
 
 //! [0]
-Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,
+Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,QMenu *contextMenu,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
 {
+	setData(ITEM_DATA,(uint)data);
     myStartItem = startItem;
     myEndItem = endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	myContextMenu = contextMenu;
 }
 //! [0]
-
+iData* Arrow::myData()
+{
+	return (iData *)data(ITEM_DATA).toUInt();
+}
 //! [1]
 QRectF Arrow::boundingRect() const
 {
@@ -105,3 +112,14 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     }
 }
 //! [7]
+void Arrow::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    scene()->clearSelection();
+    setSelected(true);
+	if(myContextMenu)
+		myContextMenu->exec(event->screenPos());
+}
+void Arrow::mouseDoubleClickEvent (QGraphicsSceneMouseEvent * event )
+{
+	QGraphicsItem::mouseDoubleClickEvent(event);
+}

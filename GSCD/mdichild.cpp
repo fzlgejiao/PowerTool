@@ -22,6 +22,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),		this, SLOT(itemInserted(DiagramItem*)));
 	connect(m_scene, SIGNAL(textInserted(QGraphicsTextItem*)),	this, SLOT(textInserted(QGraphicsTextItem*)));
 	connect(m_scene, SIGNAL(itemSelected(QGraphicsItem*)),		this, SLOT(itemSelected(QGraphicsItem*)));
+	connect(m_scene, SIGNAL(itemDBClicked(QGraphicsItem*)),		this, SLOT(itemDBClicked(QGraphicsItem*)));
 
 
 }
@@ -192,6 +193,16 @@ void MdiChild::itemSelected(QGraphicsItem *item)
     //italicAction->setChecked(font.italic());
     //underlineAction->setChecked(font.underline());
 }
+void MdiChild::itemDBClicked(QGraphicsItem *item)
+{
+	if(!item)
+		return;
+	iData* data = (iData *)item->data(ITEM_DATA).toUInt();
+	if(!data)
+		return;
+
+
+}
 void MdiChild::OnScaleChanged(const QString &scale)
 {
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
@@ -218,7 +229,7 @@ void MdiChild::deleteItem()
              qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
 
 			 m_scene->removeItem(item);
-			 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->data();
+			 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->myData();
 			 if(data && data->type() == T_STAT)
 			 {
 				 ((iSTAT *)data)->itemRemoved();

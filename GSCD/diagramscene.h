@@ -55,12 +55,13 @@ signals:
     void itemInserted(DiagramItem *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
-	void itemDBClicked(iData *);
+	void itemDBClicked(QGraphicsItem *item);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
 
 	void addSTAT(iSTAT* stat,const QPointF& pos);
 
