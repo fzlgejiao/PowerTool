@@ -34,6 +34,7 @@ public slots:
 	void textInserted(QGraphicsTextItem *item);
 	void itemSelected(QGraphicsItem *item);
 	void OnScaleChanged(const QString &);
+	
 
 signals:
 	void itemInserted(DiagramItem *item, DiagramScene *scene);
@@ -43,7 +44,8 @@ private:
     bool maybeSave();
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
-
+	void showparameterDialog(iData *);
+	
     DiagramScene *m_scene;
 	iDoc		 *m_doc;
 

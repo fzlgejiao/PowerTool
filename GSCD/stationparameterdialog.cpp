@@ -1,17 +1,25 @@
 #include "stationparameterdialog.h"
+#include "idata.h"
+
 
 StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
-	m_station=station;
+	m_station=station;	
+	SetTableStyle(ui.tableWidget_parameter);
+		
+	foreach(iNodeData *node,m_station->nodeDatas())
+	{
+			AddNodeToTable(node);
+	}			
+	connect(ui.pushButton_OK,SIGNAL(accepted()),this,SLOT(accept()));
 }
 
 StationParameterDialog::~StationParameterDialog()
 {
 
 }
-
 void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 {
 	//set table Parameter
@@ -26,8 +34,8 @@ void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setSelectionBehavior(QAbstractItemView::SelectRows);	//select all row
 	tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);	//can bot be edit
 	//set column width	
-	tablewidget->setColumnWidth(Name,50);
-	tablewidget->setColumnWidth(Ref_Volatge,50);
+	tablewidget->setColumnWidth(NAME,50);
+	tablewidget->setColumnWidth(Ref_Volatge,80);
 	tablewidget->setColumnWidth(Voltage,50);
 	tablewidget->setColumnWidth(Angle,50);
 	tablewidget->setColumnWidth(Energy,50);
@@ -37,4 +45,16 @@ void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
+}
+
+void StationParameterDialog::AddNodeToTable(iNodeData *node)
+{	
+	int row = ui.tableWidget_parameter->rowCount();
+	ui.tableWidget_parameter->insertRow(row);
+
+	QTableWidgetItem *item = new QTableWidgetItem();	
+	
+	if(node->type()==T_BUS) 		
+			item->setText(((iBUS *)node)->name());
+	ui.tableWidget_parameter->setItem(row, NAME, item);	
 }

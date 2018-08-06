@@ -29,7 +29,7 @@ public:
 		listSTAT.remove(id);
 	}
 	void	STAT_add(iSTAT* stat){listSTAT.insert(stat->Id(),stat);}
-	int GetStatCnt(){return listSTAT.count();}
+	
 	iNodeData* getNode(int uid);
 	iNodeData* getNode(int type,int id);
 
@@ -37,7 +37,7 @@ public:
 	iBRANCH*	getBRANCH(int id){return listBRANCH.value(id,NULL);}
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
 
-	void	getAvailableBus(QList<iBUS *>& list);													//to get buses which need to be show in scene
+	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	
 	iData*	Uid2Data(int uid);
 

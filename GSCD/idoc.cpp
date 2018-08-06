@@ -225,7 +225,7 @@ void iDoc::GetTRANSMORMERData(const QString& dataname)
 {
 	
 }
-void	iDoc::getAvailableBus(QList<iBUS *>& list)
+void	iDoc::getAvailableNode(QList<iNodeData *>& list)
 {
 	foreach(iBUS *bus,listBUS)
 	{

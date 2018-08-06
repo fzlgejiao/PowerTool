@@ -115,5 +115,5 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
 //! [6]
 void DiagramItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event )
 {
-	//emit itemDBClicked(myData);
+	//emit itemDBClicked(myData);	
 }

@@ -93,6 +93,8 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->button() != Qt::LeftButton)
         return;
 
+	
+
 	//QList<iBUS*> list;
 	//myDoc->getAvailableBus(list);
 	//
@@ -105,7 +107,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 	iSTAT* stat = myDoc->getFreeSTAT();
 	if(stat)
 		addSTAT(stat,mouseEvent->scenePos());
-
+		
 /*
     DiagramItem *item;
     switch (myMode) {

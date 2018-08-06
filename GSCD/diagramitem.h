@@ -54,6 +54,7 @@ private:
 
 signals:
 	void itemDBClicked(iData *);
+	
 };
 
 

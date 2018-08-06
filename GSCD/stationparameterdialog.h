@@ -5,10 +5,12 @@
 #include "ui_stationparameterdialog.h"
 
 
+class iData;
+class iNodeData;
 class iSTAT;
 
 enum StationParameterTableColumn{
-	Name			=0,
+	NAME			=0,
 	Ref_Volatge,
 	Voltage,
 	Angle,
@@ -25,11 +27,16 @@ class StationParameterDialog : public QDialog
 public:
 	StationParameterDialog(iSTAT *station,QWidget *parent = 0);
 	~StationParameterDialog();
+	QString GetStationName(){return ui.lineEdit_name->text().trimmed();}
+
+private  slots:
+	
 
 private:
 	Ui::StationParameterDialog ui;
 	iSTAT *m_station;
 	void SetTableStyle(QTableWidget *tablewidget);	
+	void AddNodeToTable(iNodeData *node);
 };
 
 #endif // STATIONPARAMETERDIALOG_H

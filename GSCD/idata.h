@@ -73,9 +73,12 @@ public:
 	~iSTAT();
 	T_DATA type(){return T_STAT;}
 	QString name(){return m_name;}
+	void  Setname(const QString& value){m_name=value;}
 
 	void	addNodes(const QList<iNodeData *>& listNodes);
 	void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
+	void    removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
+	void    removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
 	void	itemAdded(DiagramItem* item){m_item = item;}

@@ -3,19 +3,34 @@
 #include "idata.h"
 #include <QTableWidget>
 
-AddDialog::AddDialog(iDoc *idoc ,QWidget *parent)
+AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
-	ui.lineEdit_name->setPlaceholderText("Sub-");
-	m_doc=idoc;
-	m_doc->getAvailableBus(hiddenbuslist);	
-	
 	SetTableStyle(ui.tableWidget_hidden);
 	SetTableStyle(ui.tableWidget_added);
-		
-	foreach(iBUS *bus ,hiddenbuslist)
-		addBus2Rows(ui.tableWidget_hidden,bus);
+	
+	m_doc=idoc;
+	m_editstation=editstation;
+	m_doc->getAvailableNode(hiddennodelist);	
+
+	if(m_editstation)
+	{
+		is_edit=true;
+		ui.lineEdit_name->setText(m_editstation->name());
+
+	foreach(iNodeData *node,m_editstation->nodeDatas())
+	{
+		addNode2Rows(ui.tableWidget_added,node);
+		addednodelist.append(node);
+	}
+	}else
+	{
+		is_edit=false;
+		ui.lineEdit_name->setPlaceholderText("Sub-");
+	}
+	foreach(iNodeData *bus ,hiddennodelist)
+		addNode2Rows(ui.tableWidget_hidden,bus);
 
 	connect(ui.tableWidget_hidden,SIGNAL(cellClicked (int,int)),this,SLOT(OnHiddenTableActived(int,int)));
 	connect(ui.tableWidget_added,SIGNAL(cellClicked (int,int)),this,SLOT(OnAddedTableActived(int,int)));
@@ -54,27 +69,40 @@ void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
 }
 
-iBUS * AddDialog::GetiBUSfromID(int busid,QList<iBUS *> buslist)
+iNodeData * AddDialog::GetNodefromID(int nodeid,QList<iNodeData *> nodelist)
 {
-	foreach(iBUS *bus,buslist)
+	foreach(iNodeData *node,nodelist)
 	{
-		if(bus->Id()==busid)
-			return bus;
+		if(node->Id()==nodeid)
+			return node;
 	}
 	return NULL;
 }
 
 bool AddDialog::IsAddSite()
 {
-	if(addedbuslist.count()>0) return true;
+	if(addednodelist.count()>0) return true;
+	else return false;
+}
+
+bool AddDialog::IsRemovedSite()
+{
+	if(hiddennodelist.count()>0) return true;
 	else return false;
 }
 
 QString AddDialog::NewSiteName()
 {
-	if(addedbuslist.count()==0) return NULL;
+	//QString name;
+	if(addednodelist.count()==0) return NULL;
 	QString nametxt=ui.lineEdit_name->text().trimmed();
-	if(nametxt==NULL) return addedbuslist[0]->name();
+	if(nametxt==NULL) 
+	{
+		if(addednodelist[0]->type()==T_BUS)					//if not new the name ,use the first node's name
+		{
+			return ((iBUS *)addednodelist[0])->name();			
+		}
+	}		
 	else return nametxt;
 }
 
@@ -88,7 +116,7 @@ void AddDialog::OnAddedTableActived(int row,int column)
 }
 void AddDialog::OnAdd()
 {	
-	if(hiddenbuslist.count()==0) return;
+	if(hiddennodelist.count()==0) return;
 	QList<QTableWidgetItem*> items=ui.tableWidget_hidden->selectedItems();
 	int count=items.count();
 	int columncnt=3;
@@ -97,17 +125,17 @@ void AddDialog::OnAdd()
 	for(int row=0;row<rowscnt;row++)
 	{
 		QTableWidgetItem *item=items.at(columncnt*row+ID);							//get the bus ID cell				
-		iBUS *bus= GetiBUSfromID(item->text().toInt(),hiddenbuslist);
-		if(bus==NULL) return;
-		addedbuslist.append(bus);
+		iNodeData *node= GetNodefromID(item->text().toInt(),hiddennodelist);
+		if(node==NULL) return;
+		addednodelist.append(node);
 		
-		addBus2Rows(ui.tableWidget_added,bus);
+		addNode2Rows(ui.tableWidget_added,node);
 		//remove the row		
 		int selectrow=ui.tableWidget_hidden->row(items.at(row*columncnt));
 		ui.tableWidget_hidden->removeRow(selectrow);
-		hiddenbuslist.removeOne(bus);	
+		hiddennodelist.removeOne(node);	
 	}		
-	
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 void AddDialog::OnAddAll()
 {
@@ -120,19 +148,21 @@ void AddDialog::OnAddAll()
 		ui.tableWidget_hidden->selectRow(firstrow);	
 		QList<QTableWidgetItem*> items=ui.tableWidget_hidden->selectedItems();
 		QTableWidgetItem* iditem=items.at(ID);
-		iBUS *bus= GetiBUSfromID(iditem->text().toInt(),hiddenbuslist);
-		if(bus==NULL) return;
-		addedbuslist.append(bus);
+		iNodeData *node= GetNodefromID(iditem->text().toInt(),hiddennodelist);
+		if(node==NULL) return;
+		addednodelist.append(node);
 
-		addBus2Rows(ui.tableWidget_added,bus);
+		addNode2Rows(ui.tableWidget_added,node);
 		//remove the row		
-		hiddenbuslist.removeOne(bus);
+		hiddennodelist.removeOne(node);
 		ui.tableWidget_hidden->removeRow(firstrow);
 	}		
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+	
 }
 void AddDialog::OnRevoke()
 {
-	if(addedbuslist.count()==0) return;
+	if(addednodelist.count()==0) return;
 	QList<QTableWidgetItem*> items=ui.tableWidget_added->selectedItems();
 	int count=items.count();
 	int columncnt=3;
@@ -141,14 +171,19 @@ void AddDialog::OnRevoke()
 	for(int row=0;row<rowscnt;row++)
 	{
 		QTableWidgetItem *item=items.at(columncnt*row+ID);		//get the bus ID cell
-		iBUS *bus= GetiBUSfromID(item->text().toInt(),addedbuslist);
-		if(bus==NULL) return;
-		hiddenbuslist.append(bus);
-		addBus2Rows(ui.tableWidget_hidden,bus);
+		iNodeData *node= GetNodefromID(item->text().toInt(),addednodelist);
+		if(node==NULL) return;
+		hiddennodelist.append(node);
+		addNode2Rows(ui.tableWidget_hidden,node);
 		//remove the row
 		int selectrow=ui.tableWidget_added->row(items.at(row*columncnt));
 		ui.tableWidget_added->removeRow(selectrow);
-		addedbuslist.removeOne(bus);
+		addednodelist.removeOne(node);
+	}
+	if(is_edit) 
+		{
+			if(ui.tableWidget_added->rowCount()==0)
+			ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	}
 }
 void AddDialog::OnRevokeAll()
@@ -163,33 +198,35 @@ void AddDialog::OnRevokeAll()
 		ui.tableWidget_added->selectRow(firstrow);	
 		QList<QTableWidgetItem*> items=ui.tableWidget_added->selectedItems();
 		QTableWidgetItem* iditem=items.at(ID);
-		iBUS *bus= GetiBUSfromID(iditem->text().toInt(),addedbuslist);
-		if(bus==NULL) return;
-		hiddenbuslist.append(bus);
+		iNodeData *node= GetNodefromID(iditem->text().toInt(),addednodelist);
+		if(node==NULL) return;
+		hiddennodelist.append(node);
 
-		addBus2Rows(ui.tableWidget_hidden,bus);
+		addNode2Rows(ui.tableWidget_hidden,node);
 		//remove the row		
-		addedbuslist.removeOne(bus);
+		addednodelist.removeOne(node);
 		ui.tableWidget_added->removeRow(firstrow);
 	}		
+	if(is_edit) ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 }
-void AddDialog::addBus2Rows(QTableWidget *tablewidget, iBUS *bus)
+void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node)
 {
 	int row = tablewidget->rowCount();
 	tablewidget->insertRow(row);
-
+	if(node->type()==T_BUS)
+	{
 	QTableWidgetItem *item0 = new QTableWidgetItem("BUS");	
 	QTableWidgetItem *item1 = new QTableWidgetItem();
 	QTableWidgetItem *item2 = new QTableWidgetItem();
 				
-	item1->setText(QString::number(bus->Id()));
-	item2->setText(bus->name());
+	item1->setText(QString::number(((iBUS *)node)->Id()));
+	item2->setText(((iBUS *)node)->name());
 	
 	tablewidget->setItem(row, Type, item0);
 	tablewidget->setItem(row, ID, item1);
 	tablewidget->setItem(row, Name, item2);
+	}	
 }
-
 //void AddDialog::addGeneratorRows(iGENERATOR *generator);
 //{
 //	int row = ui.tableWidget_hidden->rowCount();

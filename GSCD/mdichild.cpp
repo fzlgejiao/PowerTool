@@ -2,7 +2,7 @@
 #include <QtGui>
 #include "mdichild.h"
 #include "arrow.h"
-
+#include "stationparameterdialog.h"
 
 MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	: QGraphicsView(scene)
@@ -22,8 +22,29 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),		this, SLOT(itemInserted(DiagramItem*)));
 	connect(m_scene, SIGNAL(textInserted(QGraphicsTextItem*)),	this, SLOT(textInserted(QGraphicsTextItem*)));
 	connect(m_scene, SIGNAL(itemSelected(QGraphicsItem*)),		this, SLOT(itemSelected(QGraphicsItem*)));
+	connect(m_scene, SIGNAL(itemDBClicked(iData *)),		this, SLOT(showparameterDialog(iData*)));
+	
+}
 
+void MdiChild::showparameterDialog(iData *data)
+{	
+	if(data->type()==T_STAT)
+	{
+		if(m_scene->selectedItems().count()==1)
+		{
+			
+			iData *selectdata= qgraphicsitem_cast<DiagramItem *>(m_scene->selectedItems()[0])->data();
+		
+		StationParameterDialog *stationparameter=new StationParameterDialog((iSTAT *)(selectdata),this);
+		if(stationparameter->exec()==QDialog::Accepted)
+		{
 
+		}
+		}
+	}else if(data->type()==T_BRANCH)
+	{
+		//To do : branch parameter dialog
+	}
 }
 
 MdiChild::~MdiChild()

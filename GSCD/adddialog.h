@@ -8,8 +8,8 @@
 #include <QTableWidget>
 
 class iDoc;
-class  iNode;
-
+class iNodeData;
+class iSTAT;
 enum Columns
 {
 	Type=0,
@@ -22,11 +22,14 @@ class AddDialog : public QDialog
 	Q_OBJECT
 
 public:
-	AddDialog(iDoc * idoc ,QWidget *parent = 0);
+	AddDialog(iDoc * idoc ,iSTAT * editstation,QWidget *parent = 0);
+	
 	~AddDialog();
 	bool IsAddSite();
+	bool IsRemovedSite();
 	QString NewSiteName();
-	QList<iBUS *>& GetAddedbus(){return addedbuslist;}
+	QList<iNodeData *>& GetAddedNode(){return addednodelist;}
+	QList<iNodeData *>& GetRemovedNode(){return hiddennodelist;}
 
 private slots:
 		void OnHiddenTableActived(int row,int column);
@@ -38,12 +41,14 @@ private slots:
 		
 private:
 	Ui::AddDialog ui;
-	QList<iBUS *> hiddenbuslist;
-	QList<iBUS *> addedbuslist;
+	QList<iNodeData *> hiddennodelist;
+	QList<iNodeData *> addednodelist;
 	
 	iDoc *m_doc;
-	void addBus2Rows(QTableWidget *tablewidget, iBUS *bus);
-	iBUS * GetiBUSfromID(int busid,QList<iBUS *> buslist);
+	iSTAT *m_editstation;
+	bool is_edit;
+	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node);	
+	iNodeData * GetNodefromID(int nodeid,QList<iNodeData *> nodelist);
 	void SetTableStyle(QTableWidget *tablewidget);	
 	//void addGeneratorRows(iGENERATOR *generator);
 	

@@ -8,6 +8,7 @@
 #include "adddialog.h"
 #include "idata.h"
 
+
 const int InsertTextButton = 10;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
@@ -162,32 +163,55 @@ void MainWindow::paste()
 
 void MainWindow::addStation()
 {
-	//To do: add hiden items
+	QAction *action = qobject_cast<QAction *>(sender()); 
 	MdiChild *currentchild= activeMdiChild();
-	if(currentchild==NULL) return ;
-	QList<iBUS *> Buslist;
-	iDoc *currentdoc=currentchild->GetChildDoc();
-	currentdoc->getAvailableBus(Buslist);
+		if(currentchild==NULL) return ;
 
-	if(Buslist.count()==0)
-	{
-		QMessageBox::information(this,tr("Info"),tr("All Site is already on the Canvas"));
-	}else
-	{
-		AddDialog *addDialog=new AddDialog(currentchild->GetChildDoc());
-		if(addDialog->exec()==QDialog::Accepted)
-		{				
-			if(!addDialog->IsAddSite()) return;
-			//To do : add new site
-			QString name=addDialog->NewSiteName();
-			iSTAT* newstation= new iSTAT(currentdoc->GetStatCnt()+1,name,this);
-			QList<iNodeData *> newstatnode;
-			foreach(iBUS *bus,addDialog->GetAddedbus())
+	if(action==stationeditAction) {
+			iData *s_data=qgraphicsitem_cast<DiagramItem *>(currentchild->scene()->selectedItems()[0])->data();
+			if(s_data->type()==T_STAT)
 			{
-				newstation->addNode(bus);
+				int CurrentNodesCnt=((iSTAT *)s_data)->nodeDatas().count();
+				AddDialog *editDialog=new AddDialog(currentchild->GetChildDoc(),(iSTAT *)s_data);
+				if(editDialog->exec()==QDialog::Accepted)
+				{
+					//update the name
+					((iSTAT *)s_data)->Setname(editDialog->NewSiteName());
+
+					if(!editDialog->IsRemovedSite()) return;
+					QList<iNodeData *> removednodes=editDialog->GetRemovedNode();
+					//Removed the selected nodes				
+					((iSTAT *)s_data)->removeNodes(removednodes);		
+					//add new node to station
+					if(editDialog->GetAddedNode().count()>CurrentNodesCnt)
+					{
+						
+					}
+				}				
 			}
-			currentchild->GetChildDoc()->STAT_add(newstation);
-			
+
+	}else if(action==addItemAction)
+	{
+		//To do: add New Station
+		
+		QList<iNodeData *> Nodelist;
+		iDoc *currentdoc=currentchild->GetChildDoc();
+		currentdoc->getAvailableNode(Nodelist);
+
+		if(Nodelist.count()==0)
+		{
+			QMessageBox::information(this,tr("Info"),tr("All Site is already on the Canvas"));
+		}else
+		{
+			AddDialog *addDialog=new AddDialog(currentchild->GetChildDoc(),NULL);
+			if(addDialog->exec()==QDialog::Accepted)
+			{				
+				if(!addDialog->IsAddSite()) return;
+				//To do : add new site			
+				iSTAT* newstation= new iSTAT(currentdoc->STAT_getId(),addDialog->NewSiteName(),this);						
+				newstation->addNodes(addDialog->GetAddedNode());
+				currentdoc->STAT_add(newstation);
+			}
 		}
 	}
 }
@@ -196,12 +220,6 @@ void MainWindow::addNote()
 {
 	//To do: add note in diagram
 
-
-}
-
-
-void MainWindow::showparameter()
-{
 
 }
 
@@ -267,7 +285,8 @@ MdiChild *MainWindow::createMdiChild()
 	iDoc *t_Doc = new iDoc(this);
 	DiagramScene* scene= new DiagramScene(t_Doc,this);
 	scene->addMenu(T_NONE,editMenu);
-	scene->addMenu(T_STAT,editMenu);
+	//scene->addMenu(T_STAT,editMenu);
+	scene->addMenu(T_STAT,stationcontextMenu);
 	scene->addMenu(T_BRANCH,editMenu);
 	scene->addMenu(T_TRANSFORMER,editMenu);
 
@@ -281,9 +300,8 @@ MdiChild *MainWindow::createMdiChild()
 		copyAct, SLOT(setEnabled(bool)));
 
 	connect(child, SIGNAL(itemInserted(DiagramItem*, DiagramScene*)),this, SLOT(itemInserted(DiagramItem*, DiagramScene*)));
-	connect(child, SIGNAL(textInserted(QGraphicsTextItem*, DiagramScene*)),	this, SLOT(textInserted(QGraphicsTextItem*, DiagramScene*)));
+	connect(child, SIGNAL(textInserted(QGraphicsTextItem*, DiagramScene*)),	this, SLOT(textInserted(QGraphicsTextItem*, DiagramScene*)));	
 	connect(this, SIGNAL(scaleChanged(const QString &)),child, SLOT(OnScaleChanged(const QString &)));
-
 	return child;
 }
 
@@ -418,8 +436,11 @@ void MainWindow::createActions()
 
 	parameterAct = new QAction(tr("&Parameter"), this);
 	parameterAct->setStatusTip(tr("Show the Site Parameter"));
-	connect(parameterAct, SIGNAL(triggered()),
-		mdiArea, SLOT(showparameter()));
+	//connect(parameterAct, SIGNAL(triggered()),this, SLOT(showparameter()));
+
+	stationeditAction = new QAction(tr("&Station &Edit"), this);
+	stationeditAction->setStatusTip(tr("Edit the station"));
+	connect(stationeditAction, SIGNAL(triggered()),this, SLOT(addStation()));
 
 	closeAct = new QAction(tr("Cl&ose"), this);
 	closeAct->setStatusTip(tr("Close the active window"));
@@ -469,11 +490,17 @@ void MainWindow::createMenus()
 	editMenu->addAction(copyAct);
 	editMenu->addAction(pasteAct);
 
+	stationcontextMenu=new QMenu();
+	stationcontextMenu->addAction(parameterAct);
+	stationcontextMenu->addAction(stationeditAction);
+	stationcontextMenu->addSeparator();
+	stationcontextMenu->addAction(deleteAction);
+
 	viewMenu = menuBar()->addMenu(tr("&View"));
 	viewMenu->addAction(toolbarAct);
 	viewMenu->addAction(statusbarAct);
 	viewMenu->addSeparator();
-	viewMenu->addAction(parameterAct);
+//	viewMenu->addAction(parameterAct);
 
 	windowMenu = menuBar()->addMenu(tr("&Window"));
 	updateWindowMenu();

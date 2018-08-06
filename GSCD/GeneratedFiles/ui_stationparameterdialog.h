@@ -41,10 +41,10 @@ public:
     QTableWidget *tableWidget_parameter;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout_2;
-    QPushButton *pushButton;
-    QPushButton *pushButton_2;
+    QPushButton *pushButton_tideway;
+    QPushButton *pushButton_voltage;
     QSpacerItem *horizontalSpacer_2;
-    QPushButton *pushButton_3;
+    QPushButton *pushButton_OK;
 
     void setupUi(QDialog *StationParameterDialog)
     {
@@ -58,7 +58,7 @@ public:
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        verticalLayout->setSizeConstraint(QLayout::SetFixedSize);
+        verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         verticalLayout->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
@@ -132,24 +132,24 @@ public:
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        pushButton = new QPushButton(verticalLayoutWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton_tideway = new QPushButton(verticalLayoutWidget);
+        pushButton_tideway->setObjectName(QString::fromUtf8("pushButton_tideway"));
 
-        horizontalLayout_2->addWidget(pushButton);
+        horizontalLayout_2->addWidget(pushButton_tideway);
 
-        pushButton_2 = new QPushButton(verticalLayoutWidget);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
+        pushButton_voltage = new QPushButton(verticalLayoutWidget);
+        pushButton_voltage->setObjectName(QString::fromUtf8("pushButton_voltage"));
 
-        horizontalLayout_2->addWidget(pushButton_2);
+        horizontalLayout_2->addWidget(pushButton_voltage);
 
         horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_2->addItem(horizontalSpacer_2);
 
-        pushButton_3 = new QPushButton(verticalLayoutWidget);
-        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
+        pushButton_OK = new QPushButton(verticalLayoutWidget);
+        pushButton_OK->setObjectName(QString::fromUtf8("pushButton_OK"));
 
-        horizontalLayout_2->addWidget(pushButton_3);
+        horizontalLayout_2->addWidget(pushButton_OK);
 
 
         verticalLayout->addLayout(horizontalLayout_2);
@@ -179,9 +179,9 @@ public:
         ___qtablewidgetitem5->setText(QApplication::translate("StationParameterDialog", "Load", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem6 = tableWidget_parameter->horizontalHeaderItem(6);
         ___qtablewidgetitem6->setText(QApplication::translate("StationParameterDialog", "Compensation", 0, QApplication::UnicodeUTF8));
-        pushButton->setText(QApplication::translate("StationParameterDialog", "TideWay", 0, QApplication::UnicodeUTF8));
-        pushButton_2->setText(QApplication::translate("StationParameterDialog", "Voltage", 0, QApplication::UnicodeUTF8));
-        pushButton_3->setText(QApplication::translate("StationParameterDialog", "OK", 0, QApplication::UnicodeUTF8));
+        pushButton_tideway->setText(QApplication::translate("StationParameterDialog", "TideWay", 0, QApplication::UnicodeUTF8));
+        pushButton_voltage->setText(QApplication::translate("StationParameterDialog", "Voltage", 0, QApplication::UnicodeUTF8));
+        pushButton_OK->setText(QApplication::translate("StationParameterDialog", "OK", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

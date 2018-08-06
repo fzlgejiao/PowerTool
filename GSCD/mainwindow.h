@@ -48,7 +48,7 @@ private slots:
 	void addStation();
 	void addNote();
 	void deleteItem();
-	void showparameter();
+	
 
     void about();
     void updateMenus();
@@ -92,6 +92,7 @@ private:
 	QMenu *viewMenu;
     QMenu *windowMenu;
     QMenu *helpMenu;
+	QMenu *stationcontextMenu;
     QToolBar *tBar;
     QAction *newAct;
     QAction *openAct;
@@ -108,6 +109,7 @@ private:
     QAction *pasteAct;
 
 	QAction *addItemAction;
+	QAction *stationeditAction;
 	QAction *addNoteAction;
 	QAction *zoomOutAction;
 	QAction *zoomInAction;
