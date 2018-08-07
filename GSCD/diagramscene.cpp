@@ -160,6 +160,7 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [11]
 void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+	/*
     if (line != 0 && myMode == InsertLine) {
         QList<QGraphicsItem *> startItems = items(line->line().p1());
         if (startItems.count() && startItems.first() == line)
@@ -191,11 +192,18 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 //! [12] //! [13]
     line = 0;
+	*/
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
-//! [13]
-
-//! [14]
+void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
+{
+	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
+	if(selectedItems().isEmpty())
+		return;
+	QGraphicsItem *item = selectedItems().first();//qgraphicsitem_cast<DiagramItem *>(selectedItems().first());
+	if(item)
+		emit itemDBClicked(item);																	//send out item double clicked signal
+}
 bool DiagramScene::isItemChange(int type)
 {
     foreach (QGraphicsItem *item, selectedItems()) {
@@ -204,12 +212,10 @@ bool DiagramScene::isItemChange(int type)
     }
     return false;
 }
-//! [14]
-
 
 void DiagramScene::addSTAT(iSTAT* stat,const QPointF& pos)
 {
-	DiagramItem *item = new DiagramItem(stat, getMenu(T_STAT));
+	DiagramItem *item = new DiagramItem(stat, getMenu(T_STAT),0,this);								//create diagram item for station
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
@@ -247,7 +253,7 @@ void DiagramScene::addSTAT(iSTAT* stat,const QPointF& pos)
 
 			if(data->type() == T_BRANCH)
 			{
-				Arrow *arrow = new Arrow(startItem, endItem);
+				Arrow *arrow = new Arrow(startItem, endItem,data,getMenu(T_BRANCH));				//create arrow item for brunch
 				arrow->setColor(myLineColor);
 				startItem->addArrow(arrow);
 				endItem->addArrow(arrow);

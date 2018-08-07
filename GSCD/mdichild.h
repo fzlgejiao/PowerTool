@@ -33,6 +33,7 @@ public slots:
 	void itemInserted(DiagramItem *item);
 	void textInserted(QGraphicsTextItem *item);
 	void itemSelected(QGraphicsItem *item);
+	void itemDBClicked(QGraphicsItem *item);
 	void OnScaleChanged(const QString &);
 	
 

@@ -8,12 +8,14 @@ StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
 	ui.setupUi(this);
 	m_station=station;	
 	SetTableStyle(ui.tableWidget_parameter);
-		
+
+	ui.lineEdit_name->setText(m_station->name());
+
 	foreach(iNodeData *node,m_station->nodeDatas())
 	{
 			AddNodeToTable(node);
 	}			
-	connect(ui.pushButton_OK,SIGNAL(accepted()),this,SLOT(accept()));
+	connect(ui.pushButton_OK,SIGNAL(clicked()),this,SLOT(accept()));		
 }
 
 StationParameterDialog::~StationParameterDialog()

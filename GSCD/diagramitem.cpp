@@ -4,6 +4,7 @@
 #include "diagramitem.h"
 #include "arrow.h"
 #include "idata.h"
+#include "diagramscene.h"
 
 //! [0]
 DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
@@ -11,7 +12,7 @@ DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
     : QGraphicsPolygonItem(parent, scene)
 {
     myContextMenu = contextMenu;
-	myData		  = data;
+	setData(ITEM_DATA,(uint)data);
 
     QPainterPath path;
 	switch (data->type()) {
@@ -46,7 +47,10 @@ DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 //! [0]
-
+iData* DiagramItem::myData()
+{
+	return (iData *)data(ITEM_DATA).toUInt();
+}
 //! [1]
 void DiagramItem::removeArrow(Arrow *arrow)
 {
@@ -76,7 +80,6 @@ void DiagramItem::addArrow(Arrow *arrow)
 }
 //! [3]
 
-//! [4]
 QPixmap DiagramItem::image() const
 {
     QPixmap pixmap(250, 250);
@@ -88,7 +91,7 @@ QPixmap DiagramItem::image() const
 
     return pixmap;
 }
-//! [4]
+
 
 //! [5]
 void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
@@ -115,5 +118,5 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
 //! [6]
 void DiagramItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event )
 {
-	//emit itemDBClicked(myData);	
+	QGraphicsItem::mouseDoubleClickEvent(event);
 }

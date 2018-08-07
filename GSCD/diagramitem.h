@@ -39,7 +39,7 @@ public:
     QPixmap image() const;
     int type() const
 		{ return Type;}
-	iData* data(){return myData;}
+	iData* myData();
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -49,11 +49,10 @@ protected:
 private:
     QPolygonF		myPolygon;
     QMenu *			myContextMenu;
-	iData *			myData;
     QList<Arrow *>	arrows;
 
 signals:
-	void itemDBClicked(iData *);
+
 	
 };
 

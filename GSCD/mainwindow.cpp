@@ -168,28 +168,25 @@ void MainWindow::addStation()
 		if(currentchild==NULL) return ;
 
 	if(action==stationeditAction) {
-			iData *s_data=qgraphicsitem_cast<DiagramItem *>(currentchild->scene()->selectedItems()[0])->data();
+		iData *s_data=qgraphicsitem_cast<DiagramItem *>(currentchild->scene()->selectedItems().first())->myData();
 			if(s_data->type()==T_STAT)
-			{
-				int CurrentNodesCnt=((iSTAT *)s_data)->nodeDatas().count();
+			{				
 				AddDialog *editDialog=new AddDialog(currentchild->GetChildDoc(),(iSTAT *)s_data);
 				if(editDialog->exec()==QDialog::Accepted)
 				{
 					//update the name
-					((iSTAT *)s_data)->Setname(editDialog->NewSiteName());
-
-					if(!editDialog->IsRemovedSite()) return;
-					QList<iNodeData *> removednodes=editDialog->GetRemovedNode();
-					//Removed the selected nodes				
+					((iSTAT *)s_data)->Setname(editDialog->NewSiteName());										
+					//Removed the nodes	
+					QList<iNodeData *> removednodes;
+					editDialog->GetNewRemovedNodes(removednodes);								
 					((iSTAT *)s_data)->removeNodes(removednodes);		
-					//add new node to station
-					if(editDialog->GetAddedNode().count()>CurrentNodesCnt)
-					{
-						
-					}
+					//Added  nodes
+					QList<iNodeData *> addednodes;
+					editDialog->GetNewAddedNodes(addednodes);
+					((iSTAT *)s_data)->addNodes(addednodes);
+					//To do :update the branchs in the  diagram scence
 				}				
 			}
-
 	}else if(action==addItemAction)
 	{
 		//To do: add New Station
@@ -208,8 +205,10 @@ void MainWindow::addStation()
 			{				
 				if(!addDialog->IsAddSite()) return;
 				//To do : add new site			
-				iSTAT* newstation= new iSTAT(currentdoc->STAT_getId(),addDialog->NewSiteName(),this);						
-				newstation->addNodes(addDialog->GetAddedNode());
+				iSTAT* newstation= new iSTAT(currentdoc->STAT_getId(),addDialog->NewSiteName(),this);	
+				QList<iNodeData *> addednodes;
+				addDialog->GetNewAddedNodes(addednodes);
+				newstation->addNodes(addednodes);
 				currentdoc->STAT_add(newstation);
 			}
 		}

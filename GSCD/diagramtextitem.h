@@ -12,7 +12,7 @@ class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
-//! [0]
+class iData;
 class DiagramTextItem : public QGraphicsTextItem
 {
     Q_OBJECT
@@ -25,6 +25,7 @@ public:
     int type() const
         { return Type; }
 
+
 signals:
     void lostFocus(DiagramTextItem *item);
     void selectedChange(QGraphicsItem *item);
@@ -33,6 +34,9 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void focusOutEvent(QFocusEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+private:
+
 };
 //! [0]
 

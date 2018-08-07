@@ -28,8 +28,8 @@ public:
 	bool IsAddSite();
 	bool IsRemovedSite();
 	QString NewSiteName();
-	QList<iNodeData *>& GetAddedNode(){return addednodelist;}
-	QList<iNodeData *>& GetRemovedNode(){return hiddennodelist;}
+	void GetNewAddedNodes(QList<iNodeData *>& nodes);
+	void GetNewRemovedNodes(QList<iNodeData *>& nodes);
 
 private slots:
 		void OnHiddenTableActived(int row,int column);
@@ -39,17 +39,22 @@ private slots:
 		void OnRevoke();
 		void OnRevokeAll();		
 		
+		
 private:
 	Ui::AddDialog ui;
 	QList<iNodeData *> hiddennodelist;
 	QList<iNodeData *> addednodelist;
 	
+	QList<iNodeData *> Rawaddednodelist;
+	QList<iNodeData *> Branchnodelist;
+
 	iDoc *m_doc;
 	iSTAT *m_editstation;
 	bool is_edit;
 	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node);	
 	iNodeData * GetNodefromID(int nodeid,QList<iNodeData *> nodelist);
 	void SetTableStyle(QTableWidget *tablewidget);	
+	void ClearTableContext(QTableWidget *tablewidget);
 	//void addGeneratorRows(iGENERATOR *generator);
 	
 

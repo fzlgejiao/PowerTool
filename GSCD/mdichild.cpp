@@ -22,25 +22,19 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),		this, SLOT(itemInserted(DiagramItem*)));
 	connect(m_scene, SIGNAL(textInserted(QGraphicsTextItem*)),	this, SLOT(textInserted(QGraphicsTextItem*)));
 	connect(m_scene, SIGNAL(itemSelected(QGraphicsItem*)),		this, SLOT(itemSelected(QGraphicsItem*)));
-	connect(m_scene, SIGNAL(itemDBClicked(iData *)),		this, SLOT(showparameterDialog(iData*)));
+	connect(m_scene, SIGNAL(itemDBClicked(QGraphicsItem*)),		this, SLOT(itemDBClicked(QGraphicsItem*)));
 	
 }
 
 void MdiChild::showparameterDialog(iData *data)
 {	
 	if(data->type()==T_STAT)
-	{
-		if(m_scene->selectedItems().count()==1)
-		{
-			
-			iData *selectdata= qgraphicsitem_cast<DiagramItem *>(m_scene->selectedItems()[0])->data();
-		
-		StationParameterDialog *stationparameter=new StationParameterDialog((iSTAT *)(selectdata),this);
+	{				
+		StationParameterDialog *stationparameter=new StationParameterDialog((iSTAT *)(data),this);
 		if(stationparameter->exec()==QDialog::Accepted)
 		{
-
-		}
-		}
+			((iSTAT *)data)->Setname(stationparameter->GetStationName());
+		}		
 	}else if(data->type()==T_BRANCH)
 	{
 		//To do : branch parameter dialog
@@ -213,6 +207,16 @@ void MdiChild::itemSelected(QGraphicsItem *item)
     //italicAction->setChecked(font.italic());
     //underlineAction->setChecked(font.underline());
 }
+void MdiChild::itemDBClicked(QGraphicsItem *item)
+{
+	if(!item)
+		return;
+	iData* data = (iData *)item->data(ITEM_DATA).toUInt();
+	if(!data)
+		return;
+
+	showparameterDialog(data);
+}
 void MdiChild::OnScaleChanged(const QString &scale)
 {
     double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
@@ -239,7 +243,7 @@ void MdiChild::deleteItem()
              qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
 
 			 m_scene->removeItem(item);
-			 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->data();
+			 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->myData();
 			 if(data && data->type() == T_STAT)
 			 {
 				 ((iSTAT *)data)->itemRemoved();
