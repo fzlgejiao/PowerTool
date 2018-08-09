@@ -22,8 +22,8 @@ public:
     QString userFriendlyCurrentFile();
     QString currentFile() { return curFile; }
 	DiagramScene* scene(){return m_scene;}
-	iDoc *GetChildDoc(){return m_doc;}
-	void deleteItem();
+	iDoc *doc(){return m_doc;}
+	
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -33,7 +33,7 @@ public slots:
 	void itemInserted(DiagramItem *item);
 	void textInserted(QGraphicsTextItem *item);
 	void itemSelected(QGraphicsItem *item);
-	void itemDBClicked(QGraphicsItem *item);
+
 	void OnScaleChanged(const QString &);
 	
 
@@ -45,7 +45,6 @@ private:
     bool maybeSave();
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
-	void showparameterDialog(iData *);
 	
     DiagramScene *m_scene;
 	iDoc		 *m_doc;

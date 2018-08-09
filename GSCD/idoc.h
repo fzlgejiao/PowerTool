@@ -21,14 +21,8 @@ public:
 
 	int		STAT_getId();																			//get available station id
 	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
-	void	STAT_delete(int id)
-	{
-		iSTAT* stat = STAT_get(id);
-		if(stat)
-			delete stat;
-		listSTAT.remove(id);
-	}
-	void	STAT_add(iSTAT* stat){listSTAT.insert(stat->Id(),stat);}
+	void	STAT_delete(int id);
+	iSTAT*	STAT_new(const QString& name);
 	
 	iNodeData* getNode(int uid);
 	iNodeData* getNode(int type,int id);

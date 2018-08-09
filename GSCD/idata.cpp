@@ -37,20 +37,20 @@ iSTAT::~iSTAT()
 		node->statRemoved();
 	}
 }
-void iSTAT::addNodes(const QList<iNodeData *>& listNodes)
+void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 {
 	foreach(iNodeData* node,listNodes)
 		node->statAdded(Id());
-	m_nodeDatas.append(listNodes);
+	m_nodeDatas = listNodes;
 }
-void iSTAT::removeNodes(const QList<iNodeData *>& listNodes)
-{
-	foreach(iNodeData* node,listNodes)
-	{
-		node->statRemoved();
-		m_nodeDatas.removeOne(node);
-	}
-}
+//void iSTAT::removeNodes(const QList<iNodeData *>& listNodes)
+//{
+//	foreach(iNodeData* node,listNodes)
+//	{
+//		node->statRemoved();
+//		m_nodeDatas.removeOne(node);
+//	}
+//}
 //--------------------------------------------------------------------------------------------------
 //	iBUS funcs
 //--------------------------------------------------------------------------------------------------

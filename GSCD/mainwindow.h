@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include "ui_mainwindow.h"
 #include "diagramitem.h"
+#include "idef.h"
 
 
 class MdiChild;
@@ -28,44 +29,11 @@ class MainWindow : public QMainWindow
 public:
 	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
+	ACT_MODE mode(){return m_nActMode;}
 
 protected:
     void closeEvent(QCloseEvent *event);
-	QMenu* createPopupMenu() { return NULL; }
-
-private slots:
-    void newFile();
-    void open();
-    void save();
-    void saveAs();
-	void print();
-	void printPreview();
-	void openRecentFile();
-    void cut();
-    void copy();
-    void paste();
-
-	void addStation();
-	void addNote();
-	void deleteItem();
-	
-
-    void about();
-    void updateMenus();
-    void updateWindowMenu();
-    MdiChild *createMdiChild();
-    void setActiveSubWindow(QWidget *window);
-	//void buttonGroupClicked(int id);
-	//void pointerGroupClicked(int id);
-	void itemInserted(DiagramItem *item,DiagramScene* scene);
-	void textInserted(QGraphicsTextItem *item, DiagramScene* scene);
-	void sceneScaleChanged(const QString &scale);
-	void OnScaleReset();
-	void OnZoomOut();
-	void OnZoomIn();
-
-signals:
-    void scaleChanged(const QString &scale);
+	QList<QGraphicsItem *> selectedItems();
 
 private:
     void createActions();
@@ -75,6 +43,9 @@ private:
 	void createToolBox();
     void readSettings();
     void writeSettings();
+
+    MdiChild *createMdiChild();
+    void setActiveSubWindow(QWidget *window);
     MdiChild *activeMdiChild();
     QMdiSubWindow *findMdiChild(const QString &fileName);
 	//QWidget *createCellWidget(const QString &text,
@@ -92,7 +63,7 @@ private:
 	QMenu *viewMenu;
     QMenu *windowMenu;
     QMenu *helpMenu;
-	QMenu *stationcontextMenu;
+
     QToolBar *tBar;
     QAction *newAct;
     QAction *openAct;
@@ -108,20 +79,22 @@ private:
     QAction *copyAct;
     QAction *pasteAct;
 
-	QAction *addItemAction;
-	QAction *stationeditAction;
+	QAction *addStationAction;
 	QAction *addNoteAction;
+    QAction *deleteAction;
+	QAction *editObjectAction;
+
 	QAction *zoomOutAction;
 	QAction *zoomInAction;
 	QAction *zoomResetAction;
 
-    QAction *deleteAction;
+
     QAction *toFrontAction;
     QAction *sendBackAction;
 
 	QAction *toolbarAct;
 	QAction *statusbarAct;
-	QAction *parameterAct;
+	QAction *propertyAction;
 
     QAction *closeAct;
     QAction *closeAllAct;
@@ -132,7 +105,10 @@ private:
     QAction *aboutAct;
     QAction *aboutQtAct;
 
-	QButtonGroup *pointerTypeGroup;
+	QAction *escAct;
+
+	QButtonGroup *buttonModeGroup;
+	QActionGroup *actionModeGroup;
 	//QComboBox *sceneScaleCombo;
 	QLabel *currentScale;
 
@@ -143,11 +119,78 @@ private:
     enum { MaxRecentFiles = 5 };
     QAction *recentFileActs[MaxRecentFiles];
 		
+	ACT_MODE	m_nActMode;
 	int mScale;
 	int mScaleMax;
 	int mScaleMin;;
 	int mScaleStep;
 	int mScaleIndex;
+
+private slots:
+	//file menu
+    void newFile();
+    void open();
+    void save();
+    void saveAs();
+	void print();
+	void printPreview();
+	void openRecentFile();
+
+	//edit menu
+	void addStation();
+	void addNote();
+	//void addInfoNote();
+	//void addLegend();
+	void deleteItems();
+	//void selectAll();
+	void editObject();
+
+	//view menu
+	//void showToolBar();
+	//void showStatusBar();
+	//void zoom();
+	void viewProperty();
+	//void viewCtrl();
+	//void viewDoc();
+
+	//setting menu
+	//void imageRegion();
+	//void font();
+	//void voltageLevel();
+	//void loadSymbol();
+	//void options();
+
+	//window menu
+    void updateWindowMenu();
+
+	//help menu
+    void about();
+
+	void esc();
+
+	//toolbar events
+	void OnScaleReset();
+	void OnZoomOut();
+	void OnZoomIn();
+
+	
+
+    void updateMenus();
+	//void buttonGroupClicked(int id);
+	void actionModeGroupClicked(int id);
+	void itemInserted(DiagramItem *item,DiagramScene* scene);
+	void textInserted(QGraphicsTextItem *item, DiagramScene* scene);
+	void sceneScaleChanged(const QString &scale);
+	void sceneSelectionChanged();
+	void OnModeDone();
+
+
+	//not in use
+    void cut();
+    void copy();
+    void paste();
+signals:
+    void scaleChanged(const QString &scale);
 };
 
 #endif // MAINWINDOW_H

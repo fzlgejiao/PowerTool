@@ -27,7 +27,7 @@ public:
 	~AddDialog();
 	bool IsAddSite();
 	bool IsRemovedSite();
-	QString NewSiteName();
+	QString NewStationName();
 	void GetNewAddedNodes(QList<iNodeData *>& nodes);
 	void GetNewRemovedNodes(QList<iNodeData *>& nodes);
 

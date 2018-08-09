@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>StationParameterDialog</string>
+   <string>Station</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -39,7 +39,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Site Name:</string>
+         <string>Station Name:</string>
         </property>
        </widget>
       </item>

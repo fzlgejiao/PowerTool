@@ -174,5 +174,8 @@
     <ClInclude Include="GeneratedFiles\ui_stationparameterdialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="idef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

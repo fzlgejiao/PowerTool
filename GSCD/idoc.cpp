@@ -37,20 +37,18 @@ void iDoc::test()
 	listBUS.insert(2,bus2);
 	listBUS.insert(3,bus3);
 
-	iSTAT* stat1 = new iSTAT(1,"STAT1",this);
-	iSTAT* stat2 = new iSTAT(2,"STAT2",this);
+	//iSTAT* stat1 = STAT_new("STAT1");
+	//iSTAT* stat2 = STAT_new("STAT2");
 
-	QList<iNodeData*> listNodes1;
-	listNodes1.append(bus1);
-	stat1->addNodes(listNodes1);
+	//QList<iNodeData*> listNodes1;
+	//listNodes1.append(bus1);
+	//stat1->setNodes(listNodes1);
 
-	QList<iNodeData*> listNodes2;
-	listNodes2.append(bus2);
-	listNodes2.append(bus3);
-	stat2->addNodes(listNodes2);
+	//QList<iNodeData*> listNodes2;
+	//listNodes2.append(bus2);
+	//listNodes2.append(bus3);
+	//stat2->setNodes(listNodes2);
 
-	STAT_add(stat1);
-	STAT_add(stat2);
 }
 
 bool iDoc::openDataFile(const QString& file)
@@ -149,11 +147,8 @@ void iDoc::GetDataModel(T_DATA datatype)
 					{
 					case T_BUS:
 						{
-						iBUS *bus=new iBUS(datalist[0].toInt(),datalist[1].replace(QString("'"),QString("")).trimmed(),this);
-						addBUS(bus);
-						iSTAT* newstat = new iSTAT(datarows,bus->name(),this);				//station id is the index	,defualt every bus is one station
-						newstat->addNode(bus);
-						STAT_add(newstat);
+							iBUS *bus=new iBUS(datalist[0].toInt(),datalist[1].replace(QString("'"),QString("")).trimmed(),this);
+							addBUS(bus);
 						}
 					break;
 
@@ -261,6 +256,19 @@ int	iDoc::STAT_getId()
 			id = stat->Id();
 	}
 	return id+1;
+}
+iSTAT* iDoc::STAT_new(const QString& name)
+{
+	iSTAT* stat = new iSTAT(STAT_getId(),name,this);
+	listSTAT.insert(stat->Id(),stat);
+	return stat;
+}
+void iDoc::STAT_delete(int id)
+{
+	iSTAT* stat = STAT_get(id);
+	if(stat)
+		delete stat;
+	listSTAT.remove(id);
 }
 iNodeData* iDoc::getNode(int uid)
 {

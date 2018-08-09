@@ -4,19 +4,62 @@
 #include "diagramscene.h"
 #include "arrow.h"
 #include "idoc.h"
+#include "adddialog.h"
+#include "mainwindow.h"
+#include "stationparameterdialog.h"
 
 //! [0]
 DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     : QGraphicsScene(parent)
 {
+	pMain		= (MainWindow *)parent;
 	myDoc		= doc;
-    myMode		= MoveItem;
 
     line = 0;
     textItem = 0;
     myItemColor = Qt::white;
     myTextColor = Qt::black;
     myLineColor = Qt::black;
+
+	//context menus
+	propertyAction = new QAction(tr("&Properties..."), this);
+	propertyAction->setStatusTip(tr("Show object property"));
+	connect(propertyAction, SIGNAL(triggered()),this, SLOT(viewProperty()));
+
+	editStationAction = new QAction(tr("&Edit Station..."), this);
+	editStationAction->setStatusTip(tr("Edit station"));
+	connect(editStationAction, SIGNAL(triggered()),this, SLOT(editStation()));
+
+	editBranchAction = new QAction(tr("&Edit Branch..."), this);
+	editBranchAction->setStatusTip(tr("Edit branch"));
+	connect(editBranchAction, SIGNAL(triggered()),this, SLOT(editBranch()));
+
+	deleteAction = new QAction(QIcon(":/images/delete.png"),tr("&Delete"), this);
+	deleteAction->setStatusTip(tr("Delete item from diagram"));
+	connect(deleteAction, SIGNAL(triggered()),	this, SLOT(deleteItem()));
+
+	sceneMenu=new QMenu();
+	sceneMenu->addAction("none-select1");
+	sceneMenu->addAction("none-select2");
+
+	multiMenu=new QMenu();
+	multiMenu->addAction("multi-select1");
+	multiMenu->addAction("multi-select2");
+
+
+	statMenu=new QMenu();
+	statMenu->addAction(propertyAction);
+	statMenu->addAction(editStationAction);
+	statMenu->addSeparator();
+	statMenu->addAction(deleteAction);
+
+
+	//add menus to scene
+	addMenu(T_NONE,sceneMenu);
+	//addMenu(T_STAT,editMenu);
+	addMenu(T_STAT,statMenu);
+	addMenu(T_BRANCH,statMenu);
+	addMenu(T_TRANSFORMER,statMenu);
 }
 //! [0]
 
@@ -90,57 +133,60 @@ void DiagramScene::editorLostFocus(DiagramTextItem *item)
 //! [6]
 void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (mouseEvent->button() != Qt::LeftButton)
-        return;
+    if (mouseEvent->button() == Qt::LeftButton)
+	{
+		switch (pMain->mode()) 
+		{
+		case M_AddStation:
+			{
+				QList<iNodeData *> Nodelist;
+				myDoc->getAvailableNode(Nodelist);
 
-	
+				if(Nodelist.count())
+				{
+					addStation(mouseEvent->scenePos());
+				}
 
-	//QList<iBUS*> list;
-	//myDoc->getAvailableBus(list);
-	//
-	//if(list.isEmpty() == false)
-	//{
-	//	iBUS* bus = list.first();
-	//	if(bus)
-	//		addBUS(bus,mouseEvent->scenePos());
-	//}
-	iSTAT* stat = myDoc->getFreeSTAT();
-	if(stat)
-		addSTAT(stat,mouseEvent->scenePos());
+				emit modeDone();
+			}
+			break;
+		}
+
 		
-/*
-    DiagramItem *item;
-    switch (myMode) {
-        case InsertItem:
-            item = new DiagramItem(myItemType, myItemMenu);
-            item->setBrush(myItemColor);
-            addItem(item);
-            item->setPos(mouseEvent->scenePos());
-            emit itemInserted(item);
-            break;
-//! [6] //! [7]
-        case InsertLine:
-            line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(), mouseEvent->scenePos()));
-            line->setPen(QPen(myLineColor, 2));
-            addItem(line);
-            break;
-//! [7] //! [8]
-        case InsertText:
-            textItem = new DiagramTextItem();
-            textItem->setFont(myFont);
-            textItem->setTextInteractionFlags(Qt::TextEditorInteraction);
-            textItem->setZValue(1000.0);
-            connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),   this, SLOT(editorLostFocus(DiagramTextItem*)));
-            connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),this, SIGNAL(itemSelected(QGraphicsItem*)));
-            addItem(textItem);
-            textItem->setDefaultTextColor(myTextColor);
-            textItem->setPos(mouseEvent->scenePos());
-            emit textInserted(textItem);
-//! [8] //! [9]
-    default:
-        ;
-    }
-*/
+	/*
+		DiagramItem *item;
+		switch (myMode) {
+			case InsertItem:
+				item = new DiagramItem(myItemType, myItemMenu);
+				item->setBrush(myItemColor);
+				addItem(item);
+				item->setPos(mouseEvent->scenePos());
+				emit itemInserted(item);
+				break;
+	//! [6] //! [7]
+			case InsertLine:
+				line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(), mouseEvent->scenePos()));
+				line->setPen(QPen(myLineColor, 2));
+				addItem(line);
+				break;
+	//! [7] //! [8]
+			case InsertText:
+				textItem = new DiagramTextItem();
+				textItem->setFont(myFont);
+				textItem->setTextInteractionFlags(Qt::TextEditorInteraction);
+				textItem->setZValue(1000.0);
+				connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),   this, SLOT(editorLostFocus(DiagramTextItem*)));
+				connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),this, SIGNAL(itemSelected(QGraphicsItem*)));
+				addItem(textItem);
+				textItem->setDefaultTextColor(myTextColor);
+				textItem->setPos(mouseEvent->scenePos());
+				emit textInserted(textItem);
+	//! [8] //! [9]
+		default:
+			;
+		}
+	*/
+	}
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 //! [9]
@@ -148,10 +194,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [10]
 void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (myMode == InsertLine && line != 0) {
-        QLineF newLine(line->line().p1(), mouseEvent->scenePos());
-        line->setLine(newLine);
-    } else if (myMode == MoveItem) {
+	if (pMain->mode() == M_MoveItem) {
         QGraphicsScene::mouseMoveEvent(mouseEvent);
     }
 }
@@ -202,8 +245,28 @@ void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 		return;
 	QGraphicsItem *item = selectedItems().first();//qgraphicsitem_cast<DiagramItem *>(selectedItems().first());
 	if(item)
-		emit itemDBClicked(item);																	//send out item double clicked signal
+		viewProperty();																				//to show 'property' dialog
 }
+void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+	QList<QGraphicsItem *> &list = selectedItems();
+	if(list.count() == 0)																			//none-selected
+	{	
+		if(sceneMenu)
+			sceneMenu->exec(event->screenPos());
+	}
+	else if(list.count() > 1)																		//multi-selected
+	{
+		if(multiMenu)
+			multiMenu->exec(event->screenPos());
+
+	}
+	else																							//one-selected
+	{
+		QGraphicsScene::contextMenuEvent(event);
+	}
+}
+
 bool DiagramScene::isItemChange(int type)
 {
     foreach (QGraphicsItem *item, selectedItems()) {
@@ -212,8 +275,127 @@ bool DiagramScene::isItemChange(int type)
     }
     return false;
 }
+void DiagramScene::viewProperty()
+{
+	if(selectedItems().isEmpty())
+		return;
+	QGraphicsItem* item = selectedItems().first();
+	if(!item)
+		return;
+	iData* data = (iData *)item->data(ITEM_DATA).toUInt();
+	if(!data)
+		return;
 
-void DiagramScene::addSTAT(iSTAT* stat,const QPointF& pos)
+	if(data->type()==T_STAT)
+	{	
+		iSTAT* stat = (iSTAT *)data;
+		StationParameterDialog dlg(stat,pMain);
+		if(dlg.exec()==QDialog::Accepted)
+		{
+			QString name = dlg.GetStationName();
+			stat->setName(name);
+			DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
+			 //if(statItem)
+				// statItem->setName(name);
+		}		
+	}
+	else if(data->type()==T_BRANCH)
+	{
+		//To do : branch parameter dialog
+	}
+}
+void DiagramScene::addStation(const QPointF& pos)
+{
+	AddDialog dlg(myDoc,NULL,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{				
+		//To do : add new station			
+		iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());								//create a new station object
+		QList<iNodeData *> addednodes;
+		dlg.GetNewAddedNodes(addednodes);
+		stat->setNodes(addednodes);
+
+		addStationItem(stat,pos);														//create a new station item
+	}
+}
+void DiagramScene::editStation()
+{
+	if(selectedItems().isEmpty())
+		return;
+	QGraphicsItem* item = selectedItems().first();
+	if(!item)
+		return;
+    if (item->type() != DiagramItem::Type) 
+		return;
+
+	iData *data=qgraphicsitem_cast<DiagramItem *>(item)->myData();
+	if(!data)
+		return;
+	if(data->type()!=T_STAT)
+		return;
+	
+	iSTAT* stat = (iSTAT *)data;
+	AddDialog dlg(myDoc,stat,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{
+		//update the name
+		stat->setName(dlg.NewStationName());										
+		////Removed the nodes	
+		//QList<iNodeData *> removednodes;
+		//dlg.GetNewRemovedNodes(removednodes);								
+		//stat->removeNodes(removednodes);		
+		//Added  nodes
+		QList<iNodeData *> addednodes;
+		dlg.GetNewAddedNodes(addednodes);
+		//stat->setNodes(addednodes);
+		//To do :update the branchs in the  diagram scence
+	}				
+
+}
+void DiagramScene::editBranch()
+{
+}
+void DiagramScene::deleteItem()
+{
+	if(selectedItems().isEmpty())
+		return;
+	QGraphicsItem* item = selectedItems().first();
+	if(!item)
+		return;
+    if (item->type() == DiagramItem::Type) 
+	{
+        qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
+
+		removeItem(item);
+		iData* data = qgraphicsitem_cast<DiagramItem *>(item)->myData();
+		if(data && data->type() == T_STAT)
+		{
+			((iSTAT *)data)->itemRemoved();
+			myDoc->STAT_delete(data->Id());
+		}
+		delete item;
+	}
+}
+void DiagramScene::deleteItems()
+{
+    foreach (QGraphicsItem *item, selectedItems()) 
+	{
+         if (item->type() == DiagramItem::Type) 
+		 {
+             qgraphicsitem_cast<DiagramItem *>(item)->removeArrows();
+
+			 removeItem(item);
+			 iData* data = qgraphicsitem_cast<DiagramItem *>(item)->myData();
+			 if(data && data->type() == T_STAT)
+			 {
+				 ((iSTAT *)data)->itemRemoved();
+				 myDoc->STAT_delete(data->Id());
+			 }
+			 delete item;
+		}
+     }
+}
+void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 {
 	DiagramItem *item = new DiagramItem(stat, getMenu(T_STAT),0,this);								//create diagram item for station
 	item->setBrush(myItemColor);

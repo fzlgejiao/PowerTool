@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QList>
 
+//data type
 typedef enum{
 	T_NONE			= 0,
 	T_STAT,
@@ -17,14 +18,14 @@ typedef enum{
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
 #define	UID(type,id)	(((type)<<16)|(id))
 
-#define ITEM_DATA	0
+#define ITEM_DATA	0																				//item data type
 
 class iData : public QObject
 {
 	Q_OBJECT
 
 public:
-	iData(int id,QObject *parent);
+	iData(int id,QObject *parent=0);
 	~iData();
 	virtual T_DATA type()		= 0;
 	int		Id(){return m_ID;}
@@ -36,7 +37,7 @@ private:
 class iLinkData : public iData
 {
 public:
-	iLinkData(int id,int fromUid,int toUid,QObject *parent);
+	iLinkData(int id,int fromUid,int toUid,QObject *parent=0);
 	~iLinkData(){}
 	virtual T_DATA type()		= 0;
 	int fromUid(){return m_fromUid;}
@@ -50,7 +51,7 @@ protected:
 class iNodeData : public iData
 {
 public:
-	iNodeData(int id,QObject *parent);
+	iNodeData(int id,QObject *parent=0);
 	~iNodeData(){}
 	virtual T_DATA type()		= 0;
 	int		statId(){return m_statId;}
@@ -71,16 +72,16 @@ class DiagramItem;
 class iSTAT : public iData
 {
 public:
-	iSTAT(int id,const QString& name,QObject *parent);
+	iSTAT(int id,const QString& name,QObject *parent=0);
 	~iSTAT();
-	T_DATA type(){return T_STAT;}
+	T_DATA	type(){return T_STAT;}
 	QString name(){return m_name;}
-	void  Setname(const QString& value){m_name=value;}
+	void	setName(const QString& value){m_name=value;}
 
-	void	addNodes(const QList<iNodeData *>& listNodes);
-	void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
-	void    removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
-	void    removeNodes(const QList<iNodeData *>& listNodes);
+	void	setNodes(const QList<iNodeData *>& listNodes);
+	//void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
+	//void    removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
+	//void    removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
 	void	itemAdded(DiagramItem* item){m_item = item;}
@@ -98,7 +99,7 @@ private:
 class iBUS : public iNodeData
 {
 public:
-	iBUS(int id,const QString& name,QObject *parent);
+	iBUS(int id,const QString& name,QObject *parent=0);
 	~iBUS(){}
 	T_DATA type(){return T_BUS;}
 	
@@ -115,7 +116,7 @@ private:
 class iBRANCH : public iLinkData
 {
 public:
-	iBRANCH(int id,int fromUid,int toUid,QObject *parent);
+	iBRANCH(int id,int fromUid,int toUid,QObject *parent=0);
 	~iBRANCH(){}
 	T_DATA type(){return T_BRANCH;}
 	
@@ -129,7 +130,7 @@ private:
 class iTRANSFORMER : public iLinkData
 {
 public:
-	iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent);
+	iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent=0);
 	~iTRANSFORMER(){}
 	T_DATA type(){return T_TRANSFORMER;}
 	

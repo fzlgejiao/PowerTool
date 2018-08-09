@@ -119,10 +119,11 @@ void AddDialog::GetNewRemovedNodes(QList<iNodeData *>& nodes)
 			nodes.append(node);		
 	}	
 }
-QString AddDialog::NewSiteName()
+QString AddDialog::NewStationName()
 {
-	//QString name;
-	//if(addednodelist.count()==0) return NULL;
+	QString name;
+	if(addednodelist.count()==0) 
+		return name;
 	QString nametxt=ui.lineEdit_name->text().trimmed();
 	if(nametxt==NULL) 
 	{
@@ -131,7 +132,7 @@ QString AddDialog::NewSiteName()
 			return ((iBUS *)addednodelist.first())->name();			
 		}
 	}		
-	else return nametxt;
+	return nametxt;
 }
 void AddDialog::OnHiddenTableActived(int row,int column)
 {

@@ -162,8 +162,8 @@ public:
 
     void retranslateUi(QDialog *StationParameterDialog)
     {
-        StationParameterDialog->setWindowTitle(QApplication::translate("StationParameterDialog", "StationParameterDialog", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("StationParameterDialog", "Site Name:", 0, QApplication::UnicodeUTF8));
+        StationParameterDialog->setWindowTitle(QApplication::translate("StationParameterDialog", "Station", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("StationParameterDialog", "Station Name:", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("StationParameterDialog", "Unit:-----", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem = tableWidget_parameter->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("StationParameterDialog", "Name", 0, QApplication::UnicodeUTF8));
