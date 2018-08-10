@@ -137,8 +137,8 @@ private slots:
 	void openRecentFile();
 
 	//edit menu
-	void addStation();
-	void addNote();
+	//void addStation();
+	//void addNote();
 	//void addInfoNote();
 	//void addLegend();
 	void deleteItems();
@@ -176,13 +176,13 @@ private slots:
 	
 
     void updateMenus();
-	//void buttonGroupClicked(int id);
-	void actionModeGroupClicked(int id);
+	void OnModeActionGroupClicked(QAction* action);
+	void OnModeButtonGroupClicked(int id);
+	void OnModeDone();
 	void itemInserted(DiagramItem *item,DiagramScene* scene);
 	void textInserted(QGraphicsTextItem *item, DiagramScene* scene);
-	void sceneScaleChanged(const QString &scale);
+	void OnScaleChanged(const QString &scale);
 	void sceneSelectionChanged();
-	void OnModeDone();
 
 
 	//not in use

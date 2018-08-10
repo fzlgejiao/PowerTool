@@ -234,15 +234,11 @@ void MainWindow::createActions()
 	addStationAction->setShortcut(tr("Add Station"));
 	addStationAction->setStatusTip(tr("Add Station"));
 	addStationAction->setCheckable(true);
-	connect(addStationAction, SIGNAL(triggered()),
-		this, SLOT(addStation()));
 
 	addNoteAction = new QAction(tr("Add &Note"), this);
 	addNoteAction->setShortcut(tr("Add Note"));
 	addNoteAction->setStatusTip(tr("Add Note"));
 	addNoteAction->setCheckable(true);
-	connect(addNoteAction, SIGNAL(triggered()),
-		this, SLOT(addNote()));
 
 	zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
 		tr("Zoom &Out"), this);
@@ -319,6 +315,9 @@ void MainWindow::createActions()
 	actionModeGroup->setExclusive(true);
 	actionModeGroup->addAction(addStationAction);
 	actionModeGroup->addAction(addNoteAction);
+	connect(actionModeGroup, SIGNAL(triggered(QAction *)), this, SLOT(OnModeActionGroupClicked(QAction *)));
+
+
 
 }
 
@@ -386,7 +385,7 @@ void MainWindow::createToolBars()
 	buttonModeGroup->addButton(btnAddStation, M_AddStation);
 	buttonModeGroup->addButton(btnAddNote,	  M_AddNote);
 	buttonModeGroup->setExclusive(false);
-	connect(buttonModeGroup, SIGNAL(buttonClicked(int)),		this, SLOT(actionModeGroupClicked(int)));
+	connect(buttonModeGroup, SIGNAL(buttonClicked(int)),this, SLOT(OnModeButtonGroupClicked(int)));
 
 	/*sceneScaleCombo = new QComboBox;
 
@@ -394,7 +393,7 @@ void MainWindow::createToolBars()
 	scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");	
 	sceneScaleCombo->addItems(scales);
 	sceneScaleCombo->setCurrentIndex((mScaleMax-mScaleMin)/mScaleStep/2);
-	connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),this, SLOT(sceneScaleChanged(QString)));
+	connect(sceneScaleCombo, SIGNAL(currentIndexChanged(QString)),this, SLOT(OnScaleChanged(QString)));
 	*/
 
 	tBar->addAction(newAct);
@@ -592,48 +591,27 @@ QList<QGraphicsItem *> MainWindow::selectedItems()
 	return child->scene()->selectedItems();
 }
 
-//void MainWindow::buttonGroupClicked(int id)
-//{
-//	QList<QAbstractButton *> buttons = buttonGroup->buttons();
-//	foreach(QAbstractButton *button, buttons) {
-//		if (buttonGroup->button(id) != button)
-//			button->setChecked(false);
-//	}
-//	foreach(QMdiSubWindow *window, mdiArea->subWindowList()) {
-//		MdiChild *mdiChild = qobject_cast<MdiChild *>(window->widget());
-//		if (!mdiChild) continue;
-//
-//		DiagramScene *scene = mdiChild->scene();
-//		if (!scene) continue;
-//
-//		if (id == InsertTextButton) {
-//			scene->setMode(DiagramScene::InsertText);
-//		}
-//		else {
-//			scene->setItemType(DiagramItem::DiagramType(id));
-//			scene->setMode(DiagramScene::InsertItem);
-//		}
-//
-//	}
-//}
-
-void MainWindow::actionModeGroupClicked(int id)
+void MainWindow::OnModeActionGroupClicked(QAction* action)
 {
-	QList<QAbstractButton *> buttons = buttonModeGroup->buttons();
-	foreach(QAbstractButton *button, buttons) {
+	if(action == addStationAction)
+		buttonModeGroup->button(M_AddStation)->click();
+	else if(action == addNoteAction)
+		buttonModeGroup->button(M_AddNote)->click();
+}
+
+void MainWindow::OnModeButtonGroupClicked(int id)
+{
+	foreach(QAbstractButton *button, buttonModeGroup->buttons()) 
+	{
 		if (buttonModeGroup->button(id) != button)
 			button->setChecked(false);
 	}
+	if(id == M_AddStation)
+		addStationAction->setChecked(true);
+	else if(id == M_AddNote)
+		addNoteAction->setChecked(true);
 
-	foreach(QMdiSubWindow *window, mdiArea->subWindowList()) {
-		MdiChild *mdiChild = qobject_cast<MdiChild *>(window->widget());
-		if (!mdiChild) continue;
-
-		DiagramScene *scene = mdiChild->scene();
-		if (!scene) continue;
-
-		m_nActMode = (ACT_MODE)id;
-	}
+	m_nActMode = (ACT_MODE)id;
 }
 
 void MainWindow::sceneSelectionChanged()
@@ -739,69 +717,6 @@ void MainWindow::paste()
 	//    activeMdiChild()->paste();
 }
 
-void MainWindow::addStation()
-{
-	buttonModeGroup->button(M_AddStation)->click();
-	/*
-	QAction *action = qobject_cast<QAction *>(sender()); 
-	MdiChild *currentchild= activeMdiChild();
-	if(currentchild==NULL) return ;
-
-	if(action==editObjectAction) {
-		iData *s_data=qgraphicsitem_cast<DiagramItem *>(currentchild->scene()->selectedItems().first())->myData();
-		if(s_data->type()==T_STAT)
-		{				
-			AddDialog *editDialog=new AddDialog(currentchild->doc(),(iSTAT *)s_data);
-			if(editDialog->exec()==QDialog::Accepted)
-			{
-				//update the name
-				((iSTAT *)s_data)->setName(editDialog->NewStationName());										
-				//Removed the nodes	
-				QList<iNodeData *> removednodes;
-				editDialog->GetNewRemovedNodes(removednodes);								
-				((iSTAT *)s_data)->removeNodes(removednodes);		
-				//Added  nodes
-				QList<iNodeData *> addednodes;
-				editDialog->GetNewAddedNodes(addednodes);
-				((iSTAT *)s_data)->addNodes(addednodes);
-				//To do :update the branchs in the  diagram scence
-			}				
-		}
-	}else if(action==addStationAction)
-	{
-		//To do: add New Station
-
-		QList<iNodeData *> Nodelist;
-		iDoc *currentdoc=currentchild->doc();
-		currentdoc->getAvailableNode(Nodelist);
-
-		if(Nodelist.count()==0)
-		{
-			QMessageBox::information(this,tr("Info"),tr("All Site is already on the Canvas"));
-		}else
-		{
-			AddDialog *addDialog=new AddDialog(currentchild->doc(),NULL);
-			if(addDialog->exec()==QDialog::Accepted)
-			{				
-				if(!addDialog->IsAddSite()) return;
-				//To do : add new site			
-				iSTAT* newstation= new iSTAT(currentdoc->STAT_getId(),addDialog->NewStationName(),this);	
-				QList<iNodeData *> addednodes;
-				addDialog->GetNewAddedNodes(addednodes);
-				newstation->addNodes(addednodes);
-				currentdoc->STAT_add(newstation);
-			}
-		}
-	}*/
-}
-
-void MainWindow::addNote()
-{
-	//To do: add note in diagram
-	//addStationAction->setChecked(false);
-	buttonModeGroup->button(M_AddNote)->click();
-}
-
 void MainWindow::deleteItems()
 {
 	MdiChild* child = activeMdiChild();
@@ -853,7 +768,7 @@ void MainWindow::esc()
 
 }
 
-void MainWindow::sceneScaleChanged(const QString &scale)
+void MainWindow::OnScaleChanged(const QString &scale)
 {
 	emit scaleChanged(scale);
 }
@@ -862,7 +777,7 @@ void MainWindow::OnScaleReset()
 {
 	mScale=100;
 	currentScale->setText("100%");
-	sceneScaleChanged("100%");
+	OnScaleChanged("100%");
 }
 
 void MainWindow::OnZoomOut()
@@ -872,7 +787,7 @@ void MainWindow::OnZoomOut()
 	mScale-=mScaleStep;
 	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
 	currentScale->setText(scaletxt);
-	sceneScaleChanged(scaletxt);
+	OnScaleChanged(scaletxt);
 }
 
 void MainWindow::OnZoomIn()
@@ -882,7 +797,7 @@ void MainWindow::OnZoomIn()
 	mScale+=mScaleStep;
 	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
 	currentScale->setText(scaletxt);
-	sceneScaleChanged(scaletxt);
+	OnScaleChanged(scaletxt);
 }
 
 void MainWindow::itemInserted(DiagramItem *item, DiagramScene* scene)
@@ -894,7 +809,7 @@ void MainWindow::itemInserted(DiagramItem *item, DiagramScene* scene)
 
 void MainWindow::textInserted(QGraphicsTextItem *, DiagramScene* scene)
 {
-	buttonGroup->button(InsertTextButton)->setChecked(false);
+	//buttonGroup->button(InsertTextButton)->setChecked(false);
 	//scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
 }
 
@@ -906,13 +821,5 @@ void MainWindow::OnModeDone()
 	foreach(QAbstractButton *button, buttonModeGroup->buttons())
 		button->setChecked(false);
 
-	foreach(QMdiSubWindow *window, mdiArea->subWindowList()) {
-		MdiChild *mdiChild = qobject_cast<MdiChild *>(window->widget());
-		if (!mdiChild) continue;
-
-		DiagramScene *scene = mdiChild->scene();
-		if (!scene) continue;
-
-		m_nActMode = M_MoveItem;
-	}
+	m_nActMode = M_MoveItem;
 }
