@@ -7,7 +7,7 @@
 #include "mdichild.h"
 #include "adddialog.h"
 #include "idata.h"
-
+#include "scaledialog.h"
 
 const int InsertTextButton = 10;
 
@@ -268,6 +268,10 @@ void MainWindow::createActions()
 	connect(statusbarAct, SIGNAL(triggered()),
 		mdiArea, SLOT(showStatusbar()));
 
+	scaledialogAction = new QAction(tr("&Zoom In/Out"), this);
+	scaledialogAction->setStatusTip(tr("Change the scale"));
+	connect(scaledialogAction, SIGNAL(triggered()),this, SLOT(OnZoomDialog()));
+
 	propertyAction = new QAction(tr("&Properties..."), this);
 	propertyAction->setStatusTip(tr("Show object property"));
 	connect(propertyAction, SIGNAL(triggered()),this, SLOT(viewProperty()));
@@ -345,9 +349,10 @@ void MainWindow::createMenus()
 	viewMenu->addAction(toolbarAct);
 	viewMenu->addAction(statusbarAct);
 	viewMenu->addSeparator();
-	viewMenu->addAction(zoomInAction);
+	/*viewMenu->addAction(zoomInAction);
 	viewMenu->addAction(zoomResetAction);
-	viewMenu->addAction(zoomOutAction);
+	viewMenu->addAction(zoomOutAction);*/
+	viewMenu->addAction(scaledialogAction);
 	viewMenu->addSeparator();
 	viewMenu->addAction(propertyAction);
 
@@ -798,6 +803,18 @@ void MainWindow::OnZoomIn()
 	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
 	currentScale->setText(scaletxt);
 	OnScaleChanged(scaletxt);
+}
+
+void MainWindow::OnZoomDialog()
+{
+	ScaleDialog scaledialog(mScale);
+	if(scaledialog.exec()==QDialog::Accepted)
+	{
+		mScale=scaledialog.GetScale();
+		QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
+		currentScale->setText(scaletxt);
+		OnScaleChanged(scaletxt);
+	}
 }
 
 void MainWindow::itemInserted(DiagramItem *item, DiagramScene* scene)

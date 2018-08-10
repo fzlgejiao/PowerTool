@@ -87,7 +87,7 @@ private:
 	QAction *zoomOutAction;
 	QAction *zoomInAction;
 	QAction *zoomResetAction;
-
+	QAction *scaledialogAction;
 
     QAction *toFrontAction;
     QAction *sendBackAction;
@@ -148,7 +148,7 @@ private slots:
 	//view menu
 	//void showToolBar();
 	//void showStatusBar();
-	//void zoom();
+	void OnZoomDialog();
 	void viewProperty();
 	//void viewCtrl();
 	//void viewDoc();

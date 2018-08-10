@@ -309,6 +309,7 @@ void DiagramScene::addStation(const QPointF& pos)
 	AddDialog dlg(myDoc,NULL,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{				
+		if(!dlg.IsAddSite()) return ;
 		//To do : add new station			
 		iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());								//create a new station object
 		QList<iNodeData *> addednodes;
@@ -337,7 +338,7 @@ void DiagramScene::editStation()
 	iSTAT* stat = (iSTAT *)data;
 	AddDialog dlg(myDoc,stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
-	{
+	{		
 		//update the name
 		stat->setName(dlg.NewStationName());										
 		////Removed the nodes	
@@ -347,7 +348,7 @@ void DiagramScene::editStation()
 		//Added  nodes
 		QList<iNodeData *> addednodes;
 		dlg.GetNewAddedNodes(addednodes);
-		//stat->setNodes(addednodes);
+		stat->setNodes(addednodes);
 		//To do :update the branchs in the  diagram scence
 	}				
 
