@@ -340,15 +340,13 @@ void DiagramScene::editStation()
 	{
 		//update the name
 		stat->setName(dlg.NewStationName());										
-		////Removed the nodes	
-		//QList<iNodeData *> removednodes;
-		//dlg.GetNewRemovedNodes(removednodes);								
-		//stat->removeNodes(removednodes);		
-		//Added  nodes
+		//change nodes of station
 		QList<iNodeData *> addednodes;
 		dlg.GetNewAddedNodes(addednodes);
-		//stat->setNodes(addednodes);
+		stat->setNodes(addednodes);
+
 		//To do :update the branchs in the  diagram scence
+		editStationItem(qgraphicsitem_cast<DiagramItem *>(item),stat);
 	}				
 
 }
@@ -448,4 +446,53 @@ void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 	}
 
 	emit itemInserted(item);
+}
+void DiagramScene::editStationItem(DiagramItem *item,iSTAT* stat)
+{
+	item->removeArrows();
+
+	foreach(iNodeData* node,stat->nodeDatas())
+	{
+		if(!node)
+			break;
+
+		//to check if both fromBus and toBus of the attached data to this bus are already added
+		foreach(iLinkData* data,node->linkDatas())
+		{
+			if(!data)
+				break;
+
+			int from = data->fromUid();
+			int to	 = data->toUid();
+			iNodeData* node1 = myDoc->getNode(from);
+			iNodeData* node2 = myDoc->getNode(to);
+			if(!node1 || !node2)
+				break;
+			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
+				break;
+
+			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
+			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
+			if(!stat1 || !stat2)
+				break;
+
+			DiagramItem *startItem	= stat1->myItem();
+			DiagramItem *endItem	= stat2->myItem();
+			if(!startItem || !endItem)
+				break;
+
+			if(data->type() == T_BRANCH)
+			{
+				Arrow *arrow = new Arrow(startItem, endItem,data,getMenu(T_BRANCH));				//create arrow item for brunch
+				arrow->setColor(myLineColor);
+				startItem->addArrow(arrow);
+				endItem->addArrow(arrow);
+				arrow->setZValue(-1000.0);
+				addItem(arrow);
+				arrow->updatePosition();
+			}
+		}
+
+	}	
+
 }

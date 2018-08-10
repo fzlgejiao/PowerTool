@@ -39,6 +39,10 @@ iSTAT::~iSTAT()
 }
 void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 {
+	//update old nodes
+	foreach(iNodeData* node,m_nodeDatas)
+		node->statRemoved();
+	//set new nodes to station
 	foreach(iNodeData* node,listNodes)
 		node->statAdded(Id());
 	m_nodeDatas = listNodes;

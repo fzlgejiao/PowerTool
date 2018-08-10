@@ -59,6 +59,7 @@ protected:
 
 	void addStation(const QPointF& pos);
 	void addStationItem(iSTAT* stat,const QPointF& pos);
+	void editStationItem(DiagramItem *item,iSTAT* stat);
 
 private:
     bool isItemChange(int type);
