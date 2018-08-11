@@ -116,7 +116,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
     return value;
 }
 //! [6]
-void DiagramItem::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event )
+void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
 	QGraphicsItem::mouseDoubleClickEvent(event);
 }

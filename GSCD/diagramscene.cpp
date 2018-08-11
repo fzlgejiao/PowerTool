@@ -151,8 +151,8 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 			}
 			break;
 		}
+	}
 
-		
 	/*
 		DiagramItem *item;
 		switch (myMode) {
@@ -186,17 +186,20 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 			;
 		}
 	*/
-	}
+
     QGraphicsScene::mousePressEvent(mouseEvent);
+	qDebug("PressEvent");
 }
 //! [9]
 
 //! [10]
 void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-	if (pMain->mode() == M_MoveItem) {
-        QGraphicsScene::mouseMoveEvent(mouseEvent);
-    }
+	if (pMain->mode() == M_MoveItem) 
+	{
+    }        
+	QGraphicsScene::mouseMoveEvent(mouseEvent);
+	qDebug("MoveEvent");
 }
 //! [10]
 
@@ -237,15 +240,22 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     line = 0;
 	*/
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
+	qDebug("ReleaseEvent");
 }
 void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 {
+	QList<QGraphicsItem *> &list = selectedItems();
+	if(list.count() <= 1)																			//none-selected
+	{	
+		if(selectedItems().isEmpty())
+			return;
+		QGraphicsItem *item = selectedItems().first();//qgraphicsitem_cast<DiagramItem *>(selectedItems().first());
+		if(item)
+			viewProperty();		
+	}
 	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
-	if(selectedItems().isEmpty())
-		return;
-	QGraphicsItem *item = selectedItems().first();//qgraphicsitem_cast<DiagramItem *>(selectedItems().first());
-	if(item)
-		viewProperty();																				//to show 'property' dialog
+																		
+	qDebug("DoubleClickEvent");
 }
 void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
@@ -263,8 +273,8 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 	}
 	else																							//one-selected
 	{
-		QGraphicsScene::contextMenuEvent(event);
 	}
+	QGraphicsScene::contextMenuEvent(event);
 }
 
 bool DiagramScene::isItemChange(int type)
@@ -395,12 +405,29 @@ void DiagramScene::deleteItems()
 }
 void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 {
+	//create station item
 	DiagramItem *item = new DiagramItem(stat, getMenu(T_STAT),0,this);								//create diagram item for station
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
 	stat->itemAdded(item);																			//set item to station
 
+	//create station name text item
+	DiagramTextItem* itemName = new DiagramTextItem();
+	itemName->setFont(myFont);
+	itemName->setPlainText(stat->name());
+	//itemName->setTextInteractionFlags(Qt::TextEditorInteraction);
+	itemName->setZValue(1000.0);
+	//connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),   this, SLOT(editorLostFocus(DiagramTextItem*)));
+	//connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),this, SIGNAL(itemSelected(QGraphicsItem*)));
+	addItem(itemName);
+	itemName->setDefaultTextColor(myTextColor);
+	itemName->setPos(pos + QPointF(20,20));
+	//emit textInserted(itemName);
+
+	//create station value text item
+
+	//create station to staiton arrow item
 	foreach(iNodeData* node,stat->nodeDatas())
 	{
 		if(!node)
@@ -444,6 +471,7 @@ void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 		}
 
 	}
+	item->setSelected(true);
 
 	emit itemInserted(item);
 }

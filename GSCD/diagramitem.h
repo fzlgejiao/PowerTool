@@ -43,7 +43,7 @@ public:
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-	void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
+	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:

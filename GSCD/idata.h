@@ -69,6 +69,7 @@ protected:
 };
 
 class DiagramItem;
+class DiagramTextItem;
 class iSTAT : public iData
 {
 public:
@@ -84,13 +85,16 @@ public:
 	//void    removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
-	void	itemAdded(DiagramItem* item){m_item = item;}
-	void	itemRemoved(){m_item=NULL;}
-	DiagramItem* myItem(){return m_item;}
+	void	itemAdded(DiagramItem* item){m_itemStat = item;}
+	void	itemRemoved(){m_itemStat=NULL;}
+	DiagramItem* myItem(){return m_itemStat;}
 
 private:
 	QString			m_name;
-	DiagramItem*	m_item;																			//pointer to item on scene for station	
+
+	DiagramItem*	m_itemStat;																		//pointer to station diagram item
+	DiagramTextItem* m_itemName;																	//pointer to station name text item
+	DiagramTextItem* m_itemValue;																	//pointer to station value text item
 
 	QList<iNodeData *>	m_nodeDatas;
 };

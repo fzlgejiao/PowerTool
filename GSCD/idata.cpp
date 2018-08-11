@@ -28,7 +28,7 @@ iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 	:iData(id,parent)
 {
 	m_name = name;
-	m_item = NULL;
+	m_itemStat = NULL;
 }
 iSTAT::~iSTAT()
 {
