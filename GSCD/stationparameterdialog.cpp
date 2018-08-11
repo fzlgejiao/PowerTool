@@ -6,6 +6,7 @@ StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+	this->setFixedSize(this->size());
 	m_station=station;	
 	SetTableStyle(ui.tableWidget_parameter);
 
@@ -25,7 +26,8 @@ StationParameterDialog::~StationParameterDialog()
 void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 {
 	//set table Parameter
-	tablewidget->horizontalHeader()->setStretchLastSection(true);	
+	//tablewidget->horizontalHeader()->setStretchLastSection(true);	
+	tablewidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 	tablewidget->setColumnCount(ParameterColumnCnt);					//Set columns Count
 	tablewidget->horizontalHeader()->setClickable(true);				//set header can be click and sorting
 	tablewidget->setSortingEnabled(true);

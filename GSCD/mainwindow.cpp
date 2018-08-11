@@ -280,6 +280,24 @@ void MainWindow::createActions()
 	editObjectAction->setStatusTip(tr("Edit object"));
 	connect(editObjectAction, SIGNAL(triggered()),this, SLOT(editObject()));
 
+	//actions for menu 'settings'
+	imageAreaAction = new QAction(tr("&Image Area..."), this);
+	imageAreaAction->setStatusTip(tr("Image area"));
+	connect(imageAreaAction, SIGNAL(triggered()),this, SLOT(imageArea()));
+
+	viewFontAction = new QAction(tr("&Font..."), this);
+	viewFontAction->setStatusTip(tr("View font"));
+	connect(viewFontAction, SIGNAL(triggered()),this, SLOT(viewFont()));
+
+	voltageLevelAction = new QAction(tr("&Voltage Level..."), this);
+	voltageLevelAction->setStatusTip(tr("Voltage level"));
+	connect(voltageLevelAction, SIGNAL(triggered()),this, SLOT(voltageLevel()));
+
+	optionsAction = new QAction(tr("&Options..."), this);
+	optionsAction->setStatusTip(tr("options"));
+	connect(optionsAction, SIGNAL(triggered()),this, SLOT(options()));
+
+	//actions for menu 'window'
 	closeAct = new QAction(tr("Cl&ose"), this);
 	closeAct->setStatusTip(tr("Close the active window"));
 	connect(closeAct, SIGNAL(triggered()),
@@ -301,6 +319,7 @@ void MainWindow::createActions()
 	separatorAct = new QAction(this);
 	separatorAct->setSeparator(true);
 
+	//actions for menu 'about'
 	aboutAct = new QAction(QIcon(":/images/about.png"),tr("&About"), this);
 	aboutAct->setStatusTip(tr("Show the application's About box"));
 	connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
@@ -355,6 +374,13 @@ void MainWindow::createMenus()
 	viewMenu->addAction(scaledialogAction);
 	viewMenu->addSeparator();
 	viewMenu->addAction(propertyAction);
+
+	settingMenu = menuBar()->addMenu(tr("&Settings"));
+	settingMenu->addAction(imageAreaAction);
+	settingMenu->addAction(viewFontAction);
+	settingMenu->addAction(voltageLevelAction);
+	settingMenu->addAction(optionsAction);
+
 
 	windowMenu = menuBar()->addMenu(tr("&Window"));
 	updateWindowMenu();
@@ -611,12 +637,14 @@ void MainWindow::OnModeButtonGroupClicked(int id)
 		if (buttonModeGroup->button(id) != button)
 			button->setChecked(false);
 	}
+	bool bChecked = buttonModeGroup->button(id)->isChecked();
 	if(id == M_AddStation)
-		addStationAction->setChecked(true);
+		addStationAction->setChecked(bChecked?true:false);
 	else if(id == M_AddNote)
-		addNoteAction->setChecked(true);
+		addNoteAction->setChecked(bChecked?true:false);
 
-	m_nActMode = (ACT_MODE)id;
+	if(bChecked == true)
+		m_nActMode = (ACT_MODE)id;
 }
 
 void MainWindow::sceneSelectionChanged()
@@ -762,6 +790,18 @@ void MainWindow::viewProperty()
 	child->scene()->viewProperty();
 }
 
+void MainWindow::imageArea()
+{
+}
+void MainWindow::viewFont()
+{
+}
+void MainWindow::voltageLevel()
+{
+}
+void MainWindow::options()
+{
+}
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About GWD"),
@@ -797,6 +837,11 @@ void MainWindow::OnZoomOut()
 
 void MainWindow::OnZoomIn()
 {
+	QList<iSTAT *> list;
+	foreach(iSTAT* stat,list)
+	{
+		QString na = stat->name();
+	}
 	if(activeMdiChild()==NULL) return;
 	if(mScale==mScaleMax) return;
 	mScale+=mScaleStep;

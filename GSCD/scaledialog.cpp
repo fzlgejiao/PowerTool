@@ -4,7 +4,7 @@ ScaleDialog::ScaleDialog(int scale,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
-
+	this->setFixedSize(this->size());
 	m_scale=scale;
 	scalemin=10;
 	scalemax=200;

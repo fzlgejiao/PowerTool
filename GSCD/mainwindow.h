@@ -61,6 +61,7 @@ private:
     QMenu *fileMenu;
     QMenu *editMenu;
 	QMenu *viewMenu;
+	QMenu *settingMenu;
     QMenu *windowMenu;
     QMenu *helpMenu;
 
@@ -95,6 +96,11 @@ private:
 	QAction *toolbarAct;
 	QAction *statusbarAct;
 	QAction *propertyAction;
+
+	QAction *imageAreaAction;
+	QAction *viewFontAction;
+	QAction *voltageLevelAction;
+	QAction *optionsAction;
 
     QAction *closeAct;
     QAction *closeAllAct;
@@ -154,11 +160,10 @@ private slots:
 	//void viewDoc();
 
 	//setting menu
-	//void imageRegion();
-	//void font();
-	//void voltageLevel();
-	//void loadSymbol();
-	//void options();
+	void imageArea();
+	void viewFont();
+	void voltageLevel();
+	void options();
 
 	//window menu
     void updateWindowMenu();

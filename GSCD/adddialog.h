@@ -28,8 +28,8 @@ public:
 	bool IsAddSite();
 	bool IsRemovedSite();
 	QString NewStationName();
-	void GetNewAddedNodes(QList<iNodeData *>& nodes);
-	void GetNewRemovedNodes(QList<iNodeData *>& nodes);
+	QList<iNodeData *>&  GetAddedNodes(){return addednodelist;}
+	//void GetRemovedNodes(QList<iNodeData *>& nodes);
 
 private slots:
 		void OnHiddenTableActived(int row,int column);
@@ -45,7 +45,7 @@ private:
 	QList<iNodeData *> hiddennodelist;
 	QList<iNodeData *> addednodelist;
 	
-	QList<iNodeData *> Rawaddednodelist;
+	//QList<iNodeData *> Rawaddednodelist;
 	QList<iNodeData *> Branchnodelist;
 
 	iDoc *m_doc;
