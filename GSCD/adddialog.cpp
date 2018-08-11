@@ -10,11 +10,12 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	SetTableStyle(ui.tableWidget_hidden);
 	SetTableStyle(ui.tableWidget_added);
 	SetTableStyle(ui.tableWidget_branch);
-
+	
 	m_doc=idoc;
 	m_editstation=editstation;
 	m_doc->getAvailableNode(hiddennodelist);	
-	
+	this->setFixedSize(this->size());
+
 	if(m_editstation)
 	{
 		is_edit=true;
@@ -25,7 +26,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 			addNode2Rows(ui.tableWidget_added,node);
 			addednodelist.append(node);
 		}
-		Rawaddednodelist=addednodelist;
+		//Rawaddednodelist=addednodelist;
 	}else
 	{
 		is_edit=false;
@@ -51,7 +52,8 @@ AddDialog::~AddDialog()
 void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 {
 	//set table Parameter
-	tablewidget->horizontalHeader()->setStretchLastSection(true);	
+	//tablewidget->horizontalHeader()->setStretchLastSection(true);
+	tablewidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 	tablewidget->setColumnCount(3);										//Set 3 columns
 	tablewidget->horizontalHeader()->setClickable(true);				//set header can be click and sorting
 	tablewidget->setSortingEnabled(true);
@@ -99,26 +101,14 @@ bool AddDialog::IsRemovedSite()
 	if(hiddennodelist.count()>0) return true;
 	else return false;
 }
-void AddDialog::GetNewAddedNodes(QList<iNodeData *>& nodes)
-{
-	if(Rawaddednodelist.count()==0)
-		nodes=addednodelist;
-	else{
-		foreach(iNodeData *node,addednodelist)
-		{
-			if(!Rawaddednodelist.contains(node))
-				nodes.append(node);
-		}
-	}
-}
-void AddDialog::GetNewRemovedNodes(QList<iNodeData *>& nodes)
-{	
-	foreach(iNodeData *node,Rawaddednodelist)
-	{
-		if(!addednodelist.contains(node))
-			nodes.append(node);		
-	}	
-}
+//void AddDialog::GetRemovedNodes(QList<iNodeData *>& nodes)
+//{	
+//	foreach(iNodeData *node,Rawaddednodelist)
+//	{
+//		if(!addednodelist.contains(node))
+//			nodes.append(node);		
+//	}	
+//}
 QString AddDialog::NewStationName()
 {
 	QString name;
@@ -214,6 +204,8 @@ void AddDialog::OnAdd()
 	}		
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	ui.tableWidget_hidden->clearSelection();
+	ui.label_branch->setText("connection with ....");
+	ClearTableContext(ui.tableWidget_branch);
 }
 void AddDialog::OnAddAll()
 {
@@ -237,7 +229,8 @@ void AddDialog::OnAddAll()
 		ui.tableWidget_hidden->removeRow(firstrow);
 	}		
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-	
+	ui.label_branch->setText("connection with ....");
+	ClearTableContext(ui.tableWidget_branch);
 }
 void AddDialog::OnRevoke()
 {
@@ -268,6 +261,8 @@ void AddDialog::OnRevoke()
 			ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	}
 	ui.tableWidget_added->clearSelection();
+	ui.label_branch->setText("connection with ....");
+	ClearTableContext(ui.tableWidget_branch);
 }
 void AddDialog::OnRevokeAll()
 {
@@ -291,6 +286,8 @@ void AddDialog::OnRevokeAll()
 		
 		ui.tableWidget_added->removeRow(firstrow);
 	}		
+	ui.label_branch->setText("connection with ....");
+	ClearTableContext(ui.tableWidget_branch);
 	if(is_edit) ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 }
 void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node)

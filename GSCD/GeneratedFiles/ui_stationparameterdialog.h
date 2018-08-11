@@ -50,10 +50,10 @@ public:
     {
         if (StationParameterDialog->objectName().isEmpty())
             StationParameterDialog->setObjectName(QString::fromUtf8("StationParameterDialog"));
-        StationParameterDialog->resize(709, 448);
+        StationParameterDialog->resize(709, 348);
         verticalLayoutWidget = new QWidget(StationParameterDialog);
         verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(40, 50, 611, 331));
+        verticalLayoutWidget->setGeometry(QRect(40, 30, 611, 281));
         verticalLayout = new QVBoxLayout(verticalLayoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);

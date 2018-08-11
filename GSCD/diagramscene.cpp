@@ -7,6 +7,7 @@
 #include "adddialog.h"
 #include "mainwindow.h"
 #include "stationparameterdialog.h"
+#include "textdialog.h"
 
 //! [0]
 DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
@@ -147,6 +148,17 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 					addStation(mouseEvent->scenePos());
 				}
 
+				emit modeDone();
+			}
+			break;
+
+			case M_AddNote:
+			{
+				TextDialog textdlg(NULL);
+				if(textdlg.exec()==QDialog::Accepted)
+				{
+
+				}
 				emit modeDone();
 			}
 			break;
@@ -319,10 +331,10 @@ void DiagramScene::addStation(const QPointF& pos)
 	AddDialog dlg(myDoc,NULL,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{				
+		if(!dlg.IsAddSite()) return ;
 		//To do : add new station			
 		iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());								//create a new station object
-		QList<iNodeData *> addednodes;
-		dlg.GetNewAddedNodes(addednodes);
+		QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
 		stat->setNodes(addednodes);
 
 		addStationItem(stat,pos);														//create a new station item
@@ -347,12 +359,11 @@ void DiagramScene::editStation()
 	iSTAT* stat = (iSTAT *)data;
 	AddDialog dlg(myDoc,stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
-	{
+	{		
 		//update the name
 		stat->setName(dlg.NewStationName());										
 		//change nodes of station
-		QList<iNodeData *> addednodes;
-		dlg.GetNewAddedNodes(addednodes);
+		QList<iNodeData *> addednodes=dlg.GetAddedNodes();
 		stat->setNodes(addednodes);
 
 		//To do :update the branchs in the  diagram scence

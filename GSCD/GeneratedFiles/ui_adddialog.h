@@ -248,7 +248,7 @@ public:
     {
         AddDialog->setWindowTitle(QApplication::translate("AddDialog", "Station Editor", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_WHATSTHIS
-        AddDialog->setWhatsThis(QApplication::translate("AddDialog", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt; font-weight:600;\">This Dialog is for Add a new Site </span></p></body></html>", 0, QApplication::UnicodeUTF8));
+        AddDialog->setWhatsThis(QApplication::translate("AddDialog", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt; font-weight:600;\">This Dialog is for Add a new Site or Edit a station</span></p></body></html>", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_WHATSTHIS
         QTableWidgetItem *___qtablewidgetitem = tableWidget_hidden->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("AddDialog", "Type", 0, QApplication::UnicodeUTF8));
