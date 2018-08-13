@@ -261,3 +261,7 @@ __pycache__/
 *.pyc
 /GSCD/GeneratedFiles/qrc_mainwindow.cpp
 /GSCD/GeneratedFiles/ui_mainwindow.h
+/GSCD/GeneratedFiles/ui_adddialog.h
+/GSCD/GeneratedFiles/ui_stationparameterdialog.h
+/GSCD/GeneratedFiles/ui_scaledialog.h
+/GSCD/GeneratedFiles/ui_textdialog.h
