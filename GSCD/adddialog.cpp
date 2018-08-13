@@ -2,6 +2,7 @@
 #include "idoc.h"
 #include "idata.h"
 #include <QTableWidget>
+#include <QFontDialog>
 
 AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	: QDialog(parent)
@@ -14,7 +15,11 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	m_doc=idoc;
 	m_editstation=editstation;
 	m_doc->getAvailableNode(hiddennodelist);	
+	foreach(int area,m_doc->getarealist())
+		ui.comboBox_areas->addItem(QString::number(area));
 	this->setFixedSize(this->size());
+
+	m_font=QFont("Arial",10);
 
 	if(m_editstation)
 	{
@@ -30,6 +35,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	}else
 	{
 		is_edit=false;
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 		ui.lineEdit_name->setPlaceholderText("Sub-");
 	}
 	foreach(iNodeData *bus ,hiddennodelist)
@@ -37,13 +43,22 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 
 	connect(ui.tableWidget_hidden,SIGNAL(cellClicked (int,int)),this,SLOT(OnHiddenTableActived(int,int)));
 	connect(ui.tableWidget_added,SIGNAL(cellClicked (int,int)),this,SLOT(OnAddedTableActived(int,int)));
+	connect(ui.tableWidget_hidden,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(OnAdd()));
+	connect(ui.tableWidget_added,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(OnRevoke()));
 	connect(ui.pushButton_add,SIGNAL(clicked()),this,SLOT(OnAdd()));
 	connect(ui.pushButton_addall,SIGNAL(clicked()),this,SLOT(OnAddAll()));
 	connect(ui.pushButton_remove,SIGNAL(clicked()),this,SLOT(OnRevoke()));
 	connect(ui.pushButton_removeall,SIGNAL(clicked()),this,SLOT(OnRevokeAll()));
-
+	connect(ui.pushButton_font,SIGNAL(clicked()),this,SLOT(OnFontdialog()));
+	connect(ui.comboBox_areas,SIGNAL(currentIndexChanged(int)),this,SLOT(OnComboAreaChanged(int)));
+	
+	
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
+
+	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
+	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
+
 }
 AddDialog::~AddDialog()
 {
@@ -80,7 +95,11 @@ void AddDialog::ClearTableContext(QTableWidget *tablewidget)
 		tablewidget->removeRow(0); 
 	}
 }
+void AddDialog::OnComboAreaChanged(int index)
+{
 
+
+}
 iNodeData * AddDialog::GetNodefromID(int nodeid,QList<iNodeData *> nodelist)
 {
 	foreach(iNodeData *node,nodelist)
@@ -123,6 +142,15 @@ QString AddDialog::NewStationName()
 		}
 	}		
 	return nametxt;
+}
+void AddDialog::OnFontdialog()
+{	
+	bool isok;
+	QFont font=QFontDialog::getFont(&isok,m_font);
+	if(isok)
+	{
+		m_font=	font;
+	}
 }
 void AddDialog::OnHiddenTableActived(int row,int column)
 {
@@ -206,6 +234,9 @@ void AddDialog::OnAdd()
 	ui.tableWidget_hidden->clearSelection();
 	ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
+
+	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
+	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 }
 void AddDialog::OnAddAll()
 {
@@ -228,9 +259,13 @@ void AddDialog::OnAddAll()
 		
 		ui.tableWidget_hidden->removeRow(firstrow);
 	}		
+
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
+
+	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
+	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 }
 void AddDialog::OnRevoke()
 {
@@ -255,14 +290,16 @@ void AddDialog::OnRevoke()
 		addednodelist.removeOne(node);
 		
 	}
-	if(is_edit) 
-		{
-			if(ui.tableWidget_added->rowCount()==0)
-			ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-	}
+	
+	if(ui.tableWidget_added->rowCount()==0)
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+	
 	ui.tableWidget_added->clearSelection();
 	ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
+
+	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
+	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 }
 void AddDialog::OnRevokeAll()
 {
@@ -288,7 +325,10 @@ void AddDialog::OnRevokeAll()
 	}		
 	ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
-	if(is_edit) ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
+	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
+	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 }
 void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node)
 {

@@ -39,34 +39,45 @@ public:
     QFrame *line_2;
     QLabel *label_branch;
     QTableWidget *tableWidget_branch;
+    QVBoxLayout *verticalLayout_4;
+    QLineEdit *lineEdit_area;
+    QComboBox *comboBox_areas;
     QVBoxLayout *verticalLayout;
+    QSpacerItem *verticalSpacer_5;
     QPushButton *pushButton_add;
+    QSpacerItem *verticalSpacer;
     QPushButton *pushButton_addall;
+    QSpacerItem *verticalSpacer_3;
     QPushButton *pushButton_remove;
+    QSpacerItem *verticalSpacer_4;
     QPushButton *pushButton_removeall;
+    QSpacerItem *verticalSpacer_2;
     QVBoxLayout *verticalLayout_3;
     QTableWidget *tableWidget_added;
     QHBoxLayout *horizontalLayout_3;
     QLabel *label_4;
     QComboBox *comboBox_StatType;
     QLabel *label;
-    QLabel *label_2;
     QWidget *horizontalLayoutWidget_2;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_3;
     QLineEdit *lineEdit_name;
+    QPushButton *pushButton_font;
     QSpacerItem *horizontalSpacer;
     QDialogButtonBox *buttonBox;
     QFrame *line;
+    QLabel *label_2;
+    QLineEdit *lineEdit_addedCnt;
+    QLineEdit *lineEdit_hiddenCnt;
 
     void setupUi(QDialog *AddDialog)
     {
         if (AddDialog->objectName().isEmpty())
             AddDialog->setObjectName(QString::fromUtf8("AddDialog"));
-        AddDialog->resize(665, 494);
+        AddDialog->resize(652, 500);
         horizontalLayoutWidget = new QWidget(AddDialog);
         horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(50, 80, 551, 361));
+        horizontalLayoutWidget->setGeometry(QRect(50, 91, 551, 381));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
@@ -122,19 +133,47 @@ public:
 
         horizontalLayout->addLayout(verticalLayout_2);
 
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        lineEdit_area = new QLineEdit(horizontalLayoutWidget);
+        lineEdit_area->setObjectName(QString::fromUtf8("lineEdit_area"));
+        lineEdit_area->setFont(font);
+        lineEdit_area->setAlignment(Qt::AlignCenter);
+        lineEdit_area->setReadOnly(true);
+
+        verticalLayout_4->addWidget(lineEdit_area);
+
+        comboBox_areas = new QComboBox(horizontalLayoutWidget);
+        comboBox_areas->setObjectName(QString::fromUtf8("comboBox_areas"));
+
+        verticalLayout_4->addWidget(comboBox_areas);
+
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalSpacer_5 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer_5);
+
         pushButton_add = new QPushButton(horizontalLayoutWidget);
         pushButton_add->setObjectName(QString::fromUtf8("pushButton_add"));
         pushButton_add->setEnabled(false);
 
         verticalLayout->addWidget(pushButton_add);
 
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer);
+
         pushButton_addall = new QPushButton(horizontalLayoutWidget);
         pushButton_addall->setObjectName(QString::fromUtf8("pushButton_addall"));
 
         verticalLayout->addWidget(pushButton_addall);
+
+        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer_3);
 
         pushButton_remove = new QPushButton(horizontalLayoutWidget);
         pushButton_remove->setObjectName(QString::fromUtf8("pushButton_remove"));
@@ -142,13 +181,24 @@ public:
 
         verticalLayout->addWidget(pushButton_remove);
 
+        verticalSpacer_4 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer_4);
+
         pushButton_removeall = new QPushButton(horizontalLayoutWidget);
         pushButton_removeall->setObjectName(QString::fromUtf8("pushButton_removeall"));
 
         verticalLayout->addWidget(pushButton_removeall);
 
+        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        horizontalLayout->addLayout(verticalLayout);
+        verticalLayout->addItem(verticalSpacer_2);
+
+
+        verticalLayout_4->addLayout(verticalLayout);
+
+
+        horizontalLayout->addLayout(verticalLayout_4);
 
         verticalLayout_3 = new QVBoxLayout();
         verticalLayout_3->setSpacing(6);
@@ -188,17 +238,13 @@ public:
 
         label = new QLabel(AddDialog);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(50, 60, 141, 20));
+        label->setGeometry(QRect(50, 73, 135, 20));
         QFont font1;
         font1.setFamily(QString::fromUtf8("\345\256\213\344\275\223"));
         font1.setPointSize(11);
         font1.setBold(true);
         font1.setWeight(75);
         label->setFont(font1);
-        label_2 = new QLabel(AddDialog);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setGeometry(QRect(370, 60, 141, 16));
-        label_2->setFont(font1);
         horizontalLayoutWidget_2 = new QWidget(AddDialog);
         horizontalLayoutWidget_2->setObjectName(QString::fromUtf8("horizontalLayoutWidget_2"));
         horizontalLayoutWidget_2->setGeometry(QRect(50, 10, 551, 41));
@@ -223,6 +269,12 @@ public:
 
         horizontalLayout_2->addWidget(lineEdit_name);
 
+        pushButton_font = new QPushButton(horizontalLayoutWidget_2);
+        pushButton_font->setObjectName(QString::fromUtf8("pushButton_font"));
+        pushButton_font->setFont(font);
+
+        horizontalLayout_2->addWidget(pushButton_font);
+
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_2->addItem(horizontalSpacer);
@@ -238,6 +290,18 @@ public:
         line->setGeometry(QRect(50, 50, 551, 16));
         line->setFrameShape(QFrame::HLine);
         line->setFrameShadow(QFrame::Sunken);
+        label_2 = new QLabel(AddDialog);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setGeometry(QRect(380, 73, 126, 20));
+        label_2->setFont(font1);
+        lineEdit_addedCnt = new QLineEdit(AddDialog);
+        lineEdit_addedCnt->setObjectName(QString::fromUtf8("lineEdit_addedCnt"));
+        lineEdit_addedCnt->setGeometry(QRect(570, 70, 31, 20));
+        lineEdit_addedCnt->setReadOnly(true);
+        lineEdit_hiddenCnt = new QLineEdit(AddDialog);
+        lineEdit_hiddenCnt->setObjectName(QString::fromUtf8("lineEdit_hiddenCnt"));
+        lineEdit_hiddenCnt->setGeometry(QRect(220, 70, 31, 20));
+        lineEdit_hiddenCnt->setReadOnly(true);
 
         retranslateUi(AddDialog);
 
@@ -263,6 +327,11 @@ public:
         ___qtablewidgetitem4->setText(QApplication::translate("AddDialog", "ID", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem5 = tableWidget_branch->horizontalHeaderItem(2);
         ___qtablewidgetitem5->setText(QApplication::translate("AddDialog", "Name", 0, QApplication::UnicodeUTF8));
+        lineEdit_area->setText(QApplication::translate("AddDialog", "Areas:", 0, QApplication::UnicodeUTF8));
+        comboBox_areas->clear();
+        comboBox_areas->insertItems(0, QStringList()
+         << QApplication::translate("AddDialog", "All Areas", 0, QApplication::UnicodeUTF8)
+        );
         pushButton_add->setText(QApplication::translate("AddDialog", "Insert>", 0, QApplication::UnicodeUTF8));
         pushButton_addall->setText(QApplication::translate("AddDialog", "Insert All>>", 0, QApplication::UnicodeUTF8));
         pushButton_remove->setText(QApplication::translate("AddDialog", "<Revoke", 0, QApplication::UnicodeUTF8));
@@ -280,9 +349,10 @@ public:
          << QApplication::translate("AddDialog", "ThermalPower Station", 0, QApplication::UnicodeUTF8)
         );
         label->setText(QApplication::translate("AddDialog", "HiddenItemList:", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("AddDialog", "AddedItemList:", 0, QApplication::UnicodeUTF8));
         label_3->setText(QApplication::translate("AddDialog", "Site Name:", 0, QApplication::UnicodeUTF8));
         lineEdit_name->setText(QString());
+        pushButton_font->setText(QApplication::translate("AddDialog", "Font", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("AddDialog", "AddedItemList:", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

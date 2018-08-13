@@ -32,7 +32,7 @@ QT_BEGIN_NAMESPACE
 class Ui_TextDialog
 {
 public:
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
     QGroupBox *groupBox;
@@ -45,7 +45,10 @@ public:
     QDialogButtonBox *buttonBox;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label;
+    QSpacerItem *horizontalSpacer_2;
     QPushButton *pushButton_font;
+    QSpacerItem *horizontalSpacer_3;
+    QPushButton *pushButton_color;
     QSpacerItem *horizontalSpacer;
     QTextEdit *textEdit_inputtext;
 
@@ -53,11 +56,11 @@ public:
     {
         if (TextDialog->objectName().isEmpty())
             TextDialog->setObjectName(QString::fromUtf8("TextDialog"));
-        TextDialog->resize(532, 230);
-        widget = new QWidget(TextDialog);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(20, 20, 491, 191));
-        verticalLayout = new QVBoxLayout(widget);
+        TextDialog->resize(538, 246);
+        layoutWidget = new QWidget(TextDialog);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(20, 20, 491, 191));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
@@ -65,7 +68,7 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        groupBox = new QGroupBox(widget);
+        groupBox = new QGroupBox(layoutWidget);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
         horizontalLayout_4 = new QHBoxLayout(groupBox);
         horizontalLayout_4->setSpacing(6);
@@ -95,7 +98,7 @@ public:
 
         horizontalLayout->addWidget(groupBox);
 
-        checkBox_border = new QCheckBox(widget);
+        checkBox_border = new QCheckBox(layoutWidget);
         checkBox_border->setObjectName(QString::fromUtf8("checkBox_border"));
         QFont font;
         font.setFamily(QString::fromUtf8("Arial"));
@@ -106,7 +109,7 @@ public:
 
         horizontalLayout->addWidget(checkBox_border);
 
-        buttonBox = new QDialogButtonBox(widget);
+        buttonBox = new QDialogButtonBox(layoutWidget);
         buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
         buttonBox->setOrientation(Qt::Vertical);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
@@ -120,7 +123,7 @@ public:
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        label = new QLabel(widget);
+        label = new QLabel(layoutWidget);
         label->setObjectName(QString::fromUtf8("label"));
         QFont font1;
         font1.setFamily(QString::fromUtf8("Arial"));
@@ -131,11 +134,25 @@ public:
 
         horizontalLayout_2->addWidget(label);
 
-        pushButton_font = new QPushButton(widget);
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_2);
+
+        pushButton_font = new QPushButton(layoutWidget);
         pushButton_font->setObjectName(QString::fromUtf8("pushButton_font"));
         pushButton_font->setFont(font);
 
         horizontalLayout_2->addWidget(pushButton_font);
+
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_3);
+
+        pushButton_color = new QPushButton(layoutWidget);
+        pushButton_color->setObjectName(QString::fromUtf8("pushButton_color"));
+        pushButton_color->setFont(font);
+
+        horizontalLayout_2->addWidget(pushButton_color);
 
         horizontalSpacer = new QSpacerItem(218, 21, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -144,7 +161,7 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_2);
 
-        textEdit_inputtext = new QTextEdit(widget);
+        textEdit_inputtext = new QTextEdit(layoutWidget);
         textEdit_inputtext->setObjectName(QString::fromUtf8("textEdit_inputtext"));
 
         verticalLayout->addWidget(textEdit_inputtext);
@@ -165,6 +182,7 @@ public:
         checkBox_border->setText(QApplication::translate("TextDialog", "Border", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("TextDialog", "Text:", 0, QApplication::UnicodeUTF8));
         pushButton_font->setText(QApplication::translate("TextDialog", "Font", 0, QApplication::UnicodeUTF8));
+        pushButton_color->setText(QApplication::translate("TextDialog", "Color", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

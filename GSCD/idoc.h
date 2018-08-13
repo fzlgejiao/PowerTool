@@ -32,7 +32,7 @@ public:
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
 
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
-	
+	QList<int >	&   getarealist(){return listAreas;}
 	iData*	Uid2Data(int uid);
 
 	//test func
@@ -59,7 +59,7 @@ private:
 	QMap<int,iBUS *>			listBUS;															//<id,iBUS*>: id is the bus id
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id
-
+	QList<int >					listAreas;
 	void GetBUSData(const QString& dataname="BUS");
 	void GetBRANCHData(const QString& dataname="BRANCH");
 	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");

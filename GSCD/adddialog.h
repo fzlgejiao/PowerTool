@@ -10,6 +10,8 @@
 class iDoc;
 class iNodeData;
 class iSTAT;
+class QFont;
+
 enum Columns
 {
 	Type=0,
@@ -38,7 +40,8 @@ private slots:
 		void OnAddAll();
 		void OnRevoke();
 		void OnRevokeAll();		
-		
+		void OnFontdialog();
+		void OnComboAreaChanged(int index);
 		
 private:
 	Ui::AddDialog ui;
@@ -57,6 +60,7 @@ private:
 	void ClearTableContext(QTableWidget *tablewidget);
 	//void addGeneratorRows(iGENERATOR *generator);
 	
+	QFont m_font;
 
 };
 

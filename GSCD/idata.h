@@ -57,14 +57,14 @@ public:
 	int		statId(){return m_statId;}
 	void	statAdded(int id){m_statId = id;}
 	void	statRemoved(){m_statId=0;}
-
+	
 	void	addLink(iLinkData* data){m_linkDatas.append(data);}
 	QList<iLinkData *>& linkDatas(){return m_linkDatas;}
 
 
 protected:
 	int			m_statId;																			//station id(0: not assigned to a station, x: station id)
-
+	
 	QList<iLinkData *>	m_linkDatas;																//branchs/transformers connected to this node
 };
 
@@ -99,10 +99,10 @@ private:
 class iBUS : public iNodeData
 {
 public:
-	iBUS(int id,const QString& name,QObject *parent=0);
+	iBUS(int id,int areaid,const QString& name,QObject *parent=0);
 	~iBUS(){}
 	T_DATA type(){return T_BUS;}
-	
+	int    belongedArea(){return m_areaID;}
 	
 	QString name(){return m_NAME;}
 
@@ -110,7 +110,8 @@ private:
 	friend class iDoc;
 
 	//properties
-	QString			m_NAME;
+	QString		m_NAME;
+	int         m_areaID;
 };
 
 class iBRANCH : public iLinkData

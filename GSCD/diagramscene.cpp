@@ -307,8 +307,8 @@ void DiagramScene::viewProperty()
 			QString name = dlg.GetStationName();
 			stat->setName(name);
 			DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
-			 //if(statItem)
-				// statItem->setName(name);
+			//if(statItem)
+			// statItem->setName(name);
 		}		
 	}
 	else if(data->type()==T_BRANCH)

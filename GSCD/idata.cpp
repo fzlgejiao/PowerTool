@@ -58,10 +58,11 @@ void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 //--------------------------------------------------------------------------------------------------
 //	iBUS funcs
 //--------------------------------------------------------------------------------------------------
-iBUS::iBUS(int id,const QString& name,QObject *parent)
+iBUS::iBUS(int id,int areaid,const QString& name,QObject *parent)
 	: iNodeData(id,parent)
 {
 	m_NAME = name;
+	m_areaID=areaid;
 }
 iBRANCH::iBRANCH(int id,int fromUid,int toUid,QObject *parent)
 	: iLinkData(id,fromUid,toUid,parent)
