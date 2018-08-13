@@ -22,6 +22,8 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     myTextColor = Qt::black;
     myLineColor = Qt::black;
 
+	myFont.setWeight(QFont::Bold);
+
 	//context menus
 	propertyAction = new QAction(tr("&Properties..."), this);
 	propertyAction->setStatusTip(tr("Show object property"));
@@ -265,7 +267,7 @@ void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 		if(item)
 			viewProperty();		
 	}
-	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
+	//QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
 																		
 	qDebug("DoubleClickEvent");
 }
@@ -416,6 +418,11 @@ void DiagramScene::deleteItems()
 }
 void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 {
+	//QGraphicsItemGroup *pGroup = new QGraphicsItemGroup();
+	//pGroup->setFlags( QGraphicsItem::ItemIsMovable);
+	//pGroup->setHandlesChildEvents(false);
+	//addItem(pGroup);
+
 	//create station item
 	DiagramItem *item = new DiagramItem(stat, getMenu(T_STAT),0,this);								//create diagram item for station
 	item->setBrush(myItemColor);
@@ -424,7 +431,7 @@ void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 	stat->itemAdded(item);																			//set item to station
 
 	//create station name text item
-	DiagramTextItem* itemName = new DiagramTextItem();
+	DiagramTextItem* itemName = new DiagramTextItem(0,this);
 	itemName->setFont(myFont);
 	itemName->setPlainText(stat->name());
 	//itemName->setTextInteractionFlags(Qt::TextEditorInteraction);
@@ -435,6 +442,10 @@ void DiagramScene::addStationItem(iSTAT* stat,const QPointF& pos)
 	itemName->setDefaultTextColor(myTextColor);
 	itemName->setPos(pos + QPointF(20,20));
 	//emit textInserted(itemName);
+
+
+	//pGroup->addToGroup(item);
+	//pGroup->addToGroup(itemName);
 
 	//create station value text item
 

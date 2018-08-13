@@ -268,7 +268,7 @@ void MainWindow::createActions()
 	connect(statusbarAct, SIGNAL(triggered()),
 		mdiArea, SLOT(showStatusbar()));
 
-	scaledialogAction = new QAction(tr("&Zoom In/Out"), this);
+	scaledialogAction = new QAction(tr("&Scaling..."), this);
 	scaledialogAction->setStatusTip(tr("Change the scale"));
 	connect(scaledialogAction, SIGNAL(triggered()),this, SLOT(OnZoomDialog()));
 

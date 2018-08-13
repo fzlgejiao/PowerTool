@@ -45,6 +45,7 @@ DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+	setFlag(QGraphicsItem::ItemIsFocusable, false);
 }
 //! [0]
 iData* DiagramItem::myData()
@@ -118,5 +119,5 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
 //! [6]
 void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-	QGraphicsItem::mouseDoubleClickEvent(event);
+	QGraphicsItem::mouseDoubleClickEvent(mouseEvent);
 }

@@ -15,96 +15,46 @@
 #include <QtGui/QButtonGroup>
 #include <QtGui/QDialog>
 #include <QtGui/QFrame>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
-#include <QtGui/QSpacerItem>
 #include <QtGui/QTableWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
 
 QT_BEGIN_NAMESPACE
 
 class Ui_StationParameterDialog
 {
 public:
-    QWidget *verticalLayoutWidget;
-    QVBoxLayout *verticalLayout;
-    QHBoxLayout *horizontalLayout;
-    QLabel *label;
-    QLineEdit *lineEdit_name;
-    QSpacerItem *horizontalSpacer;
     QLabel *label_2;
     QFrame *line;
     QTableWidget *tableWidget_parameter;
-    QSpacerItem *verticalSpacer;
-    QHBoxLayout *horizontalLayout_2;
     QPushButton *pushButton_tideway;
     QPushButton *pushButton_voltage;
-    QSpacerItem *horizontalSpacer_2;
     QPushButton *pushButton_OK;
+    QLabel *label;
+    QLineEdit *lineEdit_name;
 
     void setupUi(QDialog *StationParameterDialog)
     {
         if (StationParameterDialog->objectName().isEmpty())
             StationParameterDialog->setObjectName(QString::fromUtf8("StationParameterDialog"));
         StationParameterDialog->resize(709, 348);
-        verticalLayoutWidget = new QWidget(StationParameterDialog);
-        verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(40, 30, 611, 281));
-        verticalLayout = new QVBoxLayout(verticalLayoutWidget);
-        verticalLayout->setSpacing(6);
-        verticalLayout->setContentsMargins(11, 11, 11, 11);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        verticalLayout->setContentsMargins(0, 0, 0, 0);
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        label = new QLabel(verticalLayoutWidget);
-        label->setObjectName(QString::fromUtf8("label"));
+        label_2 = new QLabel(StationParameterDialog);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setGeometry(QRect(610, 30, 64, 22));
         QFont font;
         font.setFamily(QString::fromUtf8("Arial"));
         font.setPointSize(10);
-        font.setBold(true);
-        font.setWeight(75);
-        label->setFont(font);
-
-        horizontalLayout->addWidget(label);
-
-        lineEdit_name = new QLineEdit(verticalLayoutWidget);
-        lineEdit_name->setObjectName(QString::fromUtf8("lineEdit_name"));
-
-        horizontalLayout->addWidget(lineEdit_name);
-
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout->addItem(horizontalSpacer);
-
-        label_2 = new QLabel(verticalLayoutWidget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        QFont font1;
-        font1.setFamily(QString::fromUtf8("Arial"));
-        font1.setPointSize(10);
-        font1.setBold(false);
-        font1.setWeight(50);
-        label_2->setFont(font1);
-
-        horizontalLayout->addWidget(label_2);
-
-
-        verticalLayout->addLayout(horizontalLayout);
-
-        line = new QFrame(verticalLayoutWidget);
+        font.setBold(false);
+        font.setWeight(50);
+        label_2->setFont(font);
+        line = new QFrame(StationParameterDialog);
         line->setObjectName(QString::fromUtf8("line"));
+        line->setGeometry(QRect(600, 40, 91, 20));
         line->setFrameShape(QFrame::HLine);
         line->setFrameShadow(QFrame::Sunken);
-
-        verticalLayout->addWidget(line);
-
-        tableWidget_parameter = new QTableWidget(verticalLayoutWidget);
+        tableWidget_parameter = new QTableWidget(StationParameterDialog);
         if (tableWidget_parameter->columnCount() < 7)
             tableWidget_parameter->setColumnCount(7);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
@@ -122,38 +72,31 @@ public:
         QTableWidgetItem *__qtablewidgetitem6 = new QTableWidgetItem();
         tableWidget_parameter->setHorizontalHeaderItem(6, __qtablewidgetitem6);
         tableWidget_parameter->setObjectName(QString::fromUtf8("tableWidget_parameter"));
-
-        verticalLayout->addWidget(tableWidget_parameter);
-
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayout->addItem(verticalSpacer);
-
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        pushButton_tideway = new QPushButton(verticalLayoutWidget);
+        tableWidget_parameter->setGeometry(QRect(21, 72, 671, 221));
+        pushButton_tideway = new QPushButton(StationParameterDialog);
         pushButton_tideway->setObjectName(QString::fromUtf8("pushButton_tideway"));
-
-        horizontalLayout_2->addWidget(pushButton_tideway);
-
-        pushButton_voltage = new QPushButton(verticalLayoutWidget);
+        pushButton_tideway->setGeometry(QRect(50, 310, 93, 28));
+        pushButton_voltage = new QPushButton(StationParameterDialog);
         pushButton_voltage->setObjectName(QString::fromUtf8("pushButton_voltage"));
-
-        horizontalLayout_2->addWidget(pushButton_voltage);
-
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_2->addItem(horizontalSpacer_2);
-
-        pushButton_OK = new QPushButton(verticalLayoutWidget);
+        pushButton_voltage->setGeometry(QRect(170, 310, 93, 28));
+        pushButton_OK = new QPushButton(StationParameterDialog);
         pushButton_OK->setObjectName(QString::fromUtf8("pushButton_OK"));
-
-        horizontalLayout_2->addWidget(pushButton_OK);
-
-
-        verticalLayout->addLayout(horizontalLayout_2);
-
+        pushButton_OK->setGeometry(QRect(600, 310, 93, 28));
+        label = new QLabel(StationParameterDialog);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setGeometry(QRect(20, 32, 113, 19));
+        QFont font1;
+        font1.setFamily(QString::fromUtf8("Arial"));
+        font1.setPointSize(10);
+        font1.setBold(true);
+        font1.setWeight(75);
+        label->setFont(font1);
+        lineEdit_name = new QLineEdit(StationParameterDialog);
+        lineEdit_name->setObjectName(QString::fromUtf8("lineEdit_name"));
+        lineEdit_name->setGeometry(QRect(140, 32, 137, 22));
+        label_2->raise();
+        pushButton_OK->raise();
+        line->raise();
 
         retranslateUi(StationParameterDialog);
 
@@ -163,7 +106,6 @@ public:
     void retranslateUi(QDialog *StationParameterDialog)
     {
         StationParameterDialog->setWindowTitle(QApplication::translate("StationParameterDialog", "Station", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("StationParameterDialog", "Station Name:", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("StationParameterDialog", "Unit:-----", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem = tableWidget_parameter->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("StationParameterDialog", "Name", 0, QApplication::UnicodeUTF8));
@@ -179,9 +121,10 @@ public:
         ___qtablewidgetitem5->setText(QApplication::translate("StationParameterDialog", "Load", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem6 = tableWidget_parameter->horizontalHeaderItem(6);
         ___qtablewidgetitem6->setText(QApplication::translate("StationParameterDialog", "Compensation", 0, QApplication::UnicodeUTF8));
-        pushButton_tideway->setText(QApplication::translate("StationParameterDialog", "TideWay", 0, QApplication::UnicodeUTF8));
-        pushButton_voltage->setText(QApplication::translate("StationParameterDialog", "Voltage", 0, QApplication::UnicodeUTF8));
+        pushButton_tideway->setText(QApplication::translate("StationParameterDialog", "Power flow...", 0, QApplication::UnicodeUTF8));
+        pushButton_voltage->setText(QApplication::translate("StationParameterDialog", "Voltage...", 0, QApplication::UnicodeUTF8));
         pushButton_OK->setText(QApplication::translate("StationParameterDialog", "OK", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("StationParameterDialog", "Station Name:", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

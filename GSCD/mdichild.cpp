@@ -17,6 +17,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
     resetMatrix();
     translate(oldMatrix.dx(), oldMatrix.dy());
     scale(1, 1);
+	setDragMode(QGraphicsView::RubberBandDrag);
 
 	m_scene->setSceneRect(QRectF(0, 0, 1240, 1754));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç
 	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),		this, SLOT(itemInserted(DiagramItem*)));
