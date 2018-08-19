@@ -8,11 +8,29 @@
 //data type
 typedef enum{
 	T_NONE			= 0,
+	T_AREA,
 	T_STAT,
 	T_BUS,
 	T_BRANCH,
 	T_TRANSFORMER,
+
+	T_NOTE,
+	T_SYSINFO,
+	T_LEGEND
 }T_DATA;
+
+typedef enum{
+	MENU_SCENE		= 0,
+	MENU_STAT,
+	MENU_STAT_NAME,
+	MENU_STAT_VALUE,
+	MENU_BRANCH,
+	MENU_NOTE,
+	MENU_SYSINFO,
+	MENU_LEGEND
+
+}MENU_TYPE;
+
 
 #define Uid2Type(uid)	((uid) >> 16)
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
@@ -68,6 +86,23 @@ protected:
 	QList<iLinkData *>	m_linkDatas;																//branchs/transformers connected to this node
 };
 
+class iAREA : public iData
+{
+public:
+	iAREA(int id,const QString& name,QObject *parent=0)
+		:iData(id,parent)
+	{
+		m_Name = name;
+	}
+	~iAREA(){}
+	T_DATA	type(){return T_AREA;}
+	QString name(){return m_Name;}
+
+private:
+	friend class iDoc;
+	QString			m_Name;
+};
+
 class DiagramItem;
 class DiagramTextItem;
 class iSTAT : public iData
@@ -76,8 +111,9 @@ public:
 	iSTAT(int id,const QString& name,QObject *parent=0);
 	~iSTAT();
 	T_DATA	type(){return T_STAT;}
-	QString name(){return m_name;}
-	void	setName(const QString& value){m_name=value;}
+	QString name(){return m_Name;}
+	void	setName(const QString& value){m_Name=value;}
+	QString value(){return m_Value;}
 
 	void	setNodes(const QList<iNodeData *>& listNodes);
 	//void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
@@ -89,10 +125,16 @@ public:
 	void	itemRemoved(){m_itemStat=NULL;}
 	DiagramItem* myItem(){return m_itemStat;}
 
-private:
-	QString			m_name;
+	void	setItemName(DiagramTextItem* item){m_itemName = item;}
+	DiagramTextItem* itemName(){return m_itemName;}
+	void	setItemValue(DiagramTextItem* item){m_itemValue = item;}
+	DiagramTextItem* itemValue(){return m_itemValue;}
 
-	DiagramItem*	m_itemStat;																		//pointer to station diagram item
+private:
+	QString			m_Name;
+	QString			m_Value;
+
+	DiagramItem*	 m_itemStat;																	//pointer to station diagram item
 	DiagramTextItem* m_itemName;																	//pointer to station name text item
 	DiagramTextItem* m_itemValue;																	//pointer to station value text item
 
@@ -108,13 +150,13 @@ public:
 	T_DATA type(){return T_BUS;}
 	int    belongedArea(){return m_areaID;}
 	
-	QString name(){return m_NAME;}
+	QString name(){return m_Name;}
 
 private:
 	friend class iDoc;
 
 	//properties
-	QString		m_NAME;
+	QString		m_Name;
 	int         m_areaID;
 };
 
@@ -140,11 +182,17 @@ public:
 	T_DATA type(){return T_TRANSFORMER;}
 	
 
-	
-
 private:
 	friend class iDoc;
 
 	//properties
+};
+
+class iNote : public iData
+{
+public:
+	iNote(int id,const QString& name,QObject *parent=0);
+	~iNote(){}
+	T_DATA type(){return T_NOTE;}
 };
 #endif // IDATA_H

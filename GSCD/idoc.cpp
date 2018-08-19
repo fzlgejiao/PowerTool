@@ -22,6 +22,9 @@ iDoc::~iDoc()
 void iDoc::test()
 {
 	//test code
+	iAREA* area1 = new iAREA(1,"area1",this);
+	iAREA* area2 = new iAREA(2,"area2",this);
+
 	iBUS* bus1 = new iBUS(1,1,"bus1", this);
 	iBUS* bus2 = new iBUS(2,1,"bus2", this);
 	iBUS* bus3 = new iBUS(3,1,"bus3", this);
@@ -36,7 +39,8 @@ void iDoc::test()
 	listBUS.insert(1,bus1);
 	listBUS.insert(2,bus2);
 	listBUS.insert(3,bus3);
-	listAreas.append(1);
+	listAREA.insert(1,area1);
+	listAREA.insert(2,area2);
 	//iSTAT* stat1 = STAT_new("STAT1");
 	//iSTAT* stat2 = STAT_new("STAT2");
 
@@ -148,8 +152,6 @@ void iDoc::GetDataModel(T_DATA datatype)
 					case T_BUS:
 						{
 							int areaid=datalist[4].toInt();
-							if(!listAreas.contains(areaid))
-								listAreas.append(areaid);
 							iBUS *bus=new iBUS(datalist[0].toInt(),areaid,datalist[1].replace(QString("'"),QString("")).trimmed(),this);
 							addBUS(bus);
 						}

@@ -43,8 +43,11 @@ public:
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+	void mousePressEvent ( QGraphicsSceneMouseEvent * event );
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+	QRectF	boundingRect () const;
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
     QPolygonF		myPolygon;

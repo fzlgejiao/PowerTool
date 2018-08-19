@@ -21,23 +21,26 @@ public:
     enum { Type = UserType + 3 };
 
     DiagramTextItem(QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+	~DiagramTextItem();
 
     int type() const
         { return Type; }
 
+	void setDefaultPos(const QPointF& pos){defPos = pos;}
+	void backToDefaultPos(){setPos(defPos);}
+
 
 signals:
-    void lostFocus(DiagramTextItem *item);
     void selectedChange(QGraphicsItem *item);
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-    void focusOutEvent(QFocusEvent *event);
+	void mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent );
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-
+	QPointF		defPos;
 };
-//! [0]
 
 #endif

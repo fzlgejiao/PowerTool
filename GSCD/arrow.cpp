@@ -15,7 +15,7 @@ Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,QMenu *con
 {
 	setData(ITEM_DATA,(uint)data);
     myStartItem = startItem;
-    myEndItem = endItem;
+    myEndItem	= endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -118,6 +118,15 @@ void Arrow::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     setSelected(true);
 	if(myContextMenu)
 		myContextMenu->exec(event->screenPos());
+}
+void Arrow::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
+{
+	if (mouseEvent->button() == Qt::RightButton)
+	{
+		scene()->clearSelection();
+		setSelected(true);
+	}
+	QGraphicsItem::mousePressEvent(mouseEvent);
 }
 void Arrow::mouseDoubleClickEvent (QGraphicsSceneMouseEvent * event )
 {

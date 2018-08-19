@@ -18,12 +18,10 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
     translate(oldMatrix.dx(), oldMatrix.dy());
     scale(1, 1);
 	setDragMode(QGraphicsView::RubberBandDrag);
+	//setDragMode(QGraphicsView::ScrollHandDrag);
+	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-	m_scene->setSceneRect(QRectF(0, 0, 1240, 1754));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç
-	connect(m_scene, SIGNAL(itemInserted(DiagramItem*)),		this, SLOT(itemInserted(DiagramItem*)));
-	connect(m_scene, SIGNAL(textInserted(QGraphicsTextItem*)),	this, SLOT(textInserted(QGraphicsTextItem*)));
-	connect(m_scene, SIGNAL(itemSelected(QGraphicsItem*)),		this, SLOT(itemSelected(QGraphicsItem*)));
-	
+	m_scene->setSceneRect(QRectF(0, 0, 1240, 1754));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç	
 }
 MdiChild::~MdiChild()
 {
@@ -168,28 +166,6 @@ void MdiChild::setCurrentFile(const QString &fileName)
 QString MdiChild::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
-}
-
-void MdiChild::itemInserted(DiagramItem *item)
-{
-	emit itemInserted(item, m_scene);
-}
-
-void MdiChild::textInserted(QGraphicsTextItem *item)
-{
-	emit textInserted(item, m_scene);
-}
-void MdiChild::itemSelected(QGraphicsItem *item)
-{
-    DiagramTextItem *textItem = qgraphicsitem_cast<DiagramTextItem *>(item);
-
-    QFont font = textItem->font();
-    QColor color = textItem->defaultTextColor();
-    //fontCombo->setCurrentFont(font);
-    //fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
-    //boldAction->setChecked(font.weight() == QFont::Bold);
-    //italicAction->setChecked(font.italic());
-    //underlineAction->setChecked(font.underline());
 }
 void MdiChild::OnScaleChanged(const QString &scale)
 {

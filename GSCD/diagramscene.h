@@ -7,6 +7,14 @@
 #include "diagramtextitem.h"
 #include "idata.h"
 
+//action type
+typedef enum{
+	ACT_NONE			= 0,
+	ACT_VIEW,
+	ACT_EDIT,
+	ACT_DELETE,
+}ACT_TYPE;
+
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 class QMenu;
@@ -14,7 +22,7 @@ class QAction;
 class QPointF;
 class QGraphicsLineItem;
 class QFont;
-class QGraphicsTextItem;
+class QGraphicsSimpleTextItem;
 class QColor;
 class iBUS;
 class iBRANCH;
@@ -46,9 +54,12 @@ public:
     void setItemColor(const QColor &color);
     void setFont(const QFont &font);
 
-	void addMenu(T_DATA type,QMenu *menu){myMenus.insert(type,menu);}
-	QMenu* getMenu(T_DATA type){return myMenus.value(type,NULL);}
-	void deleteItems();																				//to deal with delete event from main menu
+	void addMenu(MENU_TYPE type,QMenu *menu){myMenus.insert(type,menu);}
+	QMenu* getMenu(MENU_TYPE type){return myMenus.value(type,NULL);}
+
+	void viewItem();																				//to deal with view property event from main menu
+	void editItem();																				//to deal with edit object event from main menu
+	void deleteItems();																				//to deal with delete items event from main menu
 	
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
@@ -57,24 +68,43 @@ protected:
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
+	void procItem(ACT_TYPE act,QGraphicsItem* item);
+
+	//actions for station
 	void addStation(const QPointF& pos);
-	void addStationItem(iSTAT* stat,const QPointF& pos);
-	void editStationItem(DiagramItem *item,iSTAT* stat);
+	void editStation(DiagramItem *item,iSTAT* stat);
+	void viewStation(DiagramItem *item,iSTAT* stat);
+	void deleteStation(DiagramItem *item,iSTAT* stat);
+
+	void viewStationName(DiagramTextItem *item,iSTAT* stat);
+	void viewStationValue(DiagramTextItem *item,iSTAT* stat);
+
+	//actions for branch
+	void editBranch();																				//for 'edit branch' menu item
+
+	//actions for note
+	void addNote(const QPointF& pos);
+	void viewNote();
 
 private:
     bool isItemChange(int type);
 
 	MainWindow* pMain;
 	iDoc*		myDoc;
-	QMap<T_DATA,QMenu *> myMenus;
+	QMap<MENU_TYPE,QMenu *> myMenus;
 	QMenu*		sceneMenu;
 	QMenu*		multiMenu;
 	QMenu*		statMenu;
+	QMenu*		statValueMenu;
+	QMenu*		statNameMenu;
+	QMenu*		branchMenu;
+	QMenu*		noteMenu;
 
 	QAction*	propertyAction;
     QAction*	deleteAction;
 	QAction*	editStationAction;
 	QAction*	editBranchAction;
+	QAction*	defPositionAction;
 
     bool		leftButtonDown;
     QPointF		startPoint;
@@ -86,16 +116,8 @@ private:
     QColor		myLineColor;
 
 public slots:
-    void editorLostFocus(DiagramTextItem *item);
-	void viewProperty();																			//for 'property' menu item
-	void editStation();																				//for 'edit station' menu item
-	void editBranch();																				//for 'edit branch' menu item
-	void deleteItem();																				//for 'delete' menu item
 
 signals:
-    void itemInserted(DiagramItem *item);
-    void textInserted(QGraphicsTextItem *item);
-    void itemSelected(QGraphicsItem *item);
 	void modeDone();
 };
 //! [0]

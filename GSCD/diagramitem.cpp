@@ -45,7 +45,8 @@ DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-	setFlag(QGraphicsItem::ItemIsFocusable, false);
+	setFlag(QGraphicsItem::ItemIsFocusable, true);
+	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 }
 //! [0]
 iData* DiagramItem::myData()
@@ -113,11 +114,61 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             arrow->updatePosition();
         }
     }
-
+   if (change == QGraphicsItem::ItemSelectedChange)
+    {
+        if (value == true)
+        {
+            // do stuff if selected
+			foreach(QGraphicsItem *item,childItems())
+			{
+				QGraphicsSimpleTextItem* txtItem = qgraphicsitem_cast<QGraphicsSimpleTextItem *>(item);
+				if(txtItem)
+				{
+					txtItem->setPen(QPen(Qt::green,1));
+				}
+			}
+        }
+        else
+        {
+            // do stuff if not selected
+        }
+    }
     return value;
 }
 //! [6]
+void DiagramItem::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
+{
+	if (mouseEvent->button() == Qt::RightButton)
+	{
+		scene()->clearSelection();
+		setSelected(true);
+	}
+	QGraphicsItem::mousePressEvent(mouseEvent);
+}
 void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
 	QGraphicsItem::mouseDoubleClickEvent(mouseEvent);
+}
+QRectF DiagramItem::boundingRect() const
+{
+    return QGraphicsPolygonItem::boundingRect() | childrenBoundingRect();
+}
+void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	QStyleOptionGraphicsItem op;
+	op.initFrom(widget);
+
+	// set state to State_None when selected
+	if (option->state & QStyle::State_Selected)
+	{
+		setPen(QPen(Qt::blue,2));
+		op.state = QStyle::State_None;
+	}
+	else
+	{
+		setPen(QPen(Qt::black,2));
+	}
+
+	// call default func to draw
+	QGraphicsPolygonItem::paint(painter, &op, widget);
 }

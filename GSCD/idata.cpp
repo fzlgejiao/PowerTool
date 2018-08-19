@@ -27,7 +27,8 @@ iNodeData::iNodeData(int id,QObject *parent)
 iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 	:iData(id,parent)
 {
-	m_name = name;
+	m_Name = name;
+	m_Value= "value";
 	m_itemStat = NULL;
 }
 iSTAT::~iSTAT()
@@ -61,7 +62,7 @@ void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 iBUS::iBUS(int id,int areaid,const QString& name,QObject *parent)
 	: iNodeData(id,parent)
 {
-	m_NAME = name;
+	m_Name = name;
 	m_areaID=areaid;
 }
 iBRANCH::iBRANCH(int id,int fromUid,int toUid,QObject *parent)

@@ -134,8 +134,6 @@ MdiChild *MainWindow::createMdiChild()
 	connect(child, SIGNAL(copyAvailable(bool)),		cutAct, SLOT(setEnabled(bool)));
 	connect(child, SIGNAL(copyAvailable(bool)),		copyAct, SLOT(setEnabled(bool)));
 
-	connect(child, SIGNAL(itemInserted(DiagramItem*, DiagramScene*)),		this, SLOT(itemInserted(DiagramItem*, DiagramScene*)));
-	connect(child, SIGNAL(textInserted(QGraphicsTextItem*, DiagramScene*)),	this, SLOT(textInserted(QGraphicsTextItem*, DiagramScene*)));	
 	connect(this,  SIGNAL(scaleChanged(const QString &)),child, SLOT(OnScaleChanged(const QString &)));
 	connect(scene, SIGNAL(selectionChanged()),this, SLOT(sceneSelectionChanged()));
 	connect(scene, SIGNAL(modeDone()),this, SLOT(OnModeDone()));
@@ -765,21 +763,7 @@ void MainWindow::editObject()
 	if(!child)
 		return;
 
-	if(child->scene()->selectedItems().isEmpty())
-		return;
-
-	QGraphicsItem* item = child->scene()->selectedItems().first();
-	if(!item)
-		return;
-
-	iData* data = (iData *)item->data(ITEM_DATA).toUInt();
-	if(!data)
-		return;
-
-	if(data->type() == T_STAT)
-	{
-		child->scene()->editStation();
-	}
+	child->scene()->editItem();
 }
 void MainWindow::viewProperty()
 {
@@ -787,7 +771,7 @@ void MainWindow::viewProperty()
 	if(!child)
 		return;
 
-	child->scene()->viewProperty();
+	child->scene()->viewItem();
 }
 
 void MainWindow::imageArea()
@@ -862,19 +846,6 @@ void MainWindow::OnZoomDialog()
 	}
 }
 
-void MainWindow::itemInserted(DiagramItem *item, DiagramScene* scene)
-{
-	//pointerTypeGroup->button(int(DiagramScene::MoveItem))->setChecked(true);
-	//scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-	//buttonGroup->button(int(item->diagramType()))->setChecked(false);
-}
-
-void MainWindow::textInserted(QGraphicsTextItem *, DiagramScene* scene)
-{
-	//buttonGroup->button(InsertTextButton)->setChecked(false);
-	//scene->setMode(DiagramScene::Mode(pointerTypeGroup->checkedId()));
-}
-
 void MainWindow::OnModeDone()
 {
 	foreach(QAction *action, actionModeGroup->actions())
@@ -884,4 +855,14 @@ void MainWindow::OnModeDone()
 		button->setChecked(false);
 
 	m_nActMode = M_MoveItem;
+}
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Escape) 
+	{
+		OnModeDone();
+    } 
+	else 
+	{
+        QMainWindow::keyPressEvent(event);
+    }
 }

@@ -30,16 +30,11 @@ protected:
 
 public slots:
     void documentWasModified();
-	void itemInserted(DiagramItem *item);
-	void textInserted(QGraphicsTextItem *item);
-	void itemSelected(QGraphicsItem *item);
-
 	void OnScaleChanged(const QString &);
 	
 
 signals:
-	void itemInserted(DiagramItem *item, DiagramScene *scene);
-	void textInserted(QGraphicsTextItem *item, DiagramScene *scene);
+
 
 private:
     bool maybeSave();

@@ -33,6 +33,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event);
+	void keyPressEvent(QKeyEvent *event);
 	QList<QGraphicsItem *> selectedItems();
 
 private:
@@ -184,8 +185,6 @@ private slots:
 	void OnModeActionGroupClicked(QAction* action);
 	void OnModeButtonGroupClicked(int id);
 	void OnModeDone();
-	void itemInserted(DiagramItem *item,DiagramScene* scene);
-	void textInserted(QGraphicsTextItem *item, DiagramScene* scene);
 	void OnScaleChanged(const QString &scale);
 	void sceneSelectionChanged();
 

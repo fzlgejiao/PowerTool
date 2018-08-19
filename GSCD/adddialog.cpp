@@ -15,8 +15,8 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	m_doc=idoc;
 	m_editstation=editstation;
 	m_doc->getAvailableNode(hiddennodelist);	
-	foreach(int area,m_doc->getarealist())
-		ui.comboBox_areas->addItem(QString::number(area));
+	foreach(iAREA *area,m_doc->getArealist())
+		ui.comboBox_areas->addItem(area->name());
 	this->setFixedSize(this->size());
 
 	m_font=QFont("Arial",10);
