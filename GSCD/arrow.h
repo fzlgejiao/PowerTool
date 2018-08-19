@@ -21,7 +21,7 @@ class Arrow : public QGraphicsLineItem
 public:
     enum { Type = UserType + 4 };
 
-    Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,QMenu *contextMenu = 0,
+    Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
 
     int type() const
@@ -42,7 +42,6 @@ public:
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0);
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 	void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
 	void mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent );
 
@@ -51,7 +50,6 @@ private:
     DiagramItem*	myEndItem;
     QColor			myColor;
     QPolygonF		arrowHead;
-	QMenu *			myContextMenu;
 };
 
 

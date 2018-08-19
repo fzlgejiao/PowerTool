@@ -80,7 +80,8 @@ protected:
 	void viewStationValue(DiagramTextItem *item,iSTAT* stat);
 
 	//actions for branch
-	void editBranch();																				//for 'edit branch' menu item
+	void viewBranch(iBRANCH* branch);																//for 'property' of branch menu item
+	void editBranch(iBRANCH* branch);																//for 'edit branch' menu item
 
 	//actions for note
 	void addNote(const QPointF& pos);

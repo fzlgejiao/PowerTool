@@ -9,7 +9,7 @@
 const qreal Pi = 3.14;
 
 //! [0]
-Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,QMenu *contextMenu,
+Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,
          QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsLineItem(parent, scene)
 {
@@ -17,9 +17,9 @@ Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,QMenu *con
     myStartItem = startItem;
     myEndItem	= endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
+	setFlag(QGraphicsItem::ItemIsFocusable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-	myContextMenu = contextMenu;
 }
 //! [0]
 iData* Arrow::myData()
@@ -112,13 +112,6 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     }
 }
 //! [7]
-void Arrow::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-{
-    scene()->clearSelection();
-    setSelected(true);
-	if(myContextMenu)
-		myContextMenu->exec(event->screenPos());
-}
 void Arrow::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
 {
 	if (mouseEvent->button() == Qt::RightButton)

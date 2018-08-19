@@ -7,11 +7,9 @@
 #include "diagramscene.h"
 
 //! [0]
-DiagramItem::DiagramItem(iData* data, QMenu *contextMenu,
-             QGraphicsItem *parent, QGraphicsScene *scene)
+DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *scene)
     : QGraphicsPolygonItem(parent, scene)
 {
-    myContextMenu = contextMenu;
 	setData(ITEM_DATA,(uint)data);
 
     QPainterPath path;
@@ -93,17 +91,6 @@ QPixmap DiagramItem::image() const
 
     return pixmap;
 }
-
-
-//! [5]
-void DiagramItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-{
-    scene()->clearSelection();
-    setSelected(true);
-	if(myContextMenu)
-		myContextMenu->exec(event->screenPos());
-}
-//! [5]
 
 //! [6]
 QVariant DiagramItem::itemChange(GraphicsItemChange change,

@@ -137,71 +137,6 @@ void DiagramScene::setFont(const QFont &font)
 //! [6]
 void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-/*    if (mouseEvent->button() == Qt::LeftButton)
-	{
-		switch (pMain->mode()) 
-		{
-		case M_AddStation:
-			{
-				QList<iNodeData *> Nodelist;
-				myDoc->getAvailableNode(Nodelist);
-
-				if(Nodelist.count())
-				{
-					addStation(mouseEvent->scenePos());
-				}
-
-				emit modeDone();
-			}
-			break;
-
-			case M_AddNote:
-			{
-				TextDialog textdlg(NULL);
-				if(textdlg.exec()==QDialog::Accepted)
-				{
-
-				}
-				emit modeDone();
-			}
-			break;
-		}
-	}
-	*/
-	/*
-		DiagramItem *item;
-		switch (myMode) {
-			case InsertItem:
-				item = new DiagramItem(myItemType, myItemMenu);
-				item->setBrush(myItemColor);
-				addItem(item);
-				item->setPos(mouseEvent->scenePos());
-				emit itemInserted(item);
-				break;
-	//! [6] //! [7]
-			case InsertLine:
-				line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(), mouseEvent->scenePos()));
-				line->setPen(QPen(myLineColor, 2));
-				addItem(line);
-				break;
-	//! [7] //! [8]
-			case InsertText:
-				textItem = new DiagramTextItem();
-				textItem->setFont(myFont);
-				textItem->setTextInteractionFlags(Qt::TextEditorInteraction);
-				textItem->setZValue(1000.0);
-				connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),   this, SLOT(editorLostFocus(DiagramTextItem*)));
-				connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),this, SIGNAL(itemSelected(QGraphicsItem*)));
-				addItem(textItem);
-				textItem->setDefaultTextColor(myTextColor);
-				textItem->setPos(mouseEvent->scenePos());
-				emit textInserted(textItem);
-	//! [8] //! [9]
-		default:
-			;
-		}
-	*/
-
     QGraphicsScene::mousePressEvent(mouseEvent);
 	qDebug("PressEvent");
 }
@@ -372,6 +307,20 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 			}
 			break;
 		case T_BRANCH:
+			{
+				iBRANCH* branch = (iBRANCH *)data;
+				if(item->type() == Arrow::Type)
+				{
+						QMenu* menu = getMenu(MENU_BRANCH);
+						if(!menu)
+							return;
+						QAction* action = menu->exec(event->screenPos());
+						if(action == propertyAction)
+							viewBranch(branch);
+						else if(action == editBranchAction)
+							editBranch(branch);
+				}
+			}
 			break;
 		case T_NOTE:
 			break;
@@ -471,12 +420,12 @@ void DiagramScene::addStation(const QPointF& pos)
 	if(!dlg.IsAddSite()) 
 		return ;
 	//To do : add new station data object			
-	iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());								//create a new station object
+	iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
 	QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
 	stat->setNodes(addednodes);
 
 	//create station diagram item
-	DiagramItem *item = new DiagramItem(stat, getMenu(MENU_STAT),0,this);							//create diagram item for station
+	DiagramItem *item = new DiagramItem(stat, 0,this);												//create diagram item for station
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
@@ -549,7 +498,7 @@ void DiagramScene::addStation(const QPointF& pos)
 
 			if(data->type() == T_BRANCH)
 			{
-				Arrow *arrow = new Arrow(startItem, endItem,data,getMenu(MENU_BRANCH));				//create arrow item for brunch
+				Arrow *arrow = new Arrow(startItem, endItem,data);									//create arrow item for brunch
 				arrow->setColor(myLineColor);
 				startItem->addArrow(arrow);
 				endItem->addArrow(arrow);
@@ -612,7 +561,7 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 
 			if(data->type() == T_BRANCH)
 			{
-				Arrow *arrow = new Arrow(startItem, endItem,data,getMenu(MENU_BRANCH));				//create arrow item for brunch
+				Arrow *arrow = new Arrow(startItem, endItem,data);									//create arrow item for brunch
 				arrow->setColor(myLineColor);
 				startItem->addArrow(arrow);
 				endItem->addArrow(arrow);
@@ -657,8 +606,13 @@ void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 {
 	//todo: show station value property dialog
 }
-void DiagramScene::editBranch()
+void DiagramScene::viewBranch(iBRANCH* branch)
 {
+
+}
+void DiagramScene::editBranch(iBRANCH* branch)
+{
+
 }
 void DiagramScene::addNote(const QPointF& pos)
 {
