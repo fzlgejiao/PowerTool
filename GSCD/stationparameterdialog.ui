@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>709</width>
-    <height>348</height>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,7 @@
      <x>21</x>
      <y>72</y>
      <width>671</width>
-     <height>221</height>
+     <height>181</height>
     </rect>
    </property>
    <column>
@@ -92,39 +92,13 @@
     </property>
    </column>
   </widget>
-  <widget class="QPushButton" name="pushButton_tideway">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>310</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Power flow...</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_voltage">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>310</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Voltage...</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButton_OK">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>310</y>
-     <width>93</width>
-     <height>28</height>
+     <x>570</x>
+     <y>270</y>
+     <width>123</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
@@ -162,7 +136,34 @@
     </rect>
    </property>
   </widget>
-  <zorder>verticalLayoutWidget</zorder>
+  <widget class="QSplitter" name="splitter">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>270</y>
+     <width>251</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <widget class="QPushButton" name="pushButton_tideway">
+    <property name="text">
+     <string>Power flow...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_voltage">
+    <property name="text">
+     <string>Voltage...</string>
+    </property>
+   </widget>
+  </widget>
+  <zorder>tableWidget_parameter</zorder>
+  <zorder>pushButton_tideway</zorder>
+  <zorder>pushButton_voltage</zorder>
+  <zorder>label</zorder>
+  <zorder>lineEdit_name</zorder>
   <zorder>label_2</zorder>
   <zorder>pushButton_OK</zorder>
   <zorder>line</zorder>

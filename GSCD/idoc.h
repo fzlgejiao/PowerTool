@@ -34,6 +34,8 @@ public:
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
 
+	iAREA*	getAREA(const QString& name);
+
 	iData*	Uid2Data(int uid);
 
 	//test func
@@ -53,7 +55,7 @@ protected:
 	void	addBUS(iBUS* bus){listBUS.insert(bus->Id(),bus);}
 	void	addBRANCH(iBRANCH* branch){listBRANCH.insert(branch->Id(),branch);}
 	void	addTRANSFORMER(iTRANSFORMER* transformer){listTRANSFORMER.insert(transformer->Id(),transformer);}
-
+	void	addAREA(iAREA* area){listAREA.insert(area->Id(),area);}
 
 private:
 	QMap<int,iSTAT *>			listSTAT;															//<id,iSTAT*>: id is the station id

@@ -18,6 +18,9 @@ TextDialog::TextDialog(const QString& text,QWidget *parent)
 	
 	connect(ui.pushButton_font,SIGNAL(clicked()),this,SLOT(OnFontdialog()));
 	connect(ui.pushButton_color,SIGNAL(clicked()),this,SLOT(OnColorChanged()));
+
+	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
 }
 TextDialog::~TextDialog()
 {
@@ -29,7 +32,7 @@ void TextDialog::OnFontdialog()
 	QFont font=QFontDialog::getFont(&ok,m_font);
 	if(ok)
 	{
-			
+		m_font=font;	
 	}
 }
 void TextDialog::OnColorChanged()

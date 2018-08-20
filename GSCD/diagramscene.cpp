@@ -8,7 +8,7 @@
 #include "mainwindow.h"
 #include "stationparameterdialog.h"
 #include "textdialog.h"
-
+#include "stationnamedialog.h"
 //! [0]
 DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     : QGraphicsScene(parent)
@@ -180,7 +180,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 				TextDialog textdlg(NULL);
 				if(textdlg.exec()==QDialog::Accepted)
 				{
-
+					addNote(mouseEvent->scenePos());
 				}
 				emit modeDone();
 			}
@@ -601,6 +601,17 @@ void DiagramScene::deleteStation(DiagramItem *item,iSTAT* stat)
 void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 {
 	//todo: show station name property dialog
+	
+	StationNameDialog dlg(item,stat,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{
+		item->setFont(dlg.GetFont());
+		if(dlg.IsApplyAll())
+		{
+			//To do : apply the font to all station 
+		}
+	}
+
 }
 void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 {
@@ -616,7 +627,10 @@ void DiagramScene::editBranch(iBRANCH* branch)
 }
 void DiagramScene::addNote(const QPointF& pos)
 {
-
+	DiagramTextItem* TextItem = new DiagramTextItem(NULL,this);	
+	TextItem->setPos(pos);	
+	TextItem->setPlainText("Add Text demo");
+	addItem(TextItem);
 }
 void DiagramScene::viewNote()
 {

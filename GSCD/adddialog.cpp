@@ -97,8 +97,32 @@ void AddDialog::ClearTableContext(QTableWidget *tablewidget)
 }
 void AddDialog::OnComboAreaChanged(int index)
 {
-
-
+	QList<iNodeData *> list;
+	if(index==0)
+	{		
+		list=hiddennodelist;
+	}else
+	{
+		QString SelectAreaName=ui.comboBox_areas->currentText();
+		iAREA *area=m_doc->getAREA(SelectAreaName);
+		if(!area) return;
+		foreach(iNodeData *node,hiddennodelist)
+		{
+			if(node->type()==T_BUS)
+			{
+				if(((iBUS *)node)->belongedArea()==area->Id())
+				{
+					list.append(node);
+				}
+			}
+		}
+	}
+	//Clear current table
+	ClearTableContext(ui.tableWidget_hidden);
+	foreach(iNodeData *bus ,list)
+		addNode2Rows(ui.tableWidget_hidden,bus);
+	//Update counter
+	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 }
 iNodeData * AddDialog::GetNodefromID(int nodeid,QList<iNodeData *> nodelist)
 {

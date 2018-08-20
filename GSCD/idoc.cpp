@@ -63,6 +63,7 @@ bool iDoc::openDataFile(const QString& file)
 	GetDataModel(T_BUS);	
 	GetDataModel(T_BRANCH);
 	GetDataModel(T_TRANSFORMER);
+	GetDataModel(T_AREA);
 	CloseDataFile();
 	}
 	return true;
@@ -121,6 +122,8 @@ void iDoc::GetDataModel(T_DATA datatype)
 		dataname="BRANCH";
 	else if(datatype==T_TRANSFORMER)
 		dataname="TRANSFORMER";
+	else if(datatype==T_AREA)
+		dataname="AREA";
 	else return;
 	QTextStream stream(m_file);
 	stream.seek(0);
@@ -202,6 +205,16 @@ void iDoc::GetDataModel(T_DATA datatype)
 								stream.readLine();
 						}
 						break;
+
+						case T_AREA:
+						{
+							int areaid=datalist[0].toInt();
+							QString areaname=datalist[4].replace(QString("'"),QString("")).trimmed();
+							iAREA *area=new iAREA(areaid,areaname,this);
+							addAREA(area);
+						}
+						break;
+
 					}
 					readline=stream.readLine();
 				}
@@ -290,4 +303,15 @@ iNodeData* iDoc::getNode(int type,int id)
 		return getBUS(id);
 	else
 		return NULL;
+}
+
+iAREA*	iDoc::getAREA(const QString& name)
+{
+   QMapIterator<int, iAREA *> it(listAREA);
+   while (it.hasNext()) 
+   {
+	   if(it.next().value()->name() == name)
+		   return it.value();
+   }
+	return NULL;
 }

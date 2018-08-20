@@ -43,6 +43,7 @@ private slots:
 		void OnFontdialog();
 		void OnComboAreaChanged(int index);
 		
+		
 private:
 	Ui::AddDialog ui;
 	QList<iNodeData *> hiddennodelist;
