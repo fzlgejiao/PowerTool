@@ -191,8 +191,33 @@ private:
 class iNote : public iData
 {
 public:
-	iNote(int id,const QString& name,QObject *parent=0);
+	iNote(int id,const QString& text,QObject *parent=0);
 	~iNote(){}
 	T_DATA type(){return T_NOTE;}
+
+private:
+	friend class iDoc;
+};
+
+class iSysInfo : public iData
+{
+public:
+	iSysInfo(int id,const QString& name,QObject *parent=0);
+	~iSysInfo(){}
+	T_DATA type(){return T_SYSINFO;}
+
+private:
+	friend class iDoc;
+};
+
+class iLegend : public iData
+{
+public:
+	iLegend(int id,QObject *parent=0);
+	~iLegend(){}
+	T_DATA type(){return T_LEGEND;}
+
+private:
+	friend class iDoc;
 };
 #endif // IDATA_H
