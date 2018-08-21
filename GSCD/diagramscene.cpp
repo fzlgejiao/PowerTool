@@ -326,7 +326,7 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 			break;
 		}
 	}
-	//QGraphicsScene::contextMenuEvent(event);
+	QGraphicsScene::contextMenuEvent(event);
 }
 
 bool DiagramScene::isItemChange(int type)

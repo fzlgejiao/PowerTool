@@ -44,7 +44,6 @@ DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *sce
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 }
 //! [0]
 iData* DiagramItem::myData()
@@ -101,7 +100,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             arrow->updatePosition();
         }
     }
-   if (change == QGraphicsItem::ItemSelectedChange)
+   if (change == QGraphicsItem::ItemSelectedHasChanged)
     {
         if (value == true)
         {

@@ -44,6 +44,8 @@ protected:
                QWidget *widget = 0);
 	void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
 	void mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent );
+	void mouseReleaseEvent( QGraphicsSceneMouseEvent * mouseEvent );
+	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
     DiagramItem*	myStartItem;
