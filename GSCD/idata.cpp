@@ -29,7 +29,10 @@ iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 {
 	m_Name = name;
 	m_Value= "value";
+	m_sType = STAT_220KV;
 	m_itemStat = NULL;
+	m_itemName = NULL;
+	m_itemValue= NULL;
 }
 iSTAT::~iSTAT()
 {

@@ -19,6 +19,14 @@ typedef enum{
 	T_LEGEND
 }T_DATA;
 
+//station type
+typedef enum{
+	STAT_330KV		= 0,
+	STAT_220KV,
+	STAT_110KV
+}STAT_TYPE;
+
+//menu type
 typedef enum{
 	MENU_SCENE		= 0,
 	MENU_STAT,
@@ -114,6 +122,8 @@ public:
 	QString name(){return m_Name;}
 	void	setName(const QString& value){m_Name=value;}
 	QString value(){return m_Value;}
+	STAT_TYPE	sType(){return m_sType;}
+	void	setsType(STAT_TYPE type){m_sType = type;}
 
 	void	setNodes(const QList<iNodeData *>& listNodes);
 	//void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
@@ -133,6 +143,7 @@ public:
 private:
 	QString			m_Name;
 	QString			m_Value;
+	STAT_TYPE		m_sType;																		//station type
 
 	DiagramItem*	 m_itemStat;																	//pointer to station diagram item
 	DiagramTextItem* m_itemName;																	//pointer to station name text item

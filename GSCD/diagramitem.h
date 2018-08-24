@@ -38,6 +38,7 @@ public:
     int type() const
 		{ return Type;}
 	iData* myData();
+	void updateData();
 
 protected:
 	void mousePressEvent ( QGraphicsSceneMouseEvent * event );

@@ -519,6 +519,10 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	if(dlg.exec()!=QDialog::Accepted)
 		return;		
 
+	//update station type icon
+	//stat->setsType();
+	stat->myItem()->updateData();
+
 	//update the name
 	stat->setName(dlg.NewStationName());
 	stat->itemName()->setPlainText(dlg.NewStationName());

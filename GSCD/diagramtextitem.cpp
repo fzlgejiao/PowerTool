@@ -54,7 +54,7 @@ void DiagramTextItem::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
 }
 void DiagramTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsTextItem::mouseDoubleClickEvent(event);
+//    QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
 void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
