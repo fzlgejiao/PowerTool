@@ -156,6 +156,8 @@ void iDoc::GetDataModel(T_DATA datatype)
 						{
 							int areaid=datalist[4].toInt();
 							iBUS *bus=new iBUS(datalist[0].toInt(),areaid,datalist[1].replace(QString("'"),QString("")).trimmed(),this);
+							bus->m_refvoltage=datalist[2].toDouble();
+							bus->m_voltage=datalist[7].toDouble();
 							addBUS(bus);
 						}
 					break;

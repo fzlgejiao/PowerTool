@@ -64,6 +64,9 @@ iBUS::iBUS(int id,int areaid,const QString& name,QObject *parent)
 {
 	m_Name = name;
 	m_areaID=areaid;
+	m_refvoltage=0;
+	m_voltage=0;
+	m_isShowVoltage=false;
 }
 iBRANCH::iBRANCH(int id,int fromUid,int toUid,QObject *parent)
 	: iLinkData(id,fromUid,toUid,parent)

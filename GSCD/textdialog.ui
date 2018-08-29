@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>538</width>
-    <height>246</height>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,14 +61,6 @@
       </item>
       <item>
        <widget class="QCheckBox" name="checkBox_border">
-        <property name="font">
-         <font>
-          <family>Arial</family>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
         <property name="text">
          <string>Border</string>
         </property>
@@ -93,14 +85,6 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <family>Arial</family>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
         <property name="text">
          <string>Text:</string>
         </property>
@@ -121,14 +105,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_font">
-        <property name="font">
-         <font>
-          <family>Arial</family>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
         <property name="text">
          <string>Font</string>
         </property>
@@ -149,14 +125,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_color">
-        <property name="font">
-         <font>
-          <family>Arial</family>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
         <property name="text">
          <string>Color</string>
         </property>

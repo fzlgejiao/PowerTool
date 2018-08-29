@@ -30,7 +30,8 @@ public:
 	QString GetStationName(){return ui.lineEdit_name->text().trimmed();}
 
 private  slots:
-	
+	void OnShowVoltage();
+	void OnPowerFlow();
 
 private:
 	Ui::StationParameterDialog ui;

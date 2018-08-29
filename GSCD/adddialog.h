@@ -31,6 +31,7 @@ public:
 	bool IsRemovedSite();
 	QString NewStationName();
 	QList<iNodeData *>&  GetAddedNodes(){return addednodelist;}
+	QFont GetFont() {return m_font;}
 	//void GetRemovedNodes(QList<iNodeData *>& nodes);
 
 private slots:
@@ -42,7 +43,7 @@ private slots:
 		void OnRevokeAll();		
 		void OnFontdialog();
 		void OnComboAreaChanged(int index);
-		
+		void OnBranchNodeAdd();
 		
 private:
 	Ui::AddDialog ui;

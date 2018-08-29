@@ -79,11 +79,20 @@ public:
 	void	addLink(iLinkData* data){m_linkDatas.append(data);}
 	QList<iLinkData *>& linkDatas(){return m_linkDatas;}
 
+	double GetRefVoltage(){return m_refvoltage;}
+	double GetVoltage(){return m_voltage;}
+	
+	void setShowVoltage(bool value){m_isShowVoltage=value;}
+	bool isShowVoltge(){return m_isShowVoltage;}
 
 protected:
 	int			m_statId;																			//station id(0: not assigned to a station, x: station id)
 	
 	QList<iLinkData *>	m_linkDatas;																//branchs/transformers connected to this node
+
+	double		m_refvoltage;
+	double      m_voltage;
+	bool		m_isShowVoltage;
 };
 
 class iAREA : public iData
@@ -151,6 +160,7 @@ public:
 	int    belongedArea(){return m_areaID;}
 	
 	QString name(){return m_Name;}
+	
 
 private:
 	friend class iDoc;

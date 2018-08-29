@@ -9,6 +9,8 @@
 #include "stationparameterdialog.h"
 #include "textdialog.h"
 #include "stationnamedialog.h"
+#include "stationvaluedialog.h"
+#include "brancheditdialog.h"
 //! [0]
 DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     : QGraphicsScene(parent)
@@ -77,7 +79,17 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_STAT_NAME,statNameMenu);
 	addMenu(MENU_STAT_VALUE,statValueMenu);
 	addMenu(MENU_BRANCH,branchMenu);
-
+	
+	m_controlpanel.showtype=SHOW_POWERFLOW;
+	m_controlpanel.isShowStationName=true;
+	m_controlpanel.isShowStationValue=true;
+	m_controlpanel.isShowBranchLine=true;
+	m_controlpanel.isShowBranchValue=true;
+	m_controlpanel.isShowReactivePowerValue=true;
+	m_controlpanel.isShowAdmittance=false;
+	m_controlpanel.isShowVoltageAngle=false;
+	m_controlpanel.isShowAllNodeVoltage=false;
+	m_controlpanel.unittype=UNIT_ACTUALVALUE;
 }
 //! [0]
 
@@ -406,6 +418,9 @@ void DiagramScene::procItem(ACT_TYPE act,QGraphicsItem* item)
 		}
 		break;
 	case T_BRANCH:
+		{
+			viewBranch((iBRANCH *)data);
+		}
 		break;
 	case T_NOTE:
 		break;
@@ -445,7 +460,8 @@ void DiagramScene::addStation(const QPointF& pos)
 	//////emit textInserted(itemName);
 
 	DiagramTextItem* itemName = new DiagramTextItem(item,this);
-	itemName->setFont(myFont);
+	//itemName->setFont(myFont);
+	itemName->setFont(dlg.GetFont());
 	itemName->setPlainText(stat->name());
 	itemName->setDefaultTextColor(Qt::red);
 	itemName->setPos(QPointF(20,20));
@@ -456,7 +472,7 @@ void DiagramScene::addStation(const QPointF& pos)
 
 	//create station value text item
 	DiagramTextItem* itemValue = new DiagramTextItem(item,this);
-	itemValue->setFont(myFont);
+	itemValue->setFont(myFont);	
 	itemValue->setPlainText(stat->value());
 	itemValue->setDefaultTextColor(Qt::red);
 	itemValue->setPos(QPointF(20,-20));
@@ -522,6 +538,8 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	//update the name
 	stat->setName(dlg.NewStationName());
 	stat->itemName()->setPlainText(dlg.NewStationName());
+	//update the name font
+	stat->itemName()->setFont(dlg.GetFont());
 
 	//change nodes of station
 	QList<iNodeData *> addednodes=dlg.GetAddedNodes();
@@ -602,28 +620,42 @@ void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 {
 	//todo: show station name property dialog
 	
-	StationNameDialog dlg(item,stat,pMain);
+	StationNameDialog dlg(stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{
-		item->setFont(dlg.GetFont());
+		//item->setFont(dlg.GetFont());
+		stat->itemName()->setFont(dlg.GetFont());
+		
 		if(dlg.IsApplyAll())
 		{
 			//To do : apply the font to all station 
 		}
 	}
-
 }
 void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 {
 	//todo: show station value property dialog
+	StationValueDialog dlg(stat,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{	
+		
+	}
 }
 void DiagramScene::viewBranch(iBRANCH* branch)
 {
-
+	BranchEditDialog dlg(branch,BranchView,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{	
+		
+	}
 }
 void DiagramScene::editBranch(iBRANCH* branch)
 {
-
+	BranchEditDialog dlg(branch,BranchEdit,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{	
+		
+	}
 }
 void DiagramScene::addNote(const QPointF& pos)
 {

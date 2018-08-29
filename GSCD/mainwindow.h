@@ -97,6 +97,7 @@ private:
 	QAction *toolbarAct;
 	QAction *statusbarAct;
 	QAction *propertyAction;
+	QAction *controlpanelAction;
 
 	QAction *imageAreaAction;
 	QAction *viewFontAction;
@@ -157,6 +158,7 @@ private slots:
 	//void showStatusBar();
 	void OnZoomDialog();
 	void viewProperty();
+	void OnControlPanelDialog();
 	//void viewCtrl();
 	//void viewDoc();
 

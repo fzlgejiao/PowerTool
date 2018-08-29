@@ -8,6 +8,7 @@
 #include "adddialog.h"
 #include "idata.h"
 #include "scaledialog.h"
+#include "controlpaneldialog.h"
 
 const int InsertTextButton = 10;
 
@@ -274,6 +275,10 @@ void MainWindow::createActions()
 	propertyAction->setStatusTip(tr("Show object property"));
 	connect(propertyAction, SIGNAL(triggered()),this, SLOT(viewProperty()));
 
+	controlpanelAction = new QAction(tr("&Control Panel..."), this);
+	controlpanelAction->setStatusTip(tr("Control Panel Dialog"));
+	connect(controlpanelAction, SIGNAL(triggered()),this, SLOT(OnControlPanelDialog()));
+
 	editObjectAction = new QAction(tr("&Edit Object..."), this);
 	editObjectAction->setStatusTip(tr("Edit object"));
 	connect(editObjectAction, SIGNAL(triggered()),this, SLOT(editObject()));
@@ -372,6 +377,7 @@ void MainWindow::createMenus()
 	viewMenu->addAction(scaledialogAction);
 	viewMenu->addSeparator();
 	viewMenu->addAction(propertyAction);
+	viewMenu->addAction(controlpanelAction);
 
 	settingMenu = menuBar()->addMenu(tr("&Settings"));
 	settingMenu->addAction(imageAreaAction);
@@ -773,7 +779,16 @@ void MainWindow::viewProperty()
 
 	child->scene()->viewItem();
 }
-
+void MainWindow::OnControlPanelDialog()
+{
+	MdiChild* child = activeMdiChild();
+	if(!child)	return;
+	ControlPanelDialog dlg(child->scene()->getControlPanel());
+	if(dlg.exec()==QDialog::Accepted)
+	{
+		child->scene()->setControlPanel(dlg.getControlPanel());
+	}
+}
 void MainWindow::imageArea()
 {
 }
@@ -836,6 +851,7 @@ void MainWindow::OnZoomIn()
 
 void MainWindow::OnZoomDialog()
 {
+	if(!activeMdiChild()) return;
 	ScaleDialog scaledialog(mScale);
 	if(scaledialog.exec()==QDialog::Accepted)
 	{

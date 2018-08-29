@@ -27,10 +27,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Arial</family>
-     <pointsize>12</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -51,14 +51,14 @@
      <widget class="QLabel" name="label_3">
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>9</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>8</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="text">
-       <string>Site Name:</string>
+       <string>Station Name:</string>
       </property>
      </widget>
     </item>
@@ -66,8 +66,8 @@
      <widget class="QLineEdit" name="lineEdit_name">
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>9</pointsize>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>8</pointsize>
        </font>
       </property>
       <property name="text">
@@ -79,10 +79,10 @@
      <widget class="QPushButton" name="pushButton_font">
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>8</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="text">
@@ -107,10 +107,10 @@
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>8</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="standardButtons">
@@ -144,10 +144,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Arial</family>
-     <pointsize>12</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -204,12 +204,6 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QTableWidget" name="tableWidget_hidden">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
       <column>
        <property name="text">
         <string>Type</string>
@@ -236,14 +230,6 @@
     </item>
     <item>
      <widget class="QLabel" name="label_branch">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
       <property name="text">
        <string>connect to which</string>
       </property>
@@ -251,12 +237,6 @@
     </item>
     <item>
      <widget class="QTableWidget" name="tableWidget_branch">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
       <column>
        <property name="text">
         <string>Type</string>
@@ -285,12 +265,6 @@
      <height>349</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
    <column>
     <property name="text">
      <string>Type</string>
@@ -307,69 +281,6 @@
     </property>
    </column>
   </widget>
-  <widget class="QSplitter" name="splitter_2">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>150</y>
-     <width>111</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-   <widget class="QPushButton" name="pushButton_add">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Insert&gt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_addall">
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Insert All&gt;&gt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_remove">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>&lt;Revoke</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_removeall">
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>&lt;&lt;Revoke All</string>
-    </property>
-   </widget>
-  </widget>
   <widget class="QLineEdit" name="lineEdit_area">
    <property name="geometry">
     <rect>
@@ -378,14 +289,6 @@
      <width>111</width>
      <height>18</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
    </property>
    <property name="text">
     <string>Areas:</string>
@@ -403,14 +306,8 @@
      <x>258</x>
      <y>111</y>
      <width>111</width>
-     <height>18</height>
+     <height>21</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
    </property>
    <item>
     <property name="text">
@@ -427,12 +324,6 @@
      <height>20</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
    <item>
     <property name="text">
      <string>Hydropower Station</string>
@@ -441,6 +332,21 @@
    <item>
     <property name="text">
      <string>ThermalPower Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>330kV Statioon</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>220kV Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>110kV Station</string>
     </property>
    </item>
   </widget>
@@ -453,16 +359,70 @@
      <height>16</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
    <property name="text">
     <string>Station Type:</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>259</x>
+     <y>150</y>
+     <width>111</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton_add">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Insert&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_addall">
+      <property name="text">
+       <string>Insert All&gt;&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_remove">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>&lt;Revoke</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_removeall">
+      <property name="text">
+       <string>&lt;&lt;Revoke All</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton_branchnodeadd">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>258</x>
+     <y>370</y>
+     <width>109</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Insert&gt;</string>
    </property>
   </widget>
  </widget>
