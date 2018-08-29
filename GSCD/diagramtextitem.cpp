@@ -54,7 +54,7 @@ void DiagramTextItem::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
 }
 void DiagramTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsTextItem::mouseDoubleClickEvent(event);
+//    QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
 void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -64,8 +64,11 @@ void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	// set state to State_None when selected
 	if (option->state & QStyle::State_Selected)
 	{
+		setDefaultTextColor(Qt::blue);
 		op.state = QStyle::State_None;
 	}
+	else
+		setDefaultTextColor(Qt::black);
 	// call default func to draw
 	QGraphicsTextItem::paint(painter, &op, widget);
 }

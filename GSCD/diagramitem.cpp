@@ -12,39 +12,12 @@ DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *sce
 {
 	setData(ITEM_DATA,(uint)data);
 
-    QPainterPath path;
-	switch (data->type()) {
- /*       case StartEnd:
-            path.moveTo(200, 50);
-            path.arcTo(150, 0, 50, 50, 0, 90);
-            path.arcTo(50, 0, 50, 50, 90, 90);
-            path.arcTo(50, 50, 50, 50, 180, 90);
-            path.arcTo(150, 50, 50, 50, 270, 90);
-            path.lineTo(200, 25);
-            myPolygon = path.toFillPolygon();
-            break;*/
-        case T_STAT:
-            myPolygon << QPointF(-20, 0) << QPointF(0, 20)
-                      << QPointF(20, 0) << QPointF(0, -20)
-                      << QPointF(-20, 0);
-            break;
-		case T_BRANCH:
-            myPolygon << QPointF(-15, -15) << QPointF(15, -15)
-                      << QPointF(15, 15) << QPointF(-15, 15)
-                      << QPointF(-15, -15);
-            break;
-        default:
-            myPolygon << QPointF(-120, -80) << QPointF(-70, 80)
-                      << QPointF(120, 80) << QPointF(70, -80)
-                      << QPointF(-120, -80);
-            break;
-    }
-    setPolygon(myPolygon);
+	updateData();
+
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 }
 //! [0]
 iData* DiagramItem::myData()
@@ -87,8 +60,7 @@ QPixmap DiagramItem::image() const
     QPainter painter(&pixmap);
     painter.setPen(QPen(Qt::black, 8));
     painter.translate(125, 125);
-    painter.drawPolyline(myPolygon);
-
+    painter.drawPolyline(myPolygon);	
     return pixmap;
 }
 
@@ -101,7 +73,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             arrow->updatePosition();
         }
     }
-   if (change == QGraphicsItem::ItemSelectedChange)
+   if (change == QGraphicsItem::ItemSelectedHasChanged)
     {
         if (value == true)
         {
@@ -158,4 +130,52 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
 	// call default func to draw
 	QGraphicsPolygonItem::paint(painter, &op, widget);
+}
+void DiagramItem::updateData()
+{
+	iSTAT* stat = (iSTAT *)myData();
+	if(!stat)
+		return;
+	myPolygon.clear();
+
+    QPainterPath path;
+	switch (stat->sType()) {
+ /*       case StartEnd:
+            path.moveTo(200, 50);
+            path.arcTo(150, 0, 50, 50, 0, 90);
+            path.arcTo(50, 0, 50, 50, 90, 90);
+            path.arcTo(50, 50, 50, 50, 180, 90);
+            path.arcTo(150, 50, 50, 50, 270, 90);
+            path.lineTo(200, 25);
+            myPolygon = path.toFillPolygon();
+            break;*/
+	case STAT_HYDROPOWER:
+			myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10)<<QPointF(15, -10);
+		break;
+
+		case STAT_THERMALPOWER:
+			myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
+		break;
+
+		case STAT_NUCLEARPOWER:
+			myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10);			
+			break;
+
+        case STAT_220KV:
+            myPolygon << QPointF(-20, 0) << QPointF(0, 20)
+                      << QPointF(20, 0) << QPointF(0, -20)
+                      << QPointF(-20, 0);
+            break;
+		case STAT_330KV:
+            myPolygon << QPointF(-15, -15) << QPointF(15, -15)
+                      << QPointF(15, 15) << QPointF(-15, 15)
+                      << QPointF(-15, -15);
+            break;
+        default:
+            myPolygon << QPointF(-120, -80) << QPointF(-70, 80)
+                      << QPointF(120, 80) << QPointF(70, -80)
+                      << QPointF(-120, -80);
+            break;
+    }
+    setPolygon(myPolygon);
 }

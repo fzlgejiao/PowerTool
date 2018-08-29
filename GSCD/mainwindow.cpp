@@ -783,7 +783,7 @@ void MainWindow::OnControlPanelDialog()
 {
 	MdiChild* child = activeMdiChild();
 	if(!child)	return;
-	ControlPanelDialog dlg(child->scene()->getControlPanel());
+	ControlPanelDialog dlg(child->scene()->getControlPanel(),this);
 	if(dlg.exec()==QDialog::Accepted)
 	{
 		child->scene()->setControlPanel(dlg.getControlPanel());
@@ -852,7 +852,7 @@ void MainWindow::OnZoomIn()
 void MainWindow::OnZoomDialog()
 {
 	if(!activeMdiChild()) return;
-	ScaleDialog scaledialog(mScale);
+	ScaleDialog scaledialog(mScale,this);
 	if(scaledialog.exec()==QDialog::Accepted)
 	{
 		mScale=scaledialog.GetScale();

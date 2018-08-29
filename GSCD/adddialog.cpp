@@ -22,12 +22,16 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	this->setFixedSize(this->size());
 
 	m_font=QFont("Arial",10);
+	m_type=STAT_HYDROPOWER;
 
 	if(m_editstation)
 	{
 		is_edit=true;
 		m_font=editstation->itemName()->font();
 		ui.lineEdit_name->setText(m_editstation->name());
+
+		m_type=m_editstation->sType();
+		ui.comboBox_StatType->setCurrentIndex(m_type);
 
 		foreach(iNodeData *node,m_editstation->nodeDatas())
 		{
@@ -55,13 +59,15 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	connect(ui.pushButton_font,SIGNAL(clicked()),this,SLOT(OnFontdialog()));
 	connect(ui.comboBox_areas,SIGNAL(currentIndexChanged(int)),this,SLOT(OnComboAreaChanged(int)));
 	connect(ui.pushButton_branchnodeadd,SIGNAL(clicked()),this,SLOT(OnBranchNodeAdd()));
-	
+	connect(ui.comboBox_StatType,SIGNAL(currentIndexChanged(int)),this,SLOT(OnStatTypeChanged(int)));
+
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 
+	
 }
 AddDialog::~AddDialog()
 {
@@ -97,6 +103,10 @@ void AddDialog::ClearTableContext(QTableWidget *tablewidget)
 	{        
 		tablewidget->removeRow(0); 
 	}
+}
+void AddDialog::OnStatTypeChanged(int index)
+{
+	m_type=(STAT_TYPE)index;	
 }
 void AddDialog::OnComboAreaChanged(int index)
 {

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
-    <height>501</height>
+    <width>724</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,113 +19,22 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>10</x>
      <y>70</y>
-     <width>135</width>
+     <width>181</width>
      <height>20</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
-    <string>HiddenItemList:</string>
+    <string>Not included Buses:</string>
    </property>
-  </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>10</y>
-     <width>571</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QLabel" name="label_3">
-      <property name="font">
-       <font>
-        <family>MS Shell Dlg 2</family>
-        <pointsize>8</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Station Name:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="lineEdit_name">
-      <property name="font">
-       <font>
-        <family>MS Shell Dlg 2</family>
-        <pointsize>8</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_font">
-      <property name="font">
-       <font>
-        <family>MS Shell Dlg 2</family>
-        <pointsize>8</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Font</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="font">
-       <font>
-        <family>MS Shell Dlg 2</family>
-        <pointsize>8</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-      </property>
-     </widget>
-    </item>
-   </layout>
   </widget>
   <widget class="Line" name="line">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>10</x>
      <y>50</y>
-     <width>571</width>
+     <width>701</width>
      <height>20</height>
     </rect>
    </property>
@@ -136,28 +45,20 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>379</x>
+     <x>431</x>
      <y>73</y>
-     <width>126</width>
+     <width>161</width>
      <height>20</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
-    <string>AddedItemList:</string>
+    <string>Included Buses</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_addedCnt">
    <property name="geometry">
     <rect>
-     <x>568</x>
+     <x>680</x>
      <y>71</y>
      <width>31</width>
      <height>20</height>
@@ -176,7 +77,7 @@
   <widget class="QLineEdit" name="lineEdit_hiddenCnt">
    <property name="geometry">
     <rect>
-     <x>220</x>
+     <x>260</x>
      <y>68</y>
      <width>31</width>
      <height>20</height>
@@ -192,76 +93,12 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>90</y>
-     <width>221</width>
-     <height>379</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QTableWidget" name="tableWidget_hidden">
-      <column>
-       <property name="text">
-        <string>Type</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-    <item>
-     <widget class="Line" name="line_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_branch">
-      <property name="text">
-       <string>connect to which</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QTableWidget" name="tableWidget_branch">
-      <column>
-       <property name="text">
-        <string>Type</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QTableWidget" name="tableWidget_added">
    <property name="geometry">
     <rect>
-     <x>376</x>
+     <x>431</x>
      <y>93</y>
-     <width>223</width>
+     <width>280</width>
      <height>349</height>
     </rect>
    </property>
@@ -284,10 +121,10 @@
   <widget class="QLineEdit" name="lineEdit_area">
    <property name="geometry">
     <rect>
-     <x>258</x>
-     <y>93</y>
-     <width>111</width>
-     <height>18</height>
+     <x>298</x>
+     <y>80</y>
+     <width>118</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="text">
@@ -303,10 +140,10 @@
   <widget class="QComboBox" name="comboBox_areas">
    <property name="geometry">
     <rect>
-     <x>258</x>
-     <y>111</y>
-     <width>111</width>
-     <height>21</height>
+     <x>298</x>
+     <y>105</y>
+     <width>118</width>
+     <height>25</height>
     </rect>
    </property>
    <item>
@@ -315,115 +152,255 @@
     </property>
    </item>
   </widget>
-  <widget class="QComboBox" name="comboBox_StatType">
-   <property name="geometry">
-    <rect>
-     <x>466</x>
-     <y>448</y>
-     <width>132</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>Hydropower Station</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>ThermalPower Station</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>330kV Statioon</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>220kV Station</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>110kV Station</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>375</x>
-     <y>451</y>
-     <width>84</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Station Type:</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>259</x>
-     <y>150</y>
-     <width>111</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QPushButton" name="pushButton_add">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Insert&gt;</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_addall">
-      <property name="text">
-       <string>Insert All&gt;&gt;</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_remove">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>&lt;Revoke</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_removeall">
-      <property name="text">
-       <string>&lt;&lt;Revoke All</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QPushButton" name="pushButton_branchnodeadd">
+  <widget class="QPushButton" name="pushButton_add">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>258</x>
-     <y>370</y>
-     <width>109</width>
-     <height>23</height>
+     <x>300</x>
+     <y>150</y>
+     <width>118</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="text">
     <string>Insert&gt;</string>
    </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_addall">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>190</y>
+     <width>118</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Insert All&gt;&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_removeall">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>270</y>
+     <width>118</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;&lt;Remove All</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_remove">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>230</y>
+     <width>118</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;Remove</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget_hidden">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>90</y>
+     <width>280</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <column>
+    <property name="text">
+     <string>Type</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>ID</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Name</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QLabel" name="label_branch">
+   <property name="geometry">
+    <rect>
+     <x>31</x>
+     <y>330</y>
+     <width>135</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>connected Buses:</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget_branch">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>357</y>
+     <width>280</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <column>
+    <property name="text">
+     <string>Type</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>ID</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Name</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>104</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Station Name:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_name">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>19</y>
+     <width>154</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_font">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>20</y>
+     <width>118</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Font...</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>517</x>
+     <y>20</y>
+     <width>193</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_branchnodeadd">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>400</y>
+     <width>118</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Insert&gt;</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>450</y>
+     <width>281</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Station Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="comboBox_StatType">
+      <item>
+       <property name="text">
+        <string>Hydropower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ThermalPower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>NuclearPower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>550kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>330kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>220kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>110kV Station</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

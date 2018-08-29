@@ -88,7 +88,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	m_controlpanel.isShowReactivePowerValue=true;
 	m_controlpanel.isShowAdmittance=false;
 	m_controlpanel.isShowVoltageAngle=false;
-	m_controlpanel.isShowAllNodeVoltage=false;
+	m_controlpanel.isShowAllNodeVoltage=true;
 	m_controlpanel.unittype=UNIT_ACTUALVALUE;
 }
 //! [0]
@@ -338,7 +338,7 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 			break;
 		}
 	}
-	//QGraphicsScene::contextMenuEvent(event);
+	QGraphicsScene::contextMenuEvent(event);
 }
 
 bool DiagramScene::isItemChange(int type)
@@ -438,14 +438,14 @@ void DiagramScene::addStation(const QPointF& pos)
 	iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
 	QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
 	stat->setNodes(addednodes);
-
+	stat->setsType(dlg.getstationtype());
 	//create station diagram item
 	DiagramItem *item = new DiagramItem(stat, 0,this);												//create diagram item for station
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
 	stat->itemAdded(item);																			//set item to station
-
+	
 	//create station name text item
 	//DiagramTextItem* itemName = new DiagramTextItem(item,this);
 	//itemName->setFont(myFont);
@@ -462,7 +462,16 @@ void DiagramScene::addStation(const QPointF& pos)
 	DiagramTextItem* itemName = new DiagramTextItem(item,this);
 	//itemName->setFont(myFont);
 	itemName->setFont(dlg.GetFont());
-	itemName->setPlainText(stat->name());
+	//To do : set all nodes voltage
+	QString nametext;
+	foreach(iNodeData *node ,addednodes)
+	{
+		double voltage=node->GetVoltage() * node->GetRefVoltage();
+		nametext.append(QString::number(voltage,10,1));
+		nametext.append("\n");
+	}
+	nametext.append(stat->name());
+	itemName->setPlainText(nametext);
 	itemName->setDefaultTextColor(Qt::red);
 	itemName->setPos(QPointF(20,20));
 	itemName->setDefaultPos(QPointF(20,20));
@@ -534,6 +543,10 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	AddDialog dlg(myDoc,stat,pMain);
 	if(dlg.exec()!=QDialog::Accepted)
 		return;		
+
+	//update station type icon
+	stat->setsType(dlg.getstationtype());
+	stat->myItem()->updateData();
 
 	//update the name
 	stat->setName(dlg.NewStationName());
