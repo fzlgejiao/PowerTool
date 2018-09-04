@@ -69,15 +69,18 @@ void StationParameterDialog::AddNodeToTable(iNodeData *node)
 	QTableWidgetItem *item = new QTableWidgetItem();
 	QTableWidgetItem *refvoltageitem = new QTableWidgetItem();
 	QTableWidgetItem *voltageitem = new QTableWidgetItem();
-	
+	QTableWidgetItem *angleitem = new QTableWidgetItem();
+
 	if(node->type()==T_BUS) 
 	{
 		iBUS *bus=(iBUS *)node;
 		item->setText(bus->name());
 		refvoltageitem->setText( QString::number(bus->GetRefVoltage(),10,1));
 		voltageitem->setText( QString::number(bus->GetVoltage(),10,3));
+		angleitem->setText(QString::number(bus->GetAngle(),10,1));
 		ui.tableWidget_parameter->setItem(row, NAME, item);	
 		ui.tableWidget_parameter->setItem(row, Ref_Volatge, refvoltageitem);
 		ui.tableWidget_parameter->setItem(row, Voltage, voltageitem);
+		ui.tableWidget_parameter->setItem(row, Angle, angleitem);
 	}
 }

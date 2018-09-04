@@ -24,10 +24,18 @@ typedef enum{
 	STAT_HYDROPOWER		 = 0,
 	STAT_THERMALPOWER,
 	STAT_NUCLEARPOWER,
+	STAT_PUMPEDSTORAGEPOWER,
+	STAT_SUBSYSTEM3,
+	STAT_SUBSYSTEM2,
+	STAT_SUBSYSTEM1,
 	STAT_550KV,
 	STAT_330KV,		
 	STAT_220KV,
-	STAT_110KV
+	STAT_110KV,
+	STAT_T_NODE,
+	STAT_SERIESCOMPENSATION,
+	STAT_CONVERTOR,
+	STAT_SWITCHING	
 }STAT_TYPE;
 
 //menu type
@@ -40,7 +48,6 @@ typedef enum{
 	MENU_NOTE,
 	MENU_SYSINFO,
 	MENU_LEGEND
-
 }MENU_TYPE;
 
 
@@ -93,7 +100,8 @@ public:
 
 	double GetRefVoltage(){return m_refvoltage;}
 	double GetVoltage(){return m_voltage;}
-	
+	double GetAngle(){return m_angle;}
+
 	void setShowVoltage(bool value){m_isShowVoltage=value;}
 	bool isShowVoltge(){return m_isShowVoltage;}
 
@@ -104,6 +112,7 @@ protected:
 
 	double		m_refvoltage;
 	double      m_voltage;
+	double      m_angle;
 	bool		m_isShowVoltage;
 };
 
@@ -191,11 +200,14 @@ public:
 	iBRANCH(int id,int fromUid,int toUid,QObject *parent=0);
 	~iBRANCH(){}
 	T_DATA type(){return T_BRANCH;}
-	
+	iBUS * getFromBus(){return frombus;}
+	iBUS * getToBus(){return tobus;}
 
 private:
 	friend class iDoc;
-
+	iBUS *frombus;
+	iBUS *tobus;
+	int ParallelCode;
 	//properties
 };
 

@@ -155,9 +155,11 @@ void iDoc::GetDataModel(T_DATA datatype)
 					case T_BUS:
 						{
 							int areaid=datalist[4].toInt();
+							double angel=datalist[8].toDouble();
 							iBUS *bus=new iBUS(datalist[0].toInt(),areaid,datalist[1].replace(QString("'"),QString("")).trimmed(),this);
 							bus->m_refvoltage=datalist[2].toDouble();
 							bus->m_voltage=datalist[7].toDouble();
+							bus->m_angle=angel;
 							addBUS(bus);
 						}
 					break;
@@ -165,6 +167,7 @@ void iDoc::GetDataModel(T_DATA datatype)
 					case T_BRANCH:
 						{
 							int from,to;
+							QString CKT= datalist[2].replace(QString("'"),QString("")).trimmed();
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
 							iBUS* frombus = getBUS(from);
@@ -172,7 +175,9 @@ void iDoc::GetDataModel(T_DATA datatype)
 							if((frombus!=NULL)&&(tobus!=NULL))
 							{
 								iBRANCH* branch = new iBRANCH(datarows,frombus->Uid(),tobus->Uid(),this);					//row index is the branch id
-
+								branch->frombus=frombus;
+								branch->tobus=tobus;
+								branch->ParallelCode=CKT.toInt();
 									//add branch into bus link list	
 								frombus->addLink(branch);	
 								tobus->addLink(branch);

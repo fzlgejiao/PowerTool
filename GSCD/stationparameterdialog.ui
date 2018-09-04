@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Unit:-----</string>
+    <string>Unit:Per Unit</string>
    </property>
   </widget>
   <widget class="Line" name="line">
@@ -146,7 +146,8 @@
     <string>Power flow...</string>
    </property>
   </widget>
-  <zorder>splitter</zorder>
+  <zorder>pushButton_voltage</zorder>
+  <zorder>pushButton_tideway</zorder>
   <zorder>tableWidget_parameter</zorder>
   <zorder>label</zorder>
   <zorder>lineEdit_name</zorder>

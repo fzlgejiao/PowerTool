@@ -5,7 +5,7 @@
 
 #include <QGraphicsPixmapItem>
 #include <QList>
-
+#include "idata.h"
 QT_BEGIN_NAMESPACE
 class QPixmap;
 class QGraphicsItem;
@@ -21,7 +21,8 @@ QT_END_NAMESPACE
 
 class Arrow;
 class iData;
-class DiagramItem : public QGraphicsPolygonItem
+//class DiagramItem : public QGraphicsPolygonItem
+class DiagramItem : public QGraphicsPathItem
 {
 public:
     enum { Type = UserType + 15 };
@@ -31,8 +32,9 @@ public:
     void removeArrow(Arrow *arrow);
     void removeArrows();
 
-    QPolygonF polygon() const
-        { return myPolygon; }
+  //  QPainterPath path () const
+    //    { return myPath;}
+
     void addArrow(Arrow *arrow);
     QPixmap image() const;
     int type() const
@@ -48,8 +50,9 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-    QPolygonF		myPolygon;
-    QList<Arrow *>	arrows;
+   // QPolygonF		myPolygon;
+	QPainterPath	myPath;
+    QList<Arrow *>	arrows;		
 	
 signals:
 

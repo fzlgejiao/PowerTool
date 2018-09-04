@@ -84,10 +84,10 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	m_controlpanel.isShowStationName=true;
 	m_controlpanel.isShowStationValue=true;
 	m_controlpanel.isShowBranchLine=true;
-	m_controlpanel.isShowBranchValue=true;
-	m_controlpanel.isShowReactivePowerValue=true;
+	m_controlpanel.isShowBranchValue=false;
+	m_controlpanel.isShowReactivePowerValue=false;
 	m_controlpanel.isShowAdmittance=false;
-	m_controlpanel.isShowVoltageAngle=false;
+	m_controlpanel.isShowVoltageAngle=true;
 	m_controlpanel.isShowAllNodeVoltage=true;
 	m_controlpanel.unittype=UNIT_ACTUALVALUE;
 }
@@ -462,12 +462,13 @@ void DiagramScene::addStation(const QPointF& pos)
 	DiagramTextItem* itemName = new DiagramTextItem(item,this);
 	//itemName->setFont(myFont);
 	itemName->setFont(dlg.GetFont());
-	//To do : set all nodes voltage
+	//To do : set all nodes voltage and angles
 	QString nametext;
 	foreach(iNodeData *node ,addednodes)
 	{
 		double voltage=node->GetVoltage() * node->GetRefVoltage();
-		nametext.append(QString::number(voltage,10,1));
+		double angle=node->GetAngle();
+		nametext.append(QString::number(voltage,10,1)+" < "+QString::number(angle,10,1));
 		nametext.append("\n");
 	}
 	nametext.append(stat->name());
@@ -540,6 +541,7 @@ void DiagramScene::addStation(const QPointF& pos)
 
 void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 {
+	
 	AddDialog dlg(myDoc,stat,pMain);
 	if(dlg.exec()!=QDialog::Accepted)
 		return;		
@@ -547,10 +549,14 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	//update station type icon
 	stat->setsType(dlg.getstationtype());
 	stat->myItem()->updateData();
+	//set item text if with the voltage value
+	QString nametext=stat->itemName()->toPlainText();
+	QString oldname=stat->name();
+	nametext.replace(oldname,dlg.NewStationName());
 
 	//update the name
 	stat->setName(dlg.NewStationName());
-	stat->itemName()->setPlainText(dlg.NewStationName());
+	stat->itemName()->setPlainText(nametext);
 	//update the name font
 	stat->itemName()->setFont(dlg.GetFont());
 
@@ -635,10 +641,16 @@ void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 	
 	StationNameDialog dlg(stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
-	{
+	{		
 		//item->setFont(dlg.GetFont());
-		stat->itemName()->setFont(dlg.GetFont());
-		
+		stat->itemName()->setFont(dlg.GetFont());		
+		//Update the voltage and name text
+		QString nametext=stat->itemName()->toPlainText();
+		QString oldname=stat->name();
+		nametext.replace(oldname,dlg.StationName());
+		stat->itemName()->setPlainText(nametext);
+		//Set the Station Object name
+		stat->setName(dlg.StationName());
 		if(dlg.IsApplyAll())
 		{
 			//To do : apply the font to all station 

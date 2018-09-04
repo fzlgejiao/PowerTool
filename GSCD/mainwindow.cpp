@@ -673,7 +673,7 @@ void MainWindow::newFile()
 
 void MainWindow::open()
 {
-	QString fileName = QFileDialog::getOpenFileName(this);
+	QString fileName = QFileDialog::getOpenFileName(this,tr("Open Raw file"),".",tr("Raw File (*.raw)"));
 	if (!fileName.isEmpty()) {
 		QMdiSubWindow *existing = findMdiChild(fileName);
 		if (existing) {

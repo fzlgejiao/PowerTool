@@ -380,6 +380,26 @@
       </item>
       <item>
        <property name="text">
+        <string>PumpedStoragePower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sub-System 3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sub-System 2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sub-System 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>550kV Station</string>
        </property>
       </item>
@@ -396,6 +416,26 @@
       <item>
        <property name="text">
         <string>110kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>T-Node</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Series Compensation Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Convertor Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Switching Station</string>
        </property>
       </item>
      </widget>

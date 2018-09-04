@@ -8,7 +8,8 @@
 
 //! [0]
 DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *scene)
-    : QGraphicsPolygonItem(parent, scene)
+  //  : QGraphicsPolygonItem(parent, scene)
+   : QGraphicsPathItem(parent, scene)
 {
 	setData(ITEM_DATA,(uint)data);
 
@@ -55,12 +56,12 @@ void DiagramItem::addArrow(Arrow *arrow)
 
 QPixmap DiagramItem::image() const
 {
-    QPixmap pixmap(250, 250);
-    pixmap.fill(Qt::transparent);
+   QPixmap pixmap(250, 250);
+   /*  pixmap.fill(Qt::transparent);
     QPainter painter(&pixmap);
     painter.setPen(QPen(Qt::black, 8));
     painter.translate(125, 125);
-    painter.drawPolyline(myPolygon);	
+    painter.drawPolyline(myPolygon);	*/
     return pixmap;
 }
 
@@ -80,11 +81,12 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             // do stuff if selected
 			foreach(QGraphicsItem *item,childItems())
 			{
-				QGraphicsSimpleTextItem* txtItem = qgraphicsitem_cast<QGraphicsSimpleTextItem *>(item);
+				DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
 				if(txtItem)
 				{
-					txtItem->setPen(QPen(Qt::green,1));
-				}
+					//txtItem->setPen(QPen(Qt::green,1));
+					txtItem->setDefaultTextColor(QColor("green"));
+				}				
 			}
         }
         else
@@ -110,7 +112,7 @@ void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 QRectF DiagramItem::boundingRect() const
 {
-    return QGraphicsPolygonItem::boundingRect() | childrenBoundingRect();
+    return 	QGraphicsPathItem::boundingRect() | childrenBoundingRect();
 }
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -120,7 +122,7 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	// set state to State_None when selected
 	if (option->state & QStyle::State_Selected)
 	{
-		setPen(QPen(Qt::blue,2));
+		setPen(QPen(Qt::blue,2));		
 		op.state = QStyle::State_None;
 	}
 	else
@@ -129,16 +131,16 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	}
 
 	// call default func to draw
-	QGraphicsPolygonItem::paint(painter, &op, widget);
+	QGraphicsPathItem::paint(painter, &op, widget);	
 }
 void DiagramItem::updateData()
 {
 	iSTAT* stat = (iSTAT *)myData();
 	if(!stat)
 		return;
-	myPolygon.clear();
-
-    QPainterPath path;
+	//myPolygon.clear();
+		
+    myPath=QPainterPath(QPointF(0,0));	
 	switch (stat->sType()) {
  /*       case StartEnd:
             path.moveTo(200, 50);
@@ -149,33 +151,125 @@ void DiagramItem::updateData()
             path.lineTo(200, 25);
             myPolygon = path.toFillPolygon();
             break;*/
-	case STAT_HYDROPOWER:
-			myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10)<<QPointF(15, -10);
-		break;
-
-		case STAT_THERMALPOWER:
-			myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
-		break;
-
-		case STAT_NUCLEARPOWER:
-			myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10);			
+		case STAT_HYDROPOWER:
+			{
+			//myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10)<<QPointF(15, -10);			
+			myPath.addRect(-15,-10,30,20);	
+			myPath.moveTo(-15,10);
+			myPath.lineTo(15,-10);
+			}
 			break;
-
+		case STAT_THERMALPOWER:
+			{
+			//myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
+			myPath.addRect(-15,-10,30,20);
+			myPath.moveTo(-15,0);
+			myPath.lineTo(15,0);
+			}
+			break;
+		case STAT_PUMPEDSTORAGEPOWER:
+			{
+			//myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
+			myPath.addRect(-15,-10,30,20);
+			myPath.moveTo(-15,-3);
+			myPath.lineTo(0,-3);
+			myPath.lineTo(0,10);
+			myPath.moveTo(0,3);
+			myPath.lineTo(15,3);
+			}
+			break;
+		case STAT_NUCLEARPOWER:
+			{					
+			myPath.addRect(-15,-10,30,20);		
+			myPath.addEllipse(QPointF(0,0),8,8);			
+			//myPolygon = path.toFillPolygon();			
+			}
+			break;
+		case STAT_110KV:
+			{			 
+			 myPath.addEllipse(QPointF(0,0),15,15);			 
+			 //myPolygon = path.toFillPolygon();
+			}
+			break;
         case STAT_220KV:
-            myPolygon << QPointF(-20, 0) << QPointF(0, 20)
-                      << QPointF(20, 0) << QPointF(0, -20)
-                      << QPointF(-20, 0);
+			{			
+			 myPath.addEllipse(QPointF(0,0),15,15);				
+			 myPath.addEllipse(QPointF(0,0),20,20);			
+			// myPolygon = path.toFillPolygon();
+			}
             break;
 		case STAT_330KV:
-            myPolygon << QPointF(-15, -15) << QPointF(15, -15)
-                      << QPointF(15, 15) << QPointF(-15, 15)
-                      << QPointF(-15, -15);
+		case STAT_550KV:
+           {			
+			 myPath.addEllipse(QPointF(0,0),15,15);	
+			 myPath.addEllipse(QPointF(0,0),20,20);
+			 myPath.addEllipse(QPointF(0,0),25,25);			 
+			 //myPolygon = path.toFillPolygon();
+			}
             break;
+		case STAT_SUBSYSTEM1:
+			{			
+			 myPath.addEllipse(QPointF(0,0),25,25);	
+			 myPath.addEllipse(QPointF(0,0),30,30);				 
+			}
+			break;
+		case STAT_SUBSYSTEM2:
+			{			
+			 myPath.addEllipse(QPointF(0,0),30,30);	
+			 myPath.addEllipse(QPointF(0,0),35,35);				
+			}
+			break;
+		case STAT_SUBSYSTEM3:
+			{			
+			 myPath.addEllipse(QPointF(0,0),35,35);	
+			 myPath.addEllipse(QPointF(0,0),40,40);				 
+			}
+			break;
+		case STAT_T_NODE:
+			{			
+			 myPath.addEllipse(QPointF(0,0),5,5);				
+			}
+			break;
+		case STAT_SERIESCOMPENSATION:
+			{			
+			 myPath.addEllipse(QPointF(0,0),25,25);
+			 myPath.moveTo(-25,0);
+			 myPath.lineTo(-8,0);
+			 myPath.moveTo(-8,-15);
+			 myPath.lineTo(-8,15);
+			 myPath.moveTo(8,-15);
+			 myPath.lineTo(8,15);
+			 myPath.moveTo(8,0);
+			 myPath.lineTo(25,0);
+			}
+			break;
+		case STAT_CONVERTOR:
+			{			
+			 myPath.addEllipse(QPointF(0,0),25,25);		
+			 myPath.moveTo(-17,-17);
+			 myPath.lineTo(17,17);
+			 myPath.moveTo(-14,10);
+			 myPath.lineTo(3,10);
+
+			 myPath.moveTo(-5,-10);
+			 myPath.arcTo(-5,-15,10,10,180,-180);
+			 myPath.arcTo(5,-15,10,10,180,180);		
+			}
+			break;
+		case STAT_SWITCHING:
+			{			
+			 myPath.addEllipse(QPointF(0,0),20,20);		
+			 myPath.moveTo(-14,14);
+			 myPath.lineTo(14,-14);
+			}
+			break;		
         default:
-            myPolygon << QPointF(-120, -80) << QPointF(-70, 80)
+            /*myPolygon << QPointF(-120, -80) << QPointF(-70, 80)
                       << QPointF(120, 80) << QPointF(70, -80)
-                      << QPointF(-120, -80);
+                      << QPointF(-120, -80);*/
+			myPath.addRect(-50,-50,100,100);
+			
             break;
     }
-    setPolygon(myPolygon);
+    setPath(myPath);
 }
