@@ -6,20 +6,24 @@
 #include "idata.h"
 #include "diagramscene.h"
 
-const qreal Pi = 3.14;
+#define LINE_HALF_GAP		3
 
 //! [0]
-Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,
+Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int groupId,
 	QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsLineItem(parent, scene)
 {
-	setData(ITEM_DATA,(uint)data);
+	setData(ITEM_DATA,(uint)slink);
+	myGroupId	= groupId;
 	myStartItem = startItem;
 	myEndItem	= endItem;
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
 	myColor = Qt::black;
-	setPen(QPen(myColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	setPen(QPen(myColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+}
+Arrow::~Arrow()
+{
 }
 //! [0]
 iData* Arrow::myData()
@@ -29,12 +33,14 @@ iData* Arrow::myData()
 //! [1]
 QRectF Arrow::boundingRect() const
 {
-	qreal extra = (pen().width() + 20) / 2.0;
+	//qreal extra = (pen().width() + 20) / 2.0;
 
-	return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
-		line().p2().y() - line().p1().y()))
-		.normalized()
-		.adjusted(-extra, -extra, extra, extra);
+	//return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
+	//	line().p2().y() - line().p1().y()))
+	//	.normalized()
+	//	.adjusted(-extra, -extra, extra, extra)| childrenBoundingRect();
+
+	return arrowLine.boundingRect() | arrowHead.boundingRect();
 }
 //! [1]
 
@@ -43,6 +49,7 @@ QPainterPath Arrow::shape() const
 {
 	QPainterPath path = QGraphicsLineItem::shape();
 	path.addPolygon(arrowHead);
+	path.addPolygon(arrowLine);
 	return path;
 }
 //! [2]
@@ -65,7 +72,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	myPen.setColor(myColor);
 	qreal arrowSize = 20;
 	painter->setPen(myPen);
-	painter->setBrush(myColor);
+	painter->setBrush(Qt::white);
 	//! [4] //! [5]
 
 	QLineF centerLine(myStartItem->pos(), myEndItem->pos());
@@ -89,26 +96,64 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 
 	double angle = ::acos(line().dx() / line().length());
 	if (line().dy() >= 0)
-		angle = (Pi * 2) - angle;
+		angle = (M_PI * 2) - angle;
 
-	QPointF arrowP1 = line().p1() + QPointF(sin(angle + Pi / 3) * arrowSize,
-		cos(angle + Pi / 3) * arrowSize);
-	QPointF arrowP2 = line().p1() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
-		cos(angle + Pi - Pi / 3) * arrowSize);
+	QPointF arrowP1 = line().p1() + QPointF(sin(angle + M_PI / 3) * arrowSize,
+		cos(angle + M_PI / 3) * arrowSize);
+	QPointF arrowP2 = line().p1() + QPointF(sin(angle + M_PI - M_PI / 3) * arrowSize,
+		cos(angle + M_PI - M_PI / 3) * arrowSize);
 
 	arrowHead.clear();
 	arrowHead << line().p1() << arrowP1 << arrowP2;
 	//! [6] //! [7]
-	painter->drawLine(line());
-	painter->drawPolygon(arrowHead);
-	if (isSelected()) {
-		painter->setPen(QPen(myColor, 1, Qt::DashLine));
-		QLineF myLine = line();
-		myLine.translate(0, 4.0);
-		painter->drawLine(myLine);
-		myLine.translate(0,-8.0);
-		painter->drawLine(myLine);
+	QPen oldPen = pen();
+	if (isSelected())
+		oldPen.setColor(Qt::blue);
+	else
+		oldPen.setColor(myColor);
+	painter->setPen(oldPen);
+	//painter->drawLine(line());
+
+	//draw lines
+	iSLINK* slink = (iSLINK *)myData();
+	if(!slink)
+		return;
+	arrowLine.clear();
+	int nLines = slink->groupLineCount(1);															//just deal with group=1
+    qreal radAngle = centerLine.angle()* M_PI / 180;
+	for(int i=0;i<nLines;i++)
+	{
+		qreal dx = (nLines-1-i*2) * LINE_HALF_GAP * sin(radAngle);
+		qreal dy = (nLines-1-i*2) * LINE_HALF_GAP * cos(radAngle);
+		QPointF offset = QPointF(dx, dy);
+		QLineF  xline;
+		xline.setP1(centerLine.p1() + offset);
+		xline.setP2(centerLine.p2() + offset);
+		if(i == 0)
+		{
+			arrowLine.append(xline.p1());
+			arrowLine.append(xline.p2());
+		}
+		if(i == nLines - 1)
+		{
+			arrowLine.append(xline.p2());
+			arrowLine.append(xline.p1());
+		}
+		painter->drawLine(xline);
 	}
+
+	//draw arrow head
+	painter->drawPolygon(arrowHead);
+
+	//if (isSelected()) 
+	//{
+	//	painter->setPen(QPen(myColor, 1, Qt::DashLine));
+	//	QLineF myLine = line();
+	//	myLine.translate(4, 4.0);
+	//	painter->drawLine(myLine);
+	//	myLine.translate(4,-8.0);
+	//	painter->drawLine(myLine);
+	//}
 }
 QVariant Arrow::itemChange(GraphicsItemChange change,
                      const QVariant &value)

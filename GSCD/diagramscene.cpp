@@ -31,8 +31,8 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	editStationAction = new QAction(tr("&Edit Station..."), this);
 	editStationAction->setStatusTip(tr("Edit station"));
 
-	editBranchAction = new QAction(tr("&Edit Branch..."), this);
-	editBranchAction->setStatusTip(tr("Edit branch"));
+	editSLinkAction = new QAction(tr("&Edit Link..."), this);
+	editSLinkAction->setStatusTip(tr("Edit link"));
 
 	deleteAction = new QAction(QIcon(":/images/delete.png"),tr("&Delete"), this);
 	deleteAction->setStatusTip(tr("Delete item from diagram"));
@@ -63,9 +63,9 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	statNameMenu->addAction(propertyAction);
 	statNameMenu->addAction(defPositionAction);
 
-	branchMenu=new QMenu();
-	branchMenu->addAction(propertyAction);
-	branchMenu->addAction(editBranchAction);
+	statLinkMenu=new QMenu();
+	statLinkMenu->addAction(propertyAction);
+	statLinkMenu->addAction(editSLinkAction);
 
 	noteMenu=new QMenu();
 	noteMenu->addAction(propertyAction);
@@ -76,7 +76,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_STAT,statMenu);
 	addMenu(MENU_STAT_NAME,statNameMenu);
 	addMenu(MENU_STAT_VALUE,statValueMenu);
-	addMenu(MENU_BRANCH,branchMenu);
+	addMenu(MENU_STAT_LINK,statLinkMenu);
 
 }
 //! [0]
@@ -306,19 +306,19 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 				}
 			}
 			break;
-		case T_BRANCH:
+		case T_SLINK:
 			{
-				iBRANCH* branch = (iBRANCH *)data;
+				iSLINK* slink = (iSLINK *)data;
 				if(item->type() == Arrow::Type)
 				{
-						QMenu* menu = getMenu(MENU_BRANCH);
+						QMenu* menu = getMenu(MENU_STAT_LINK);
 						if(!menu)
 							return;
 						QAction* action = menu->exec(event->screenPos());
 						if(action == propertyAction)
-							viewBranch(branch);
-						else if(action == editBranchAction)
-							editBranch(branch);
+							viewSLink(slink);
+						else if(action == editSLinkAction)
+							editSLink(slink);
 				}
 			}
 			break;
@@ -419,8 +419,10 @@ void DiagramScene::addStation(const QPointF& pos)
 
 	if(!dlg.IsAddSite()) 
 		return ;
-	//To do : add new station data object			
+	//add new station data object			
 	iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
+	if(!stat)
+		return;
 	QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
 	stat->setNodes(addednodes);
 
@@ -465,6 +467,20 @@ void DiagramScene::addStation(const QPointF& pos)
 	addItem(itemValue);
 	stat->setItemValue(itemValue);
 
+	//QGraphicsRectItem* itemRect = new QGraphicsRectItem(0,0,180,20,0,this);
+	//itemRect->setFlag(QGraphicsItem::ItemIsSelectable, true);
+	//itemRect->setFlag(QGraphicsItem::ItemIsFocusable, true);
+	//itemRect->setFlag(QGraphicsItem::ItemIsMovable);
+	//itemRect->setVisible(false);
+	//addItem(itemRect);
+	//QGraphicsLineItem* itemLine = new QGraphicsLineItem(0,0,180,0,itemRect,this);
+	//itemLine->setFlag(QGraphicsItem::ItemIsSelectable, true);
+	//itemLine->setFlag(QGraphicsItem::ItemIsFocusable, true);
+	//itemLine->setPos(QPointF(0,10));
+	//addItem(itemLine);
+
+	QList<iSLINK*> listSLINK;
+
 	//create station to staiton arrow item
 	foreach(iNodeData* node,stat->nodeDatas())
 	{
@@ -472,20 +488,23 @@ void DiagramScene::addStation(const QPointF& pos)
 			break;
 
 		//to check if both fromBus and toBus of the attached data to this bus are already added
-		foreach(iLinkData* data,node->linkDatas())
+		foreach(iLinkData* linkdata,node->linkDatas())
 		{
-			if(!data)
+			if(!linkdata)
 				break;
 
-			int from = data->fromUid();
-			int to	 = data->toUid();
+			int from = linkdata->fromUid();
+			int to	 = linkdata->toUid();
 			iNodeData* node1 = myDoc->getNode(from);
 			iNodeData* node2 = myDoc->getNode(to);
 			if(!node1 || !node2)
 				break;
+
+			//the from and to node of this linkdata are both added to two different stations
 			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
 				break;
 
+			//get the from and to station data for this linkdata
 			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
 			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
 			if(!stat1 || !stat2)
@@ -496,18 +515,54 @@ void DiagramScene::addStation(const QPointF& pos)
 			if(!startItem || !endItem)
 				break;
 
-			if(data->type() == T_BRANCH)
+			iSLINK* slink = myDoc->SLINK_get(stat1,stat2);
+			if(!slink)
 			{
-				Arrow *arrow = new Arrow(startItem, endItem,data);									//create arrow item for brunch
-				arrow->setColor(myLineColor);
-				startItem->addArrow(arrow);
-				endItem->addArrow(arrow);
-				arrow->setZValue(-1000.0);
-				addItem(arrow);
-				arrow->updatePosition();
+				slink = myDoc->SLINK_new(stat1,stat2);
+				if(slink)
+				{
+					slink->setStartItem(startItem);
+					slink->setEndItem(endItem);
+					stat1->addSlink(slink);
+					stat2->addSlink(slink);
+					listSLINK.append(slink);														//newly created station link
+				}
+			}
+
+			if(slink)
+			{
+				slink->addLinkData(1,linkdata);														//default groupid=1
 			}
 		}
 
+	}
+
+	foreach(iSLINK *slink,listSLINK)
+	{
+		int nGroups = slink->groupCount();
+		for(int i=1;i<=nGroups;i++)
+		{
+			DiagramItem *startItem	= slink->startItem();
+			DiagramItem *endItem	= slink->endItem();
+			if(!startItem || !endItem)
+				continue;
+			Arrow *arrow = new Arrow(startItem, endItem,slink,i);									//create arrow item for one line group
+			arrow->setColor(myLineColor);
+			startItem->addArrow(arrow);
+			endItem->addArrow(arrow);
+			arrow->setZValue(-1000.0);
+			addItem(arrow);
+			arrow->updatePosition();
+
+
+			//text for arrow
+			//QGraphicsSimpleTextItem* arrowName = new QGraphicsSimpleTextItem(0,this);
+			//arrowName->setFont(myFont);
+			//arrowName->setText("Arrow");
+			//arrowName->setPos(QPointF(arrow->line().length()/2,0));
+			//addItem(arrowName);
+
+		}
 	}
 	item->setSelected(true);
 
@@ -532,20 +587,21 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	stat->setNodes(addednodes);
 
 	item->removeArrows();
-
+/*
+	//to check each node of this newly created station
 	foreach(iNodeData* node,stat->nodeDatas())
 	{
 		if(!node)
 			break;
 
 		//to check if both fromBus and toBus of the attached data to this bus are already added
-		foreach(iLinkData* data,node->linkDatas())
+		foreach(iLinkData* linkdata,node->linkDatas())
 		{
-			if(!data)
+			if(!linkdata)
 				break;
 
-			int from = data->fromUid();
-			int to	 = data->toUid();
+			int from = linkdata->fromUid();
+			int to	 = linkdata->toUid();
 			iNodeData* node1 = myDoc->getNode(from);
 			iNodeData* node2 = myDoc->getNode(to);
 			if(!node1 || !node2)
@@ -553,19 +609,22 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
 				break;
 
+			//get the from and to station data for this linkdata
 			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
 			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
 			if(!stat1 || !stat2)
 				break;
 
+			//make sure the from and to station item has already added to scene
 			DiagramItem *startItem	= stat1->myItem();
 			DiagramItem *endItem	= stat2->myItem();
 			if(!startItem || !endItem)
 				break;
 
-			if(data->type() == T_BRANCH)
+			//create arrow item according to data type
+			if(linkdata->type() == T_BRANCH)
 			{
-				Arrow *arrow = new Arrow(startItem, endItem,data);									//create arrow item for brunch
+				Arrow *arrow = new Arrow(startItem, endItem,linkdata);								//create arrow item for brunch
 				arrow->setColor(myLineColor);
 				startItem->addArrow(arrow);
 				endItem->addArrow(arrow);
@@ -576,7 +635,7 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 		}
 
 	}	
-
+*/
 }
 void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 {
@@ -596,8 +655,9 @@ void DiagramScene::deleteStation(DiagramItem *item,iSTAT* stat)
 {
 	item->removeArrows();
 	removeItem(item);
-
 	stat->itemRemoved();
+
+	stat->removeSlinks();
 	myDoc->STAT_delete(stat->Id());
 
 	delete item;
@@ -621,11 +681,11 @@ void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 {
 	//todo: show station value property dialog
 }
-void DiagramScene::viewBranch(iBRANCH* branch)
+void DiagramScene::viewSLink(iSLINK* slink)
 {
 
 }
-void DiagramScene::editBranch(iBRANCH* branch)
+void DiagramScene::editSLink(iSLINK* slink)
 {
 
 }
