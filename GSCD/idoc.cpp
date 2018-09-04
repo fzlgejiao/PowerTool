@@ -14,6 +14,7 @@ iDoc::iDoc(QObject *parent)
 
 iDoc::~iDoc()
 {
+	qDeleteAll(listSLINK);																			//already deleted in iSTAT::removeSlinks
 	qDeleteAll(listSTAT);
 	qDeleteAll(listBUS);
 	qDeleteAll(listBRANCH);
@@ -28,17 +29,26 @@ void iDoc::test()
 	iBUS* bus1 = new iBUS(1,1,"bus1", this);
 	iBUS* bus2 = new iBUS(2,1,"bus2", this);
 	iBUS* bus3 = new iBUS(3,1,"bus3", this);
+	iBUS* bus4 = new iBUS(4,1,"bus4", this);
+	iBUS* bus5 = new iBUS(5,1,"bus5", this);
 	iBRANCH* branch1 = new iBRANCH(1,bus1->Uid(),bus3->Uid(),this);									//branch1: bus1->bus3
 	bus1->addLink(branch1);
 	bus3->addLink(branch1);
 
-	iBRANCH* branch2 = new iBRANCH(2,bus3->Uid(),bus2->Uid(),this);									//branch2: bus3->bus2
-	bus3->addLink(branch2);
+	iBRANCH* branch2 = new iBRANCH(2,bus2->Uid(),bus4->Uid(),this);									//branch2: bus2->bus4
 	bus2->addLink(branch2);
+	bus4->addLink(branch2);
+
+	iBRANCH* branch3 = new iBRANCH(3,bus3->Uid(),bus5->Uid(),this);									//branch2: bus2->bus4
+	bus3->addLink(branch3);
+	bus5->addLink(branch3);
 
 	listBUS.insert(1,bus1);
 	listBUS.insert(2,bus2);
 	listBUS.insert(3,bus3);
+	listBUS.insert(4,bus4);
+	listBUS.insert(5,bus5);
+
 	listAREA.insert(1,area1);
 	listAREA.insert(2,area2);
 	//iSTAT* stat1 = STAT_new("STAT1");
@@ -294,6 +304,42 @@ void iDoc::STAT_delete(int id)
 	if(stat)
 		delete stat;
 	listSTAT.remove(id);
+}
+
+int	iDoc::SLINK_getId()
+{
+	int id = 1;
+	if(listSLINK.isEmpty())
+		return id;
+	foreach(iSLINK* statLINK, listSLINK)
+	{
+		if(statLINK->Id() > id)
+			id = statLINK->Id();
+	}
+	return id+1;
+}
+iSLINK* iDoc::SLINK_new(iSTAT* startSTAT,iSTAT* endSTAT)
+{
+	iSLINK* statLINK = new iSLINK(SLINK_getId(),startSTAT,endSTAT,this);
+	listSLINK.insert(statLINK->Id(),statLINK);
+	return statLINK;
+}
+void iDoc::SLINK_delete(int id)
+{
+	iSLINK* statLINK = SLINK_get(id);
+	if(statLINK)
+		delete statLINK;
+	listSLINK.remove(id);
+}
+iSLINK* iDoc::SLINK_get(iSTAT* startSTAT,iSTAT* endSTAT)
+{
+	foreach(iSLINK* statLINK, listSLINK)
+	{
+		if((statLINK->m_startSTAT == startSTAT && statLINK->m_endSTAT == endSTAT)
+		 ||(statLINK->m_startSTAT == endSTAT && statLINK->m_endSTAT == startSTAT))
+			return statLINK;
+	}
+	return NULL;
 }
 iNodeData* iDoc::getNode(int uid)
 {

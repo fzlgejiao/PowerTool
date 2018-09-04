@@ -10,6 +10,7 @@ typedef enum{
 	T_NONE			= 0,
 	T_AREA,
 	T_STAT,
+	T_SLINK,																						//station link data
 	T_BUS,
 	T_BRANCH,
 	T_TRANSFORMER,
@@ -44,7 +45,7 @@ typedef enum{
 	MENU_STAT,
 	MENU_STAT_NAME,
 	MENU_STAT_VALUE,
-	MENU_BRANCH,
+	MENU_STAT_LINK,
 	MENU_NOTE,
 	MENU_SYSINFO,
 	MENU_LEGEND
@@ -135,6 +136,7 @@ private:
 
 class DiagramItem;
 class DiagramTextItem;
+class iSLINK;
 class iSTAT : public iData
 {
 public:
@@ -162,7 +164,12 @@ public:
 	void	setItemValue(DiagramTextItem* item){m_itemValue = item;}
 	DiagramTextItem* itemValue(){return m_itemValue;}
 
+	void	addSlink(iSLINK* slink);
+	void	removeSlinks();
+	void	removeSlink(iSLINK* slink);
+
 private:
+	friend class iDoc;
 	QString			m_Name;
 	QString			m_Value;
 	STAT_TYPE		m_sType;																		//station type
@@ -172,8 +179,40 @@ private:
 	DiagramTextItem* m_itemValue;																	//pointer to station value text item
 
 	QList<iNodeData *>	m_nodeDatas;
+	QList<iSLINK *>		m_sLinks;
 };
 
+class iSLINK : public iData
+{
+public:
+	iSLINK(int id,iSTAT* startSTAT,iSTAT* endSTAT,QObject *parent=0);
+	~iSLINK(){}
+	T_DATA	type(){return T_SLINK;}
+
+	void			addLinkData(int groupId,iLinkData *linkData);
+	QMap<int,QList<iLinkData *> > &linkGroups(){return m_linkGroups;}
+	int				groupCount();
+	int				groupLineCount(int groupId);													//get line count for one specific arrow group
+	QList<iLinkData *> groupLinkDatas(int groupId);
+
+	void			setStartItem(DiagramItem* item){m_startItem = item;}
+	void			setEndItem(DiagramItem* item){m_endItem = item;}
+	DiagramItem*	startItem(){return m_startItem;}
+	DiagramItem*	endItem(){return m_endItem;}
+
+	iSTAT*			startStat(){return m_startSTAT;}
+	iSTAT*			endStat(){return m_endSTAT;}
+
+private:
+	friend class iDoc;
+
+	iSTAT*			m_startSTAT;																	//start station
+	iSTAT*			m_endSTAT;																		//end station
+	DiagramItem*	m_startItem;
+	DiagramItem*	m_endItem;
+	QList<iLinkData *>					m_linkDatas;
+	QMap<int,QList<iLinkData *> >		m_linkGroups;												//link groups, one group for one arrow(can have more than one arrow line)
+};
 
 class iBUS : public iNodeData
 {
@@ -202,7 +241,7 @@ public:
 	T_DATA type(){return T_BRANCH;}
 	iBUS * getFromBus(){return frombus;}
 	iBUS * getToBus(){return tobus;}
-
+	int    getParallelCode(){return ParallelCode;}
 private:
 	friend class iDoc;
 	iBUS *frombus;

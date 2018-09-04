@@ -19,10 +19,16 @@ public:
 	bool	openMapFile(const QString& file);
 	void	close();
 
-	int		STAT_getId();																			//get available station id
+	int		STAT_getId();																			//get available station id for a new station
 	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
 	void	STAT_delete(int id);
 	iSTAT*	STAT_new(const QString& name);
+
+	int		SLINK_getId();																			//get available station link id for a new station link
+	iSLINK*	SLINK_get(int id){return listSLINK.value(id,NULL);}
+	void	SLINK_delete(int id);
+	iSLINK*	SLINK_new(iSTAT* startSTAT,iSTAT* endSTAT);
+	iSLINK* SLINK_get(iSTAT* startSTAT,iSTAT* endSTAT);												//get station link by start and end station
 	
 	iNodeData* getNode(int uid);
 	iNodeData* getNode(int type,int id);
@@ -59,6 +65,7 @@ protected:
 
 private:
 	QMap<int,iSTAT *>			listSTAT;															//<id,iSTAT*>: id is the station id
+	QMap<int,iSLINK *>			listSLINK;															//<id,iSLINK*>: id is the station link id
 	QMap<int,iBUS *>			listBUS;															//<id,iBUS*>: id is the bus id
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id

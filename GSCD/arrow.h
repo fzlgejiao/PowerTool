@@ -15,14 +15,15 @@ class QGraphicsSceneMouseEvent;
 class QPainterPath;
 QT_END_NAMESPACE
 
-class iData;
+class iSLINK;
 class Arrow : public QGraphicsLineItem
 {
 public:
     enum { Type = UserType + 4 };
 
-    Arrow(DiagramItem *startItem, DiagramItem *endItem,iData* data,
+    Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int groupId,
       QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+	~Arrow();
 
     int type() const
         { return Type; }
@@ -40,8 +41,7 @@ public:
     void updatePosition();
 
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget = 0);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 	void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
 	void mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent );
 	void mouseReleaseEvent( QGraphicsSceneMouseEvent * mouseEvent );
@@ -52,6 +52,8 @@ private:
     DiagramItem*	myEndItem;
     QColor			myColor;
     QPolygonF		arrowHead;
+	QPolygonF		arrowLine;
+	int				myGroupId;
 };
 
 

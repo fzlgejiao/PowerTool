@@ -107,9 +107,9 @@ protected:
 	void viewStationName(DiagramTextItem *item,iSTAT* stat);
 	void viewStationValue(DiagramTextItem *item,iSTAT* stat);
 
-	//actions for branch
-	void viewBranch(iBRANCH* branch);																//for 'property' of branch menu item
-	void editBranch(iBRANCH* branch);																//for 'edit branch' menu item
+	//actions for station link
+	void viewSLink(iSLINK* slink);																//for 'property' of branch menu item
+	void editSLink(iSLINK* slink);																//for 'edit link' menu item
 
 	//actions for note
 	void addNote(const QPointF& pos);
@@ -126,13 +126,13 @@ private:
 	QMenu*		statMenu;
 	QMenu*		statValueMenu;
 	QMenu*		statNameMenu;
-	QMenu*		branchMenu;
+	QMenu*		statLinkMenu;
 	QMenu*		noteMenu;
 
 	QAction*	propertyAction;
     QAction*	deleteAction;
 	QAction*	editStationAction;
-	QAction*	editBranchAction;
+	QAction*	editSLinkAction;
 	QAction*	defPositionAction;
 
     bool		leftButtonDown;
