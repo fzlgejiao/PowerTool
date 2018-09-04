@@ -31,7 +31,10 @@ public:
 	bool IsRemovedSite();
 	QString NewStationName();
 	QList<iNodeData *>&  GetAddedNodes(){return addednodelist;}
+	QFont GetFont() {return m_font;}
 	//void GetRemovedNodes(QList<iNodeData *>& nodes);
+	STAT_TYPE getstationtype(){return m_type;}
+
 
 private slots:
 		void OnHiddenTableActived(int row,int column);
@@ -42,7 +45,8 @@ private slots:
 		void OnRevokeAll();		
 		void OnFontdialog();
 		void OnComboAreaChanged(int index);
-		
+		void OnStatTypeChanged(int index);
+		void OnBranchNodeAdd();
 		
 private:
 	Ui::AddDialog ui;
@@ -62,6 +66,7 @@ private:
 	//void addGeneratorRows(iGENERATOR *generator);
 	
 	QFont m_font;
+	STAT_TYPE m_type;
 
 };
 

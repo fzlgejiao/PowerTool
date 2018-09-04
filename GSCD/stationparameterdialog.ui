@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>709</width>
-    <height>325</height>
+    <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,14 +21,6 @@
      <width>64</width>
      <height>22</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
    <property name="text">
     <string>Unit:-----</string>
@@ -95,14 +87,14 @@
   <widget class="QPushButton" name="pushButton_OK">
    <property name="geometry">
     <rect>
-     <x>570</x>
+     <x>617</x>
      <y>270</y>
-     <width>123</width>
-     <height>31</height>
+     <width>75</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>OK</string>
+    <string>Close</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -113,14 +105,6 @@
      <width>113</width>
      <height>19</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
    </property>
    <property name="text">
     <string>Station Name:</string>
@@ -136,32 +120,34 @@
     </rect>
    </property>
   </widget>
-  <widget class="QSplitter" name="splitter">
+  <widget class="QPushButton" name="pushButton_voltage">
+   <property name="geometry">
+    <rect>
+     <x>148</x>
+     <y>270</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Voltage...</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_tideway">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>270</y>
-     <width>251</width>
-     <height>31</height>
+     <width>75</width>
+     <height>23</height>
     </rect>
    </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+   <property name="text">
+    <string>Power flow...</string>
    </property>
-   <widget class="QPushButton" name="pushButton_tideway">
-    <property name="text">
-     <string>Power flow...</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_voltage">
-    <property name="text">
-     <string>Voltage...</string>
-    </property>
-   </widget>
   </widget>
+  <zorder>splitter</zorder>
   <zorder>tableWidget_parameter</zorder>
-  <zorder>pushButton_tideway</zorder>
-  <zorder>pushButton_voltage</zorder>
   <zorder>label</zorder>
   <zorder>lineEdit_name</zorder>
   <zorder>label_2</zorder>

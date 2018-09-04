@@ -25,14 +25,6 @@
      <height>20</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
     <string>Not included Buses:</string>
    </property>
@@ -58,14 +50,6 @@
      <width>161</width>
      <height>20</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
    <property name="text">
     <string>Included Buses</string>
@@ -118,12 +102,6 @@
      <height>349</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
    <column>
     <property name="text">
      <string>Type</string>
@@ -149,14 +127,6 @@
      <height>25</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
     <string>Areas:</string>
    </property>
@@ -171,69 +141,16 @@
    <property name="geometry">
     <rect>
      <x>298</x>
-     <y>110</y>
+     <y>105</y>
      <width>118</width>
      <height>25</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
    </property>
    <item>
     <property name="text">
      <string>All Areas</string>
     </property>
    </item>
-  </widget>
-  <widget class="QComboBox" name="comboBox_StatType">
-   <property name="geometry">
-    <rect>
-     <x>580</x>
-     <y>450</y>
-     <width>132</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <item>
-    <property name="text">
-     <string>Hydropower Station</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>ThermalPower Station</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>460</y>
-     <width>131</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Station Type:</string>
-   </property>
   </widget>
   <widget class="QPushButton" name="pushButton_add">
    <property name="enabled">
@@ -246,12 +163,6 @@
      <width>118</width>
      <height>25</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
    </property>
    <property name="text">
     <string>Insert&gt;</string>
@@ -266,12 +177,6 @@
      <height>25</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
    <property name="text">
     <string>Insert All&gt;&gt;</string>
    </property>
@@ -284,12 +189,6 @@
      <width>118</width>
      <height>25</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
    </property>
    <property name="text">
     <string>&lt;&lt;Remove All</string>
@@ -307,12 +206,6 @@
      <height>25</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
    <property name="text">
     <string>&lt;Remove</string>
    </property>
@@ -325,12 +218,6 @@
      <width>280</width>
      <height>221</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
    </property>
    <column>
     <property name="text">
@@ -357,14 +244,6 @@
      <height>19</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
     <string>connected Buses:</string>
    </property>
@@ -377,12 +256,6 @@
      <width>280</width>
      <height>121</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-    </font>
    </property>
    <column>
     <property name="text">
@@ -409,14 +282,6 @@
      <height>19</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
     <string>Station Name:</string>
    </property>
@@ -430,12 +295,6 @@
      <height>23</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>9</pointsize>
-    </font>
-   </property>
    <property name="text">
     <string/>
    </property>
@@ -446,16 +305,8 @@
      <x>300</x>
      <y>20</y>
      <width>118</width>
-     <height>28</height>
+     <height>25</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
    <property name="text">
     <string>Font...</string>
@@ -464,23 +315,92 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>480</x>
+     <x>517</x>
      <y>20</y>
      <width>193</width>
      <height>28</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_branchnodeadd">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>400</y>
+     <width>118</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Insert&gt;</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>450</y>
+     <width>281</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Station Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="comboBox_StatType">
+      <item>
+       <property name="text">
+        <string>Hydropower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ThermalPower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>NuclearPower Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>550kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>330kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>220kV Station</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>110kV Station</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

@@ -16,10 +16,20 @@ StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
 	{
 			AddNodeToTable(node);
 	}			
-	connect(ui.pushButton_OK,SIGNAL(clicked()),this,SLOT(accept()));		
+	connect(ui.pushButton_OK,SIGNAL(clicked()),this,SLOT(accept()));	
+	connect(ui.pushButton_tideway,SIGNAL(clicked()),this,SLOT(OnPowerFlow()));
+	connect(ui.pushButton_voltage,SIGNAL(clicked()),this,SLOT(OnShowVoltage()));
 }
 
 StationParameterDialog::~StationParameterDialog()
+{
+
+}
+void StationParameterDialog::OnShowVoltage()
+{
+
+}
+void StationParameterDialog::OnPowerFlow()
 {
 
 }
@@ -56,9 +66,18 @@ void StationParameterDialog::AddNodeToTable(iNodeData *node)
 	int row = ui.tableWidget_parameter->rowCount();
 	ui.tableWidget_parameter->insertRow(row);
 
-	QTableWidgetItem *item = new QTableWidgetItem();	
+	QTableWidgetItem *item = new QTableWidgetItem();
+	QTableWidgetItem *refvoltageitem = new QTableWidgetItem();
+	QTableWidgetItem *voltageitem = new QTableWidgetItem();
 	
-	if(node->type()==T_BUS) 		
-			item->setText(((iBUS *)node)->name());
-	ui.tableWidget_parameter->setItem(row, NAME, item);	
+	if(node->type()==T_BUS) 
+	{
+		iBUS *bus=(iBUS *)node;
+		item->setText(bus->name());
+		refvoltageitem->setText( QString::number(bus->GetRefVoltage(),10,1));
+		voltageitem->setText( QString::number(bus->GetVoltage(),10,3));
+		ui.tableWidget_parameter->setItem(row, NAME, item);	
+		ui.tableWidget_parameter->setItem(row, Ref_Volatge, refvoltageitem);
+		ui.tableWidget_parameter->setItem(row, Voltage, voltageitem);
+	}
 }

@@ -56,7 +56,7 @@ public:
     {
         if (TextDialog->objectName().isEmpty())
             TextDialog->setObjectName(QString::fromUtf8("TextDialog"));
-        TextDialog->resize(538, 246);
+        TextDialog->resize(538, 236);
         layoutWidget = new QWidget(TextDialog);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
         layoutWidget->setGeometry(QRect(20, 20, 491, 191));
@@ -100,12 +100,6 @@ public:
 
         checkBox_border = new QCheckBox(layoutWidget);
         checkBox_border->setObjectName(QString::fromUtf8("checkBox_border"));
-        QFont font;
-        font.setFamily(QString::fromUtf8("Arial"));
-        font.setPointSize(10);
-        font.setBold(true);
-        font.setWeight(75);
-        checkBox_border->setFont(font);
 
         horizontalLayout->addWidget(checkBox_border);
 
@@ -125,12 +119,6 @@ public:
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
         label = new QLabel(layoutWidget);
         label->setObjectName(QString::fromUtf8("label"));
-        QFont font1;
-        font1.setFamily(QString::fromUtf8("Arial"));
-        font1.setPointSize(12);
-        font1.setBold(true);
-        font1.setWeight(75);
-        label->setFont(font1);
 
         horizontalLayout_2->addWidget(label);
 
@@ -140,7 +128,6 @@ public:
 
         pushButton_font = new QPushButton(layoutWidget);
         pushButton_font->setObjectName(QString::fromUtf8("pushButton_font"));
-        pushButton_font->setFont(font);
 
         horizontalLayout_2->addWidget(pushButton_font);
 
@@ -150,7 +137,6 @@ public:
 
         pushButton_color = new QPushButton(layoutWidget);
         pushButton_color->setObjectName(QString::fromUtf8("pushButton_color"));
-        pushButton_color->setFont(font);
 
         horizontalLayout_2->addWidget(pushButton_color);
 

@@ -24,10 +24,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="orientation">
@@ -70,10 +70,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Arial</family>
-     <pointsize>10</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -91,10 +91,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Arial</family>
-     <pointsize>9</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -109,6 +109,42 @@
      <width>381</width>
      <height>91</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAsNeeded</enum>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::MultiSelection</enum>
+   </property>
+   <property name="textElideMode">
+    <enum>Qt::ElideRight</enum>
+   </property>
+   <property name="flow">
+    <enum>QListView::TopToBottom</enum>
+   </property>
+   <property name="isWrapping" stdset="0">
+    <bool>false</bool>
+   </property>
+   <property name="resizeMode">
+    <enum>QListView::Fixed</enum>
+   </property>
+   <property name="layoutMode">
+    <enum>QListView::Batched</enum>
+   </property>
+   <property name="selectionRectVisible">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QSplitter" name="splitter_2">
@@ -126,10 +162,10 @@
    <widget class="QPushButton" name="pushButton_font">
     <property name="font">
      <font>
-      <family>Arial</family>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -139,10 +175,10 @@
    <widget class="QCheckBox" name="checkBox_applyall">
     <property name="font">
      <font>
-      <family>Arial</family>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -165,10 +201,10 @@
    <widget class="QLabel" name="label">
     <property name="font">
      <font>
-      <family>Arial</family>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
@@ -178,8 +214,10 @@
    <widget class="QLineEdit" name="lineEdit_name">
     <property name="font">
      <font>
-      <family>Arial</family>
-      <pointsize>9</pointsize>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
    </widget>

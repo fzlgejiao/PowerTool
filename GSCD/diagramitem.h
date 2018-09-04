@@ -50,7 +50,7 @@ protected:
 private:
     QPolygonF		myPolygon;
     QList<Arrow *>	arrows;
-
+	
 signals:
 
 	

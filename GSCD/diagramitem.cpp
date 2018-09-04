@@ -60,8 +60,7 @@ QPixmap DiagramItem::image() const
     QPainter painter(&pixmap);
     painter.setPen(QPen(Qt::black, 8));
     painter.translate(125, 125);
-    painter.drawPolyline(myPolygon);
-
+    painter.drawPolyline(myPolygon);	
     return pixmap;
 }
 
@@ -150,6 +149,18 @@ void DiagramItem::updateData()
             path.lineTo(200, 25);
             myPolygon = path.toFillPolygon();
             break;*/
+	case STAT_HYDROPOWER:
+			myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10)<<QPointF(15, -10);
+		break;
+
+		case STAT_THERMALPOWER:
+			myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
+		break;
+
+		case STAT_NUCLEARPOWER:
+			myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10);			
+			break;
+
         case STAT_220KV:
             myPolygon << QPointF(-20, 0) << QPointF(0, 20)
                       << QPointF(20, 0) << QPointF(0, -20)
