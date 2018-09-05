@@ -39,7 +39,7 @@ void iDoc::test()
 	bus2->addLink(branch2);
 	bus4->addLink(branch2);
 
-	iBRANCH* branch3 = new iBRANCH(3,bus3->Uid(),bus5->Uid(),this);									//branch2: bus2->bus4
+	iBRANCH* branch3 = new iBRANCH(3,bus3->Uid(),bus5->Uid(),this);									//branch3: bus3->bus5
 	bus3->addLink(branch3);
 	bus5->addLink(branch3);
 

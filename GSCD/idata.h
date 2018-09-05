@@ -146,6 +146,7 @@ public:
 	QString name(){return m_Name;}
 	void	setName(const QString& value){m_Name=value;}
 	QString value(){return m_Value;}
+	void	setValue(const QString& value){m_Value = value;}
 	STAT_TYPE	sType(){return m_sType;}
 	void	setsType(STAT_TYPE type){m_sType = type;}
 
@@ -155,8 +156,7 @@ public:
 	//void    removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
-	void	itemAdded(DiagramItem* item){m_itemStat = item;}
-	void	itemRemoved(){m_itemStat=NULL;}
+	void	setItem(DiagramItem* item){m_itemStat = item;}
 	DiagramItem* myItem(){return m_itemStat;}
 
 	void	setItemName(DiagramTextItem* item){m_itemName = item;}
@@ -171,7 +171,7 @@ public:
 private:
 	friend class iDoc;
 	QString			m_Name;
-	QString			m_Value;
+	QString			m_Value;																		//nodes voltage value(can be more than one node,e.g "v1:v2")
 	STAT_TYPE		m_sType;																		//station type
 
 	DiagramItem*	 m_itemStat;																	//pointer to station diagram item

@@ -46,13 +46,13 @@
    <property name="geometry">
     <rect>
      <x>431</x>
-     <y>73</y>
+     <y>70</y>
      <width>161</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Included Buses</string>
+    <string>Included Buses:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_addedCnt">
@@ -121,10 +121,10 @@
   <widget class="QLineEdit" name="lineEdit_area">
    <property name="geometry">
     <rect>
-     <x>298</x>
+     <x>300</x>
      <y>80</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -140,10 +140,10 @@
   <widget class="QComboBox" name="comboBox_areas">
    <property name="geometry">
     <rect>
-     <x>298</x>
+     <x>300</x>
      <y>105</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <item>
@@ -161,7 +161,7 @@
      <x>300</x>
      <y>150</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -174,7 +174,7 @@
      <x>300</x>
      <y>190</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -187,7 +187,7 @@
      <x>300</x>
      <y>270</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -203,7 +203,7 @@
      <x>300</x>
      <y>230</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -214,7 +214,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>90</y>
+     <y>93</y>
      <width>280</width>
      <height>221</height>
     </rect>
@@ -238,14 +238,14 @@
   <widget class="QLabel" name="label_branch">
    <property name="geometry">
     <rect>
-     <x>31</x>
+     <x>10</x>
      <y>330</y>
      <width>135</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string>connected Buses:</string>
+    <string>Connected Buses:</string>
    </property>
   </widget>
   <widget class="QTableWidget" name="tableWidget_branch">
@@ -276,8 +276,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
+     <x>10</x>
+     <y>25</y>
      <width>104</width>
      <height>19</height>
     </rect>
@@ -290,9 +290,9 @@
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>19</y>
+     <y>20</y>
      <width>154</width>
-     <height>23</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -305,7 +305,7 @@
      <x>300</x>
      <y>20</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -337,110 +337,110 @@
      <x>300</x>
      <y>400</y>
      <width>118</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
     <string>Insert&gt;</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>450</y>
-     <width>281</width>
-     <height>31</height>
+     <x>431</x>
+     <y>460</y>
+     <width>76</width>
+     <height>16</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Station Type:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="comboBox_StatType">
-      <item>
-       <property name="text">
-        <string>Hydropower Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>ThermalPower Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>NuclearPower Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>PumpedStoragePower Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Sub-System 3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Sub-System 2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Sub-System 1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>550kV Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>330kV Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>220kV Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>110kV Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>T-Node</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Series Compensation Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Convertor Station</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Switching Station</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-   </layout>
+   <property name="text">
+    <string>Station Type:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_StatType">
+   <property name="geometry">
+    <rect>
+     <x>514</x>
+     <y>454</y>
+     <width>195</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Hydro Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Thermal Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Nuclear Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Pumped Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Sub-System 3</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Sub-System 2</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Sub-System 1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>550kV Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>330kV Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>220kV Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>110kV Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>T-Node</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Series Compensation Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Convertor Station</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Switching Station</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

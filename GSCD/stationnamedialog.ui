@@ -11,12 +11,12 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>StationNameDialog</string>
+   <string>Station Name</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>291</x>
+     <x>300</x>
      <y>19</y>
      <width>111</width>
      <height>61</height>
@@ -43,9 +43,9 @@
   <widget class="QLineEdit" name="lineEdit_namepreview">
    <property name="geometry">
     <rect>
-     <x>21</x>
+     <x>15</x>
      <y>99</y>
-     <width>381</width>
+     <width>396</width>
      <height>61</height>
     </rect>
    </property>
@@ -62,7 +62,7 @@
   <widget class="QPushButton" name="pushButton_clear">
    <property name="geometry">
     <rect>
-     <x>291</x>
+     <x>300</x>
      <y>169</y>
      <width>111</width>
      <height>25</height>
@@ -83,7 +83,7 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>21</x>
+     <x>15</x>
      <y>179</y>
      <width>81</width>
      <height>16</height>
@@ -104,9 +104,9 @@
   <widget class="QListView" name="listView_shownnodes">
    <property name="geometry">
     <rect>
-     <x>21</x>
+     <x>15</x>
      <y>200</y>
-     <width>381</width>
+     <width>396</width>
      <height>91</height>
     </rect>
    </property>
@@ -147,80 +147,86 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QSplitter" name="splitter_2">
+  <widget class="QPushButton" name="pushButton_font">
    <property name="geometry">
     <rect>
-     <x>21</x>
+     <x>15</x>
      <y>59</y>
-     <width>225</width>
+     <width>93</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Font..</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_applyall">
+   <property name="geometry">
+    <rect>
+     <x>114</x>
+     <y>59</y>
+     <width>171</width>
      <height>24</height>
     </rect>
    </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+   <property name="font">
+    <font>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
    </property>
-   <widget class="QPushButton" name="pushButton_font">
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Font..</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox_applyall">
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Apply all Station's Font</string>
-    </property>
-   </widget>
+   <property name="text">
+    <string>Apply font to all Stations</string>
+   </property>
   </widget>
-  <widget class="QSplitter" name="splitter">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>21</x>
-     <y>19</y>
-     <width>231</width>
-     <height>21</height>
+     <x>15</x>
+     <y>22</y>
+     <width>38</width>
+     <height>16</height>
     </rect>
    </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+   <property name="font">
+    <font>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Name:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit_name">
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>8</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
+   <property name="text">
+    <string>Name:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_name">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>19</y>
+     <width>176</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>MS Shell Dlg 2</family>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

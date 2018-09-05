@@ -9,6 +9,8 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+	m_changes = 0;
+
 	SetTableStyle(ui.tableWidget_hidden);
 	SetTableStyle(ui.tableWidget_added);
 	SetTableStyle(ui.tableWidget_branch);
