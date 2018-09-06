@@ -185,7 +185,6 @@ void DiagramItem::updateData()
 			myPath.addRect(-15,-3,15,13);
 			myPath.moveTo(0,3);
 			myPath.addRect(0,3,15,7);
-			myPath.setFillRule(Qt::WindingFill);
 			}
 			break;
 		case STAT_NUCLEARPOWER:
@@ -281,5 +280,6 @@ void DiagramItem::updateData()
 			
             break;
     }
+	myPath.setFillRule(Qt::WindingFill);
     setPath(myPath);
 }

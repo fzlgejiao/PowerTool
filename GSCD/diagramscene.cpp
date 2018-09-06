@@ -482,6 +482,7 @@ void DiagramScene::addStation(const QPointF& pos)
 	valueItem->setDefaultPos(QPointF(20,-20));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);
+	valueItem->setVisible(false);
 	stat->setItemValue(valueItem);
 
 	//QGraphicsRectItem* itemRect = new QGraphicsRectItem(0,0,180,20,0,this);
