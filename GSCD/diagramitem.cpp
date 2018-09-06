@@ -19,6 +19,7 @@ DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *sce
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
+
 }
 //! [0]
 iData* DiagramItem::myData()
@@ -112,7 +113,11 @@ void DiagramItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 QRectF DiagramItem::boundingRect() const
 {
-    return 	QGraphicsPathItem::boundingRect() | childrenBoundingRect();
+	return 	QGraphicsPathItem::boundingRect() | childrenBoundingRect() | myPath.boundingRect();
+}
+QPainterPath DiagramItem::shape() const
+{
+	return myPath;
 }
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -171,11 +176,15 @@ void DiagramItem::updateData()
 			{
 			//myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
 			myPath.addRect(-15,-10,30,20);
+			//myPath.moveTo(-15,-3);
+			//myPath.lineTo(0,-3);
+			//myPath.lineTo(0,10);
+			//myPath.moveTo(0,3);
+			//myPath.lineTo(15,3);
 			myPath.moveTo(-15,-3);
-			myPath.lineTo(0,-3);
-			myPath.lineTo(0,10);
+			myPath.addRect(-15,-3,15,13);
 			myPath.moveTo(0,3);
-			myPath.lineTo(15,3);
+			myPath.addRect(0,3,15,7);
 			}
 			break;
 		case STAT_NUCLEARPOWER:
@@ -271,5 +280,6 @@ void DiagramItem::updateData()
 			
             break;
     }
+	myPath.setFillRule(Qt::WindingFill);
     setPath(myPath);
 }

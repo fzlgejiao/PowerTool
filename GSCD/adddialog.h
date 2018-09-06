@@ -12,6 +12,10 @@ class iNodeData;
 class iSTAT;
 class QFont;
 
+#define	CHG_STAT_STYPE		0x01
+#define	CHG_STAT_NAME		0x02
+#define	CHG_STAT_DATA		0x04
+
 enum Columns
 {
 	Type=0,
@@ -35,6 +39,7 @@ public:
 	QFont GetFont() {return m_font;}
 	//void GetRemovedNodes(QList<iNodeData *>& nodes);
 	STAT_TYPE getstationtype(){return m_type;}
+	ushort	changes(){return m_changes;}
 
 
 private slots:
@@ -48,6 +53,7 @@ private slots:
 		void OnComboAreaChanged(int index);
 		void OnStatTypeChanged(int index);
 		void OnBranchNodeAdd();
+		void OnnameChanged(const QString &name);
 		
 private:
 	Ui::AddDialog ui;
@@ -66,9 +72,9 @@ private:
 	void ClearTableContext(QTableWidget *tablewidget);
 	//void addGeneratorRows(iGENERATOR *generator);
 	
-	QFont m_font;
-	STAT_TYPE m_type;
-
+	QFont		m_font;
+	STAT_TYPE	m_type;
+	ushort		m_changes;
 };
 
 #endif // ADDDIALOG_H

@@ -83,7 +83,7 @@ public:
 	void addMenu(MENU_TYPE type,QMenu *menu){myMenus.insert(type,menu);}
 	QMenu* getMenu(MENU_TYPE type){return myMenus.value(type,NULL);}
 	ControlPanel getControlPanel(){return m_controlpanel;}
-	void setControlPanel(ControlPanel value){m_controlpanel=value;}
+	void DiagramScene::setControlPanel(ControlPanel value);
 
 	void viewItem();																				//to deal with view property event from main menu
 	void editItem();																				//to deal with edit object event from main menu

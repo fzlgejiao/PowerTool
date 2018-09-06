@@ -42,6 +42,9 @@ BranchEditDialog::BranchEditDialog(iSLINK *link,BranchAction action,QWidget *par
 
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
+
+	ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+	ui.buttonBox->button(QDialogButtonBox::Help)->setEnabled(false);
 }
 BranchEditDialog::~BranchEditDialog()
 {
@@ -127,7 +130,7 @@ void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * 
 	if(linkgroup.count()==0) return;
 	int index=treewidget->topLevelItemCount();
 
-	QTreeWidgetItem * rootgroup=new  QTreeWidgetItem(treewidget,QStringList(QString("Group %1").arg(index+1)));
+	QTreeWidgetItem * rootgroup=new  QTreeWidgetItem(treewidget,QStringList(QString("Group-[%1]").arg(index+1)));
 	
 	QList<QTreeWidgetItem *> items;
 	for(int i=0;i<linkgroup.count();i++)
@@ -135,7 +138,7 @@ void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * 
 		if(linkgroup[i]->type()==T_BRANCH)
 		{
 			iBRANCH *branch=(iBRANCH *)linkgroup[i];
-			items.append(new QTreeWidgetItem(rootgroup,QStringList(QString("%1 <----> %2").arg(branch->getFromBus()->name()).arg(branch->getToBus()->name()))));
+			items.append(new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4 ").arg(branch->getFromBus()->name()).arg(branch->getFromBus()->GetRefVoltage()).arg(branch->getToBus()->name()).arg(branch->getToBus()->GetRefVoltage()))));
 		}
 	}
 

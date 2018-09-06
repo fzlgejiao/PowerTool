@@ -47,6 +47,7 @@ protected:
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	QRectF	boundingRect () const;
+	QPainterPath shape() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:

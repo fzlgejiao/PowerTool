@@ -46,7 +46,7 @@ StationNameDialog::StationNameDialog(iSTAT *stat,QWidget *parent)
 	connect(ui.pushButton_clear,SIGNAL(clicked()),this,SLOT(OnclearshownNodes()));
 	connect(ui.pushButton_font,SIGNAL(clicked()),this,SLOT(OnFontchanged()));
 	connect(ui.checkBox_applyall,SIGNAL(stateChanged (int)),this,SLOT(OnCheckBoxChanged(int)));
-
+	connect(ui.lineEdit_name,SIGNAL(textChanged ( const QString & )),ui.lineEdit_namepreview,SLOT(setText(const QString &)));
 	connect(ui.listView_shownnodes,SIGNAL(clicked(const QModelIndex&)),this,SLOT(OnshowNodeChanged(const QModelIndex&)));
 	
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));

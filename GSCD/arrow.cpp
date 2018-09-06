@@ -7,6 +7,7 @@
 #include "diagramscene.h"
 
 #define LINE_HALF_GAP		3
+#define ARROW_SIZE		   15
 
 //! [0]
 Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int groupId,
@@ -70,7 +71,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	
 	QPen myPen = pen();
 	myPen.setColor(myColor);
-	qreal arrowSize = 10;
+	qreal arrowSize = ARROW_SIZE;
 	painter->setPen(myPen);
 	painter->setBrush(Qt::white);
 	//! [4] //! [5]
@@ -161,9 +162,6 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	//	myLine.translate(4,-8.0);
 	//	painter->drawLine(myLine);
 	//}
-	painter->drawLine(line());	
-	painter->drawPolygon(arrowHead);
-	
 }
 QVariant Arrow::itemChange(GraphicsItemChange change,
                      const QVariant &value)

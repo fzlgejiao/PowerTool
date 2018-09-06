@@ -90,6 +90,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	m_controlpanel.isShowVoltageAngle=true;
 	m_controlpanel.isShowAllNodeVoltage=true;
 	m_controlpanel.unittype=UNIT_ACTUALVALUE;
+
 }
 //! [0]
 
@@ -441,57 +442,52 @@ void DiagramScene::addStation(const QPointF& pos)
 	QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
 	stat->setNodes(addednodes);
 	stat->setsType(dlg.getstationtype());
+
 	//create station diagram item
 	DiagramItem *item = new DiagramItem(stat, 0,this);												//create diagram item for station
 	item->setBrush(myItemColor);
 	addItem(item);
 	item->setPos(pos);
-	stat->itemAdded(item);																			//set item to station
+	stat->setItem(item);																			//set item to station
 	
 	//create station name text item
-	//DiagramTextItem* itemName = new DiagramTextItem(item,this);
-	//itemName->setFont(myFont);
-	//itemName->setPlainText(stat->name());
-	////itemName->setTextInteractionFlags(Qt::TextEditorInteraction);
-	////itemName->setZValue(1000.0);
-	////connect(textItem, SIGNAL(lostFocus(DiagramTextItem*)),   this, SLOT(editorLostFocus(DiagramTextItem*)));
-	////connect(textItem, SIGNAL(selectedChange(QGraphicsItem*)),this, SIGNAL(itemSelected(QGraphicsItem*)));
-	//addItem(itemName);
-	//itemName->setDefaultTextColor(myTextColor);
-	//itemName->setPos(QPointF(20,20));
-	//////emit textInserted(itemName);
+	DiagramTextItem* nameItem = new DiagramTextItem(item,this);
+	//nameItem->setFont(myFont);
+	nameItem->setFont(dlg.GetFont());
 
-	DiagramTextItem* itemName = new DiagramTextItem(item,this);
-	//itemName->setFont(myFont);
-	itemName->setFont(dlg.GetFont());
 	//To do : set all nodes voltage and angles
 	QString nametext;
 	foreach(iNodeData *node ,addednodes)
 	{
-		double voltage=node->GetVoltage() * node->GetRefVoltage();
-		double angle=node->GetAngle();
+		double voltage	= node->GetVoltage() * node->GetRefVoltage();
+		double angle	= node->GetAngle();
 		nametext.append(QString::number(voltage,10,1)+" < "+QString::number(angle,10,1));
 		nametext.append("\n");
 	}
 	nametext.append(stat->name());
-	itemName->setPlainText(nametext);
-	itemName->setDefaultTextColor(Qt::red);
-	itemName->setPos(QPointF(20,20));
-	itemName->setDefaultPos(QPointF(20,20));
-	itemName->setData(ITEM_DATA,(uint)stat);
-	addItem(itemName);
-	stat->setItemName(itemName);
+
+	if(m_controlpanel.isShowAllNodeVoltage)
+		nameItem->setPlainText(nametext);
+	else
+		nameItem->setPlainText(stat->name());
+	nameItem->setDefaultTextColor(Qt::red);
+	nameItem->setPos(QPointF(20,20));
+	nameItem->setDefaultPos(QPointF(20,20));
+	nameItem->setData(ITEM_DATA,(uint)stat);
+	addItem(nameItem);
+	stat->setItemName(nameItem);
 
 	//create station value text item
-	DiagramTextItem* itemValue = new DiagramTextItem(item,this);
-	itemValue->setFont(myFont);	
-	itemValue->setPlainText(stat->value());
-	itemValue->setDefaultTextColor(Qt::red);
-	itemValue->setPos(QPointF(20,-20));
-	itemValue->setDefaultPos(QPointF(20,-20));
-	itemValue->setData(ITEM_DATA,(uint)stat);
-	addItem(itemValue);
-	stat->setItemValue(itemValue);
+	DiagramTextItem* valueItem = new DiagramTextItem(item,this);
+	valueItem->setFont(myFont);	
+	valueItem->setPlainText(stat->value());
+	valueItem->setDefaultTextColor(Qt::red);
+	valueItem->setPos(QPointF(20,-20));
+	valueItem->setDefaultPos(QPointF(20,-20));
+	valueItem->setData(ITEM_DATA,(uint)stat);
+	addItem(valueItem);
+	valueItem->setVisible(false);
+	stat->setItemValue(valueItem);
 
 	//QGraphicsRectItem* itemRect = new QGraphicsRectItem(0,0,180,20,0,this);
 	//itemRect->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -505,9 +501,9 @@ void DiagramScene::addStation(const QPointF& pos)
 	//itemLine->setPos(QPointF(0,10));
 	//addItem(itemLine);
 
-	QList<iSLINK*> listSLINK;
 
-	//create station to staiton arrow item
+	//create station to station arrow item
+	QList<iSLINK*> listSLINK;
 	foreach(iNodeData* node,stat->nodeDatas())
 	{
 		if(!node)
@@ -601,73 +597,118 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 		return;		
 
 	//update station type icon
-	stat->setsType(dlg.getstationtype());
-	stat->myItem()->updateData();
-	//set item text if with the voltage value
-	QString nametext=stat->itemName()->toPlainText();
-	QString oldname=stat->name();
-	nametext.replace(oldname,dlg.NewStationName());
+	if(dlg.changes() & CHG_STAT_STYPE)
+	{
+		stat->setsType(dlg.getstationtype());
+		stat->myItem()->updateData();
+	}
 
-	//update the name
-	stat->setName(dlg.NewStationName());
-	stat->itemName()->setPlainText(nametext);
-	//update the name font
-	stat->itemName()->setFont(dlg.GetFont());
+	//update station name and nodes voltage value
+	if(dlg.changes() & CHG_STAT_NAME)
+	{
+		QString nametext=stat->itemName()->toPlainText();
+		QString oldname=stat->name();
+		nametext.replace(oldname,dlg.NewStationName());
+
+		//update station name
+		stat->setName(dlg.NewStationName());
+		stat->itemName()->setPlainText(nametext);
+		stat->itemName()->setFont(dlg.GetFont());
+	}
 
 	//change nodes of station
-	QList<iNodeData *> addednodes=dlg.GetAddedNodes();
-	stat->setNodes(addednodes);
-
-	item->removeArrows();
-/*
-	//to check each node of this newly created station
-	foreach(iNodeData* node,stat->nodeDatas())
+	if(dlg.changes() & CHG_STAT_DATA)
 	{
-		if(!node)
-			break;
+		QList<iNodeData *> addednodes=dlg.GetAddedNodes();
+		stat->setNodes(addednodes);
 
-		//to check if both fromBus and toBus of the attached data to this bus are already added
-		foreach(iLinkData* linkdata,node->linkDatas())
+		item->removeArrows();
+		stat->removeSlinks();
+
+		QList<iSLINK*> listSLINK;
+		foreach(iNodeData* node,stat->nodeDatas())
 		{
-			if(!linkdata)
+			if(!node)
 				break;
 
-			int from = linkdata->fromUid();
-			int to	 = linkdata->toUid();
-			iNodeData* node1 = myDoc->getNode(from);
-			iNodeData* node2 = myDoc->getNode(to);
-			if(!node1 || !node2)
-				break;
-			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
-				break;
-
-			//get the from and to station data for this linkdata
-			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
-			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
-			if(!stat1 || !stat2)
-				break;
-
-			//make sure the from and to station item has already added to scene
-			DiagramItem *startItem	= stat1->myItem();
-			DiagramItem *endItem	= stat2->myItem();
-			if(!startItem || !endItem)
-				break;
-
-			//create arrow item according to data type
-			if(linkdata->type() == T_BRANCH)
+			//to check if both fromBus and toBus of the attached data to this bus are already added
+			foreach(iLinkData* linkdata,node->linkDatas())
 			{
-				Arrow *arrow = new Arrow(startItem, endItem,linkdata);								//create arrow item for brunch
+				if(!linkdata)
+					break;
+
+				int from = linkdata->fromUid();
+				int to	 = linkdata->toUid();
+				iNodeData* node1 = myDoc->getNode(from);
+				iNodeData* node2 = myDoc->getNode(to);
+				if(!node1 || !node2)
+					break;
+
+				//the from and to node of this linkdata are both added to two different stations
+				if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
+					break;
+
+				//get the from and to station data for this linkdata
+				iSTAT* stat1 = myDoc->STAT_get(node1->statId());
+				iSTAT* stat2 = myDoc->STAT_get(node2->statId());
+				if(!stat1 || !stat2)
+					break;
+
+				DiagramItem *startItem	= stat1->myItem();
+				DiagramItem *endItem	= stat2->myItem();
+				if(!startItem || !endItem)
+					break;
+
+				iSLINK* slink = myDoc->SLINK_get(stat1,stat2);
+				if(!slink)
+				{
+					slink = myDoc->SLINK_new(stat1,stat2);
+					if(slink)
+					{
+						slink->setStartItem(startItem);
+						slink->setEndItem(endItem);
+						stat1->addSlink(slink);
+						stat2->addSlink(slink);
+						listSLINK.append(slink);														//newly created station link
+					}
+				}
+
+				if(slink)
+				{
+					slink->addLinkData(1,linkdata);														//default groupid=1
+				}
+			}
+
+		}
+
+		foreach(iSLINK *slink,listSLINK)
+		{
+			int nGroups = slink->groupCount();
+			for(int i=1;i<=nGroups;i++)
+			{
+				DiagramItem *startItem	= slink->startItem();
+				DiagramItem *endItem	= slink->endItem();
+				if(!startItem || !endItem)
+					continue;
+				Arrow *arrow = new Arrow(startItem, endItem,slink,i);									//create arrow item for one line group
 				arrow->setColor(myLineColor);
 				startItem->addArrow(arrow);
 				endItem->addArrow(arrow);
 				arrow->setZValue(-1000.0);
 				addItem(arrow);
 				arrow->updatePosition();
+
+
+				//text for arrow
+				//QGraphicsSimpleTextItem* arrowName = new QGraphicsSimpleTextItem(0,this);
+				//arrowName->setFont(myFont);
+				//arrowName->setText("Arrow");
+				//arrowName->setPos(QPointF(arrow->line().length()/2,0));
+				//addItem(arrowName);
+
 			}
 		}
-
-	}	
-*/
+	}
 }
 void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 {
@@ -692,7 +733,7 @@ void DiagramScene::deleteStation(DiagramItem *item,iSTAT* stat)
 {
 	item->removeArrows();
 	removeItem(item);
-	stat->itemRemoved();
+	stat->setItem(NULL);
 
 	stat->removeSlinks();
 	myDoc->STAT_delete(stat->Id());
@@ -735,7 +776,7 @@ void DiagramScene::viewSLink(iSLINK* slink)
 	BranchEditDialog dlg(slink,BranchView,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{	
-		
+		//to do : group change
 	}
 }
 void DiagramScene::editSLink(iSLINK* slink)
@@ -743,16 +784,74 @@ void DiagramScene::editSLink(iSLINK* slink)
 	BranchEditDialog dlg(slink,BranchEdit,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{	
-		
+		//to do : group change
 	}
 }
 void DiagramScene::addNote(const QPointF& pos)
 {
-	DiagramTextItem* TextItem = new DiagramTextItem(NULL,this);	
+	/*DiagramTextItem* TextItem = new DiagramTextItem(NULL,this);	
 	TextItem->setPos(pos);	
 	TextItem->setPlainText("Add Text demo");
-	addItem(TextItem);
+	addItem(TextItem);*/
 }
 void DiagramScene::viewNote()
 {
+}
+void DiagramScene::setControlPanel(ControlPanel value)
+{
+	if(value.showtype!=m_controlpanel.showtype)
+	{
+		//To do : change show type
+	}
+	if(value.isShowStationName!=m_controlpanel.isShowStationName)
+	{
+		//to do : show or hidden station name
+		foreach(QGraphicsItem *item ,items())
+		{
+			
+		}
+	}
+	if(value.isShowStationValue!=m_controlpanel.isShowStationValue)
+	{
+		//to do :show or hidden station value
+
+	}
+	if(value.isShowBranchLine!=m_controlpanel.isShowBranchLine)
+	{
+		//to do :show or hidden connection line
+
+	}
+	if(value.isShowBranchValue!=m_controlpanel.isShowBranchValue)
+	{
+		//to do :show or hidden connection value
+
+	}
+	if(value.isShowReactivePowerValue!=m_controlpanel.isShowReactivePowerValue)
+	{
+		//to do :show or hidden reactive part
+
+	}
+	if(value.isShowAdmittance!=m_controlpanel.isShowAdmittance)
+	{
+		//to do :show or hidden Admittance
+
+	}
+	if(value.isShowVoltageAngle!=m_controlpanel.isShowVoltageAngle)
+	{
+		//to do :show or hidden voltage angle
+		
+
+	}
+	if(value.isShowAllNodeVoltage!=m_controlpanel.isShowAllNodeVoltage)
+	{
+		//to do :show or hidden all node voltage
+		
+
+	}
+	if(value.unittype!=m_controlpanel.unittype)
+	{
+		//to do :change the unit of all values
+
+	}
+	m_controlpanel=value;
 }

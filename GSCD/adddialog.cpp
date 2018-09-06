@@ -9,6 +9,8 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+	m_changes = 0;
+
 	SetTableStyle(ui.tableWidget_hidden);
 	SetTableStyle(ui.tableWidget_added);
 	SetTableStyle(ui.tableWidget_branch);
@@ -41,10 +43,12 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 		//Rawaddednodelist=addednodelist;
 	}else
 	{
-		is_edit=false;		
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+		is_edit=false;			
 		ui.lineEdit_name->setPlaceholderText("Sub-");
 	}
+
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
 	foreach(iNodeData *bus ,hiddennodelist)
 		addNode2Rows(ui.tableWidget_hidden,bus);
 
@@ -60,6 +64,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	connect(ui.comboBox_areas,SIGNAL(currentIndexChanged(int)),this,SLOT(OnComboAreaChanged(int)));
 	connect(ui.pushButton_branchnodeadd,SIGNAL(clicked()),this,SLOT(OnBranchNodeAdd()));
 	connect(ui.comboBox_StatType,SIGNAL(currentIndexChanged(int)),this,SLOT(OnStatTypeChanged(int)));
+	connect(ui.lineEdit_name,SIGNAL(textChanged(const QString &)),this,SLOT(OnnameChanged(const QString &)));
 
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
@@ -72,6 +77,11 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 AddDialog::~AddDialog()
 {
 
+}
+void AddDialog::OnnameChanged(const QString &name)
+{
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+	m_changes|=CHG_STAT_NAME;
 }
 void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 {
@@ -106,7 +116,9 @@ void AddDialog::ClearTableContext(QTableWidget *tablewidget)
 }
 void AddDialog::OnStatTypeChanged(int index)
 {
-	m_type=(STAT_TYPE)index;	
+	m_type=(STAT_TYPE)index;
+	m_changes |=CHG_STAT_STYPE;
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 void AddDialog::OnComboAreaChanged(int index)
 {
@@ -187,6 +199,8 @@ void AddDialog::OnFontdialog()
 	if(isok)
 	{
 		m_font=	font;
+		m_changes|=CHG_STAT_NAME;
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	}
 }
 void AddDialog::OnHiddenTableActived(int row,int column)
@@ -281,6 +295,7 @@ void AddDialog::OnAdd()
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
+	m_changes|=CHG_STAT_DATA;
 }
 void AddDialog::OnAddAll()
 {
@@ -310,6 +325,7 @@ void AddDialog::OnAddAll()
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
+	m_changes|=CHG_STAT_DATA;
 }
 void AddDialog::OnRevoke()
 {
@@ -344,6 +360,7 @@ void AddDialog::OnRevoke()
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
+	m_changes|=CHG_STAT_DATA;
 }
 void AddDialog::OnRevokeAll()
 {
@@ -373,6 +390,7 @@ void AddDialog::OnRevokeAll()
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
+	m_changes|=CHG_STAT_DATA;
 }
 void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node)
 {
