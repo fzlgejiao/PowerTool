@@ -36,8 +36,8 @@ void StationParameterDialog::OnPowerFlow()
 void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 {
 	//set table Parameter
-	//tablewidget->horizontalHeader()->setStretchLastSection(true);	
-	tablewidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	tablewidget->horizontalHeader()->setStretchLastSection(true);	
+	//tablewidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 	tablewidget->setColumnCount(ParameterColumnCnt);					//Set columns Count
 	tablewidget->horizontalHeader()->setClickable(true);				//set header can be click and sorting
 	tablewidget->setSortingEnabled(true);
@@ -48,13 +48,13 @@ void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setSelectionBehavior(QAbstractItemView::SelectRows);	//select all row
 	tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);	//can bot be edit
 	//set column width	
-	tablewidget->setColumnWidth(NAME,50);
+	tablewidget->setColumnWidth(NAME,100);
 	tablewidget->setColumnWidth(Ref_Volatge,80);
-	tablewidget->setColumnWidth(Voltage,50);
+	tablewidget->setColumnWidth(Voltage,80);
 	tablewidget->setColumnWidth(Angle,50);
-	tablewidget->setColumnWidth(Energy,50);
-	tablewidget->setColumnWidth(Load,50);
-	tablewidget->setColumnWidth(Compensation,50);
+	tablewidget->setColumnWidth(Energy,120);
+	tablewidget->setColumnWidth(Load,120);
+	tablewidget->setColumnWidth(Compensation,120);
 	
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 

@@ -15,7 +15,8 @@ enum BranchColumns
 	ParallelCode,
 	R_JX,
 	P1_JQ1,
-	P2_JQ2
+	P2_JQ2,
+	BranchColumnCnt
 };
 enum BranchAction
 {
@@ -29,14 +30,22 @@ class BranchEditDialog : public QDialog
 public:
 	BranchEditDialog(iSLINK *link,BranchAction action,QWidget *parent = 0);
 	~BranchEditDialog();
+	bool enbaleParalleLine(){return m_enableparalleline;}
+
+private slots:
+	void OntreeitemPressed(QTreeWidgetItem *item,int column);
+	void OnaddGroup();
+	void Onparalleltoggled(bool toggle);
 
 private:
 	void SetTableStyle(QTableWidget *tablewidget);
 	void addlink2Rows(QTableWidget *tablewidget, iLinkData *link);
-
+	void addlink2tree(QTreeWidget *treewidget, QList<iLinkData * > linkgroup);
+	
 	Ui::BranchEditDialog ui;
 	iSLINK *m_link;
 	QList<iLinkData *> m_linklist;
+	bool			   m_enableparalleline;
 
 };
 

@@ -53,6 +53,18 @@
            <height>331</height>
           </rect>
          </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="defaultDropAction">
+          <enum>Qt::MoveAction</enum>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text">
            <string notr="true">1</string>
@@ -208,7 +220,16 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableWidget" name="tableWidget">
+          <widget class="QTableWidget" name="tableWidget_branchs">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
            <column>
             <property name="text">
              <string>Node1</string>

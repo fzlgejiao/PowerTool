@@ -732,19 +732,19 @@ void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 }
 void DiagramScene::viewSLink(iSLINK* slink)
 {
-	//BranchEditDialog dlg(branch,BranchView,pMain);
-	//if(dlg.exec()==QDialog::Accepted)
-	//{	
-	//	
-	//}
+	BranchEditDialog dlg(slink,BranchView,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{	
+		
+	}
 }
 void DiagramScene::editSLink(iSLINK* slink)
 {
-	//BranchEditDialog dlg(branch,BranchEdit,pMain);
-	//if(dlg.exec()==QDialog::Accepted)
-	//{	
-	//	
-	//}
+	BranchEditDialog dlg(slink,BranchEdit,pMain);
+	if(dlg.exec()==QDialog::Accepted)
+	{	
+		
+	}
 }
 void DiagramScene::addNote(const QPointF& pos)
 {

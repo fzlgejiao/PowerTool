@@ -76,9 +76,9 @@ AddDialog::~AddDialog()
 void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 {
 	//set table Parameter
-	//tablewidget->horizontalHeader()->setStretchLastSection(true);
-	tablewidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-	tablewidget->setColumnCount(3);										//Set 3 columns
+	tablewidget->horizontalHeader()->setStretchLastSection(true);
+	//tablewidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	tablewidget->setColumnCount(StationColumnCnt);										//Set 3 columns
 	tablewidget->horizontalHeader()->setClickable(true);				//set header can be click and sorting
 	tablewidget->setSortingEnabled(true);
 	tablewidget->setAlternatingRowColors(true);
@@ -88,9 +88,9 @@ void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setSelectionBehavior(QAbstractItemView::SelectRows);	//select all row
 	tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);	//can bot be edit
 	//set column width	
-	tablewidget->setColumnWidth(Type,50);
-	tablewidget->setColumnWidth(ID,50);
-	tablewidget->setColumnWidth(Name,110);
+	tablewidget->setColumnWidth(Type,80);
+	tablewidget->setColumnWidth(ID,80);
+	tablewidget->setColumnWidth(Name,100);
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 

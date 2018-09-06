@@ -17,6 +17,7 @@ enum Columns
 	Type=0,
 	ID,
 	Name,
+	StationColumnCnt
 };
 
 class AddDialog : public QDialog
