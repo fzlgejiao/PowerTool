@@ -238,10 +238,13 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 {
-	QList<QGraphicsItem *> &list = selectedItems();
-	if(list.count() <= 1)																			//none-selected
-	{	
-		viewItem();	
+	if (mouseEvent->button() == Qt::LeftButton)
+	{
+		QList<QGraphicsItem *> &list = selectedItems();
+		if(list.count() <= 1)																		//none-selected
+		{	
+			viewItem();	
+		}
 	}
 	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);								
 	qDebug("DoubleClickEvent");
@@ -452,24 +455,8 @@ void DiagramScene::addStation(const QPointF& pos)
 	
 	//create station name text item
 	DiagramTextItem* nameItem = new DiagramTextItem(item,this);
-	//nameItem->setFont(myFont);
 	nameItem->setFont(dlg.GetFont());
-
-	//To do : set all nodes voltage and angles
-	QString nametext;
-	foreach(iNodeData *node ,addednodes)
-	{
-		double voltage	= node->GetVoltage() * node->GetRefVoltage();
-		double angle	= node->GetAngle();
-		nametext.append(QString::number(voltage,10,1)+" < "+QString::number(angle,10,1));
-		nametext.append("\n");
-	}
-	nametext.append(stat->name());
-
-	if(m_controlpanel.isShowAllNodeVoltage)
-		nameItem->setPlainText(nametext);
-	else
-		nameItem->setPlainText(stat->name());
+	nameItem->setPlainText(stat->nodeVoltage() + stat->name());
 	nameItem->setDefaultTextColor(Qt::red);
 	nameItem->setPos(QPointF(20,20));
 	nameItem->setDefaultPos(QPointF(20,20));
@@ -604,24 +591,17 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	}
 
 	//update station name and nodes voltage value
-	if(dlg.changes() & CHG_STAT_NAME)
+	if((dlg.changes() & CHG_STAT_NAME)
+	 ||(dlg.changes() & CHG_STAT_DATA))
 	{
-		QString nametext=stat->itemName()->toPlainText();
-		QString oldname=stat->name();
-		nametext.replace(oldname,dlg.NewStationName());
-
 		//update station name
-		stat->setName(dlg.NewStationName());
-		stat->itemName()->setPlainText(nametext);
 		stat->itemName()->setFont(dlg.GetFont());
+		stat->itemName()->setPlainText(stat->nodeVoltage() + stat->name());
 	}
 
-	//change nodes of station
+	//change links of station due to nodes changed
 	if(dlg.changes() & CHG_STAT_DATA)
 	{
-		QList<iNodeData *> addednodes=dlg.GetAddedNodes();
-		stat->setNodes(addednodes);
-
 		item->removeArrows();
 		stat->removeSlinks();
 
@@ -714,19 +694,11 @@ void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 {
 	StationParameterDialog dlg(stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
-	{
-		QString name = dlg.GetStationName();
-		QString oldanme=stat->name();
-		stat->setName(name);
-		
+	{	
 		//change station name item
-		DiagramTextItem* itemName = stat->itemName();
-		if(itemName)
-		{
-			QString nametext=itemName->toPlainText();
-			nametext.replace(oldanme,dlg.GetStationName());
-			itemName->setPlainText(nametext);
-		}
+		DiagramTextItem* item = stat->itemName();
+		if(item)
+			item->setPlainText(stat->nodeVoltage() + stat->name());
 	}		
 }
 void DiagramScene::deleteStation(DiagramItem *item,iSTAT* stat)
@@ -747,15 +719,9 @@ void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 	StationNameDialog dlg(stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{		
-		//item->setFont(dlg.GetFont());
+		//Update the voltage and name text		
 		stat->itemName()->setFont(dlg.GetFont());		
-		//Update the voltage and name text
-		QString nametext=stat->itemName()->toPlainText();
-		QString oldname=stat->name();
-		nametext.replace(oldname,dlg.StationName());
-		stat->itemName()->setPlainText(nametext);
-		//Set the Station Object name
-		stat->setName(dlg.StationName());
+		stat->itemName()->setPlainText(stat->nodeVoltage() + stat->name());
 		if(dlg.IsApplyAll())
 		{
 			//To do : apply the font to all station 

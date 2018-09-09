@@ -29,7 +29,7 @@ TextDialog::~TextDialog()
 void TextDialog::OnFontdialog()
 {
 	bool ok;
-	QFont font=QFontDialog::getFont(&ok,m_font);
+	QFont font=QFontDialog::getFont(&ok,m_font,this);
 	if(ok)
 	{
 		m_font=font;	

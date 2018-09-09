@@ -16,7 +16,7 @@ StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
 	{
 			AddNodeToTable(node);
 	}			
-	connect(ui.pushButton_OK,SIGNAL(clicked()),this,SLOT(accept()));	
+	connect(ui.pushButton_OK,SIGNAL(clicked()),this,SLOT(OnOk()));	
 	connect(ui.pushButton_tideway,SIGNAL(clicked()),this,SLOT(OnPowerFlow()));
 	connect(ui.pushButton_voltage,SIGNAL(clicked()),this,SLOT(OnShowVoltage()));
 }
@@ -83,4 +83,12 @@ void StationParameterDialog::AddNodeToTable(iNodeData *node)
 		ui.tableWidget_parameter->setItem(row, Voltage, voltageitem);
 		ui.tableWidget_parameter->setItem(row, Angle, angleitem);
 	}
+}
+void StationParameterDialog::OnOk()
+{
+	if(m_station)
+	{
+		m_station->setName(ui.lineEdit_name->text().trimmed());
+	}
+	accept();
 }

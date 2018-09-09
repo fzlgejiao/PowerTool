@@ -124,6 +124,9 @@ private:
 	QButtonGroup *buttonGroup;
 	QButtonGroup *backgroundButtonGroup;
 
+	//for status bar
+	QLabel*	stsVersion;
+
     enum { MaxRecentFiles = 5 };
     QAction *recentFileActs[MaxRecentFiles];
 		
@@ -188,7 +191,7 @@ private slots:
 	void OnModeButtonGroupClicked(int id);
 	void OnModeDone();
 	void OnScaleChanged(const QString &scale);
-	void sceneSelectionChanged();
+	void OnSelectionChanged();
 
 
 	//not in use

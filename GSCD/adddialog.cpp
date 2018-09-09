@@ -24,7 +24,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	this->setFixedSize(this->size());
 
 	m_font=QFont("Arial",10);
-	m_type=STAT_HYDROPOWER;
+	m_type=STAT_HYDROPLANT;
 
 	if(m_editstation)
 	{
@@ -66,7 +66,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	connect(ui.comboBox_StatType,SIGNAL(currentIndexChanged(int)),this,SLOT(OnStatTypeChanged(int)));
 	connect(ui.lineEdit_name,SIGNAL(textChanged(const QString &)),this,SLOT(OnnameChanged(const QString &)));
 
-	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(OnOk()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
@@ -195,7 +195,7 @@ QString AddDialog::NewStationName()
 void AddDialog::OnFontdialog()
 {	
 	bool isok;
-	QFont font=QFontDialog::getFont(&isok,m_font);
+	QFont font=QFontDialog::getFont(&isok,m_font,this);
 	if(isok)
 	{
 		m_font=	font;
@@ -428,3 +428,14 @@ void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node)
 //	ui.tableWidget_hidden->setItem(row, ID, item1);
 //	ui.tableWidget_hidden->setItem(row, Name, item2);
 //}
+void AddDialog::OnOk()
+{
+	if(m_editstation)
+	{
+		m_editstation->setName(NewStationName());
+		if(m_changes & CHG_STAT_DATA)
+			m_editstation->setNodes(addednodelist);
+	}
+
+	accept();
+}

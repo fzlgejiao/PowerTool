@@ -156,7 +156,7 @@ void DiagramItem::updateData()
             path.lineTo(200, 25);
             myPolygon = path.toFillPolygon();
             break;*/
-		case STAT_HYDROPOWER:
+		case STAT_HYDROPLANT:
 			{
 			//myPolygon <<QPointF(-15, 10)<<QPointF(-15, -10)<<QPointF(15, -10)<<QPointF(15, 10)<<QPointF(-15, 10)<<QPointF(15, -10);			
 			myPath.addRect(-15,-10,30,20);	
@@ -164,7 +164,7 @@ void DiagramItem::updateData()
 			myPath.lineTo(15,-10);
 			}
 			break;
-		case STAT_THERMALPOWER:
+		case STAT_THERMALPLANT:
 			{
 			//myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
 			myPath.addRect(-15,-10,30,20);
@@ -172,7 +172,7 @@ void DiagramItem::updateData()
 			myPath.lineTo(15,0);
 			}
 			break;
-		case STAT_PUMPEDSTORAGEPOWER:
+		case STAT_PUMPEDSTORAGEPLANT:
 			{
 			//myPolygon <<QPointF(-15, 0)<<QPointF(-15, 10)<<QPointF(15, 10)<<QPointF(15, -10)<<QPointF(-15, -10)<<QPointF(-15, 0)<<QPointF(15, 0);
 			myPath.addRect(-15,-10,30,20);
@@ -187,7 +187,7 @@ void DiagramItem::updateData()
 			myPath.addRect(0,3,15,7);
 			}
 			break;
-		case STAT_NUCLEARPOWER:
+		case STAT_NUCLEARPLANT:
 			{					
 			myPath.addRect(-15,-10,30,20);		
 			myPath.addEllipse(QPointF(0,0),8,8);			
@@ -234,7 +234,7 @@ void DiagramItem::updateData()
 			 myPath.addEllipse(QPointF(0,0),40,40);				 
 			}
 			break;
-		case STAT_T_NODE:
+		case STAT_T_STATION:
 			{			
 			 myPath.addEllipse(QPointF(0,0),5,5);				
 			}
@@ -252,7 +252,7 @@ void DiagramItem::updateData()
 			 myPath.lineTo(25,0);
 			}
 			break;
-		case STAT_CONVERTOR:
+		case STAT_CONVERTER:
 			{			
 			 myPath.addEllipse(QPointF(0,0),25,25);		
 			 myPath.moveTo(-17,-17);

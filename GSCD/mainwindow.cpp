@@ -88,6 +88,8 @@ void MainWindow::updateMenus()
 	//activeMdiChild()->textCursor().hasSelection());
 	cutAct->setEnabled(hasSelection);
 	copyAct->setEnabled(hasSelection);
+
+	OnSelectionChanged();																			//to update child related menu status
 }
 
 void MainWindow::updateWindowMenu()
@@ -136,7 +138,7 @@ MdiChild *MainWindow::createMdiChild()
 	connect(child, SIGNAL(copyAvailable(bool)),		copyAct, SLOT(setEnabled(bool)));
 
 	connect(this,  SIGNAL(scaleChanged(const QString &)),child, SLOT(OnScaleChanged(const QString &)));
-	connect(scene, SIGNAL(selectionChanged()),this, SLOT(sceneSelectionChanged()));
+	connect(scene, SIGNAL(selectionChanged()),this, SLOT(OnSelectionChanged()));
 	connect(scene, SIGNAL(modeDone()),this, SLOT(OnModeDone()));
 
 	return child;
@@ -225,7 +227,7 @@ void MainWindow::createActions()
 	deleteAction = new QAction(QIcon(":/images/delete.png"),
 		tr("&Delete"), this);
 	deleteAction->setShortcut(tr("Delete"));
-	deleteAction->setStatusTip(tr("Delete item from diagram"));
+	deleteAction->setStatusTip(tr("Delete selected object"));
 	connect(deleteAction, SIGNAL(triggered()),
 		this, SLOT(deleteItems()));
 
@@ -242,19 +244,19 @@ void MainWindow::createActions()
 	zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
 		tr("Zoom &Out"), this);
 	zoomOutAction->setShortcut(tr("ZommOut"));
-	zoomOutAction->setStatusTip(tr("Zoomout the canvas"));
+	zoomOutAction->setStatusTip(tr("Zoom out"));
 	connect(zoomOutAction, SIGNAL(triggered()),this, SLOT(OnZoomOut()));
 
 	zoomInAction = new QAction(QIcon(":/images/zoomin.png"),
 		tr("Zoom &In"), this);
 	zoomInAction->setShortcut(tr("ZommIn"));
-	zoomInAction->setStatusTip(tr("Zoomin the canvas"));
+	zoomInAction->setStatusTip(tr("Zoom in"));
 	connect(zoomInAction, SIGNAL(triggered()),this, SLOT(OnZoomIn()));
 
 	zoomResetAction = new QAction(QIcon(":/images/reset.png"),
 		tr("Zoom &Reset"), this);
 	zoomResetAction->setShortcut(tr("ZommReset"));
-	zoomResetAction->setStatusTip(tr("Zoom Reset to 100% for canvas"));
+	zoomResetAction->setStatusTip(tr("Normal Size"));
 	connect(zoomResetAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
 
 	toolbarAct = new QAction(tr("Show &Toolbar"), this);
@@ -343,7 +345,10 @@ void MainWindow::createActions()
 	actionModeGroup->addAction(addNoteAction);
 	connect(actionModeGroup, SIGNAL(triggered(QAction *)), this, SLOT(OnModeActionGroupClicked(QAction *)));
 
-
+	//init status for actions
+	deleteAction->setEnabled(false);
+	editObjectAction->setEnabled(false);
+	propertyAction->setEnabled(false);
 
 }
 
@@ -444,10 +449,12 @@ void MainWindow::createToolBars()
 
 	tBar->addWidget(new QLabel("      "));
 	tBar->addAction(zoomOutAction);
-	tBar->addAction(zoomResetAction);
-	tBar->addAction(zoomInAction);
 	currentScale=new QLabel("100%");	
+	currentScale->setFixedWidth(40);
+	currentScale->setAlignment(Qt::AlignCenter);
 	tBar->addWidget(currentScale);
+	tBar->addAction(zoomInAction);
+	tBar->addAction(zoomResetAction);
 
 	//tBar->addAction(toFrontAction);
 	//tBar->addAction(sendBackAction);
@@ -468,6 +475,13 @@ void MainWindow::createToolBars()
 void MainWindow::createStatusBar()
 {
 	statusBar()->showMessage(tr("Ready"));
+
+	stsVersion = new QLabel(this);
+	stsVersion->setMinimumSize(120,22); 
+    stsVersion->setAlignment(Qt::AlignHCenter); 
+	stsVersion->setText(qApp->applicationVersion());
+
+	statusBar()->insertPermanentWidget(0,stsVersion);
 }
 //
 //void MainWindow::createToolBox()
@@ -651,16 +665,40 @@ void MainWindow::OnModeButtonGroupClicked(int id)
 		m_nActMode = (ACT_MODE)id;
 }
 
-void MainWindow::sceneSelectionChanged()
+void MainWindow::OnSelectionChanged()
 {
 	QList<QGraphicsItem *> items = selectedItems();
 	if(items.count())
 	{
 		//todo: enable/disable menu items of mainwindow
+		if(items.count()==1)
+		{
+			propertyAction->setEnabled(true);
+			QGraphicsItem* item = selectedItems().first();
+
+			if(!item)
+				return;
+			iData* data = (iData *)item->data(ITEM_DATA).toUInt();
+			if(!data)
+				return;
+			switch(data->type())
+			{
+			case T_STAT:
+				deleteAction->setEnabled(true);
+				editObjectAction->setEnabled(true);
+				break;
+			case T_BRANCH:
+				editObjectAction->setEnabled(true);
+				break;
+			}
+		}
 	}
 	else
 	{
 		//todo: enable/disable menu items of mainwindow
+		deleteAction->setEnabled(false);
+		editObjectAction->setEnabled(false);
+		propertyAction->setEnabled(false);
 	}
 }
 
@@ -829,7 +867,7 @@ void MainWindow::OnZoomOut()
 	if(activeMdiChild()==NULL) return;
 	if(mScale==mScaleMin) return;
 	mScale-=mScaleStep;
-	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
+	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
 	currentScale->setText(scaletxt);
 	OnScaleChanged(scaletxt);
 }
@@ -844,7 +882,7 @@ void MainWindow::OnZoomIn()
 	if(activeMdiChild()==NULL) return;
 	if(mScale==mScaleMax) return;
 	mScale+=mScaleStep;
-	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
+	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
 	currentScale->setText(scaletxt);
 	OnScaleChanged(scaletxt);
 }
@@ -856,7 +894,7 @@ void MainWindow::OnZoomDialog()
 	if(scaledialog.exec()==QDialog::Accepted)
 	{
 		mScale=scaledialog.GetScale();
-		QString scaletxt=QString("%1%").arg(mScale,3,10,QChar('0'));	
+		QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
 		currentScale->setText(scaletxt);
 		OnScaleChanged(scaletxt);
 	}

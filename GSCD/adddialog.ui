@@ -26,7 +26,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Not included Buses:</string>
+    <string>Not Included Buses:</string>
    </property>
   </widget>
   <widget class="Line" name="line">
@@ -368,22 +368,22 @@
    </property>
    <item>
     <property name="text">
-     <string>Hydro Station</string>
+     <string>Hydro Plant</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>Thermal Station</string>
+     <string>Thermal Plant</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>Nuclear Station</string>
+     <string>Nuclear Plant</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>Pumped Station</string>
+     <string>Pumped Plant</string>
     </property>
    </item>
    <item>
@@ -423,7 +423,7 @@
    </item>
    <item>
     <property name="text">
-     <string>T-Node</string>
+     <string>T-Station</string>
     </property>
    </item>
    <item>
@@ -433,7 +433,7 @@
    </item>
    <item>
     <property name="text">
-     <string>Convertor Station</string>
+     <string>Converter Station</string>
     </property>
    </item>
    <item>

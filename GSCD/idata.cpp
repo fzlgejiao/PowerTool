@@ -81,6 +81,19 @@ void iSTAT::removeSlink(iSLINK* slink)
     if (index != -1)
         m_sLinks.removeAt(index);
 }
+QString iSTAT::nodeVoltage() const
+{
+	QString value;
+	foreach(iNodeData* node,m_nodeDatas)
+	{
+		double voltage	= node->GetVoltage() * node->GetRefVoltage();
+		double angle	= node->GetAngle();
+
+		if(node->isShowVoltge())
+			value += QString::number(voltage,10,1)+" < "+QString::number(angle,10,1) + "\n";
+	}
+	return value;
+}
 //--------------------------------------------------------------------------------------------------
 //	iSLINK funcs
 //--------------------------------------------------------------------------------------------------
