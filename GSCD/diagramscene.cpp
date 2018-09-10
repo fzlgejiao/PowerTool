@@ -461,7 +461,10 @@ void DiagramScene::addStation(const QPointF& pos)
 	{
 		double voltage	= node->GetVoltage() * node->GetRefVoltage();
 		double angle	= node->GetAngle();
-		nametext.append(QString::number(voltage,10,1)+" < "+QString::number(angle,10,1));
+		if(m_controlpanel.isShowVoltageAngle)
+			nametext.append(QString::number(voltage,10,1)+" < "+QString::number(angle,10,1));
+		else
+			nametext.append(QString::number(voltage,10,1));
 		nametext.append("\n");
 	}
 	nametext.append(stat->name());
@@ -606,13 +609,13 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	//update station name and nodes voltage value
 	if(dlg.changes() & CHG_STAT_NAME)
 	{
-		QString nametext=stat->itemName()->toPlainText();
+		QString namestr=stat->itemName()->toPlainText();
 		QString oldname=stat->name();
-		nametext.replace(oldname,dlg.NewStationName());
+		namestr.replace(oldname,dlg.NewStationName());
 
 		//update station name
-		stat->setName(dlg.NewStationName());
-		stat->itemName()->setPlainText(nametext);
+		stat->itemName()->setPlainText(namestr);
+		stat->setName(dlg.NewStationName());		
 		stat->itemName()->setFont(dlg.GetFont());
 	}
 
@@ -621,6 +624,25 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	{
 		QList<iNodeData *> addednodes=dlg.GetAddedNodes();
 		stat->setNodes(addednodes);
+
+		//To do : Update all nodes voltage and angles
+		QString nametext;
+		foreach(iNodeData *node ,addednodes)
+		{
+			double voltage	= node->GetVoltage() * node->GetRefVoltage();
+			double angle	= node->GetAngle();
+			if(m_controlpanel.isShowVoltageAngle)
+				nametext.append(QString::number(voltage,10,1)+" < "+QString::number(angle,10,1));
+			else
+				nametext.append(QString::number(voltage,10,1));
+			nametext.append("\n");
+		}
+		nametext.append(stat->name());
+
+		if(m_controlpanel.isShowAllNodeVoltage)
+			stat->itemName()->setPlainText(nametext);
+		else
+			stat->itemName()->setPlainText(stat->name());
 
 		item->removeArrows();
 		stat->removeSlinks();
@@ -806,9 +828,18 @@ void DiagramScene::setControlPanel(ControlPanel value)
 	if(value.isShowStationName!=m_controlpanel.isShowStationName)
 	{
 		//to do : show or hidden station name
-		foreach(QGraphicsItem *item ,items())
+		QMapIterator<int, iSTAT *> station_iterator(myDoc->getStatlist()); 
+		while (station_iterator.hasNext()) 
 		{
-			
+			DiagramTextItem *nameitem;
+			nameitem=station_iterator.next().value()->itemName();
+			if(nameitem)
+			{
+				if(value.isShowStationName)
+					nameitem->setVisible(true);
+				else 
+					nameitem->setVisible(false);
+			}
 		}
 	}
 	if(value.isShowStationValue!=m_controlpanel.isShowStationValue)
@@ -839,7 +870,16 @@ void DiagramScene::setControlPanel(ControlPanel value)
 	if(value.isShowVoltageAngle!=m_controlpanel.isShowVoltageAngle)
 	{
 		//to do :show or hidden voltage angle
-		
+		QMapIterator<int, iSTAT *> station_iterator(myDoc->getStatlist()); 
+		while (station_iterator.hasNext()) 
+		{
+			DiagramTextItem *nameitem;
+			nameitem=station_iterator.next().value()->itemName();
+			if(nameitem)
+			{	
+				
+			}
+		}
 
 	}
 	if(value.isShowAllNodeVoltage!=m_controlpanel.isShowAllNodeVoltage)

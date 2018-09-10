@@ -39,6 +39,7 @@ public:
 
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
+	QMap<int,iSTAT *>&   getStatlist(){return listSTAT;}
 
 	iAREA*	getAREA(const QString& name);
 
