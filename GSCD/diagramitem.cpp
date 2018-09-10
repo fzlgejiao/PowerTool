@@ -262,7 +262,8 @@ void DiagramItem::updateData()
 
 			 myPath.moveTo(-5,-10);
 			 myPath.arcTo(-5,-15,10,10,180,-180);
-			 myPath.arcTo(5,-15,10,10,180,180);		
+			 myPath.moveTo(15,-10);
+			 myPath.arcTo(5,-15,10,10,360,-180);
 			}
 			break;
 		case STAT_SWITCHING:
