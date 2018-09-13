@@ -31,12 +31,20 @@ void iDoc::test()
 	iBUS* bus3 = new iBUS(3,1,"bus3", this);
 	iBUS* bus4 = new iBUS(4,1,"bus4", this);
 	iBUS* bus5 = new iBUS(5,1,"bus5", this);
-	iBRANCH* branch1 = new iBRANCH(1,bus1->Uid(),bus3->Uid(),this);									//branch1: bus1->bus3
-	branch1->frombus=bus1;
-	branch1->tobus=bus3;
-	branch1->ParallelCode=1;
-	bus1->addLink(branch1);
-	bus3->addLink(branch1);
+	iBRANCH* branch1_1 = new iBRANCH(1,bus1->Uid(),bus3->Uid(),this);								//branch1_1: bus1->bus3,parallel_code=1
+	branch1_1->frombus=bus1;
+	branch1_1->tobus=bus3;
+	branch1_1->ParallelCode=1;
+	bus1->addLink(branch1_1);
+	bus3->addLink(branch1_1);
+	iBRANCH* branch1_2 = new iBRANCH(1,bus1->Uid(),bus3->Uid(),this);								//branch1_2: bus1->bus3,parallel_code=2
+	branch1_2->frombus=bus1;
+	branch1_2->tobus=bus3;
+	branch1_2->ParallelCode=2;
+	bus1->addLink(branch1_2);
+	bus3->addLink(branch1_2);
+
+
 
 	iBRANCH* branch2 = new iBRANCH(2,bus2->Uid(),bus4->Uid(),this);									//branch2: bus2->bus4
 	branch2->frombus=bus2;

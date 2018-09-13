@@ -268,7 +268,7 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 	}
 	else																							//one-selected
 	{
-		QGraphicsItem* item = itemAt( x, y );
+		QGraphicsItem* item = itemAt( event->scenePos());
 		if(!item)
 			return;
 		iData* data = (iData *)item->data(ITEM_DATA).toUInt();
@@ -430,6 +430,93 @@ void DiagramScene::procItem(ACT_TYPE act,QGraphicsItem* item)
 		break;
 	}
 }
+void DiagramScene::updateArrows(iSTAT* stat)
+{
+	//create station to station arrow item
+	QList<iSLINK*> listSLINK;
+	foreach(iNodeData* node,stat->nodeDatas())
+	{
+		if(!node)
+			continue;
+
+		//to check if both fromBus and toBus of the attached data to this bus are already added
+		foreach(iLinkData* linkdata,node->linkDatas())
+		{
+			if(!linkdata)
+				continue;
+
+			int from = linkdata->fromUid();
+			int to	 = linkdata->toUid();
+			iNodeData* node1 = myDoc->getNode(from);
+			iNodeData* node2 = myDoc->getNode(to);
+			if(!node1 || !node2)
+				continue;
+
+			//the from and to node of this linkdata are both added to two different stations
+			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
+				continue;
+
+			//get the from and to station data for this linkdata
+			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
+			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
+			if(!stat1 || !stat2)
+				continue;
+
+			DiagramItem *startItem	= stat1->myItem();
+			DiagramItem *endItem	= stat2->myItem();
+			if(!startItem || !endItem)
+				continue;
+
+			iSLINK* slink = myDoc->SLINK_get(stat1,stat2);
+			if(!slink)
+			{
+				slink = myDoc->SLINK_new(stat1,stat2);
+				if(slink)
+				{
+					slink->setStartItem(startItem);
+					slink->setEndItem(endItem);
+					stat1->addSlink(slink);
+					stat2->addSlink(slink);
+					listSLINK.append(slink);														//newly created station link
+				}
+			}
+
+			if(slink)
+			{
+				slink->addLinkData(1,linkdata);														//default groupid=1
+			}
+		}
+
+	}
+
+	foreach(iSLINK *slink,listSLINK)
+	{
+		int nGroups = slink->groupCount();
+		for(int i=1;i<=nGroups;i++)
+		{
+			DiagramItem *startItem	= slink->startItem();
+			DiagramItem *endItem	= slink->endItem();
+			if(!startItem || !endItem)
+				continue;
+			Arrow *arrow = new Arrow(startItem, endItem,slink,i);									//create arrow item for one line group
+			arrow->setColor(myLineColor);
+			startItem->addArrow(arrow);
+			endItem->addArrow(arrow);
+			arrow->setZValue(-1000.0);
+			addItem(arrow);
+			arrow->updatePosition();
+
+
+			//text for arrow
+			//QGraphicsSimpleTextItem* arrowName = new QGraphicsSimpleTextItem(arrow,this);
+			//arrowName->setFont(myFont);
+			//arrowName->setText("Arrow");
+			//arrowName->setPos(QPointF(arrow->line().length()/2,0));
+			//addItem(arrowName);
+
+		}
+	}
+}
 void DiagramScene::addStation(const QPointF& pos)
 {
 	AddDialog dlg(myDoc,NULL,pMain);
@@ -488,95 +575,11 @@ void DiagramScene::addStation(const QPointF& pos)
 	//itemLine->setPos(QPointF(0,10));
 	//addItem(itemLine);
 
+	updateArrows(stat);																				//udpate station links and arrows
 
-	//create station to station arrow item
-	QList<iSLINK*> listSLINK;
-	foreach(iNodeData* node,stat->nodeDatas())
-	{
-		if(!node)
-			break;
-
-		//to check if both fromBus and toBus of the attached data to this bus are already added
-		foreach(iLinkData* linkdata,node->linkDatas())
-		{
-			if(!linkdata)
-				break;
-
-			int from = linkdata->fromUid();
-			int to	 = linkdata->toUid();
-			iNodeData* node1 = myDoc->getNode(from);
-			iNodeData* node2 = myDoc->getNode(to);
-			if(!node1 || !node2)
-				break;
-
-			//the from and to node of this linkdata are both added to two different stations
-			if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
-				break;
-
-			//get the from and to station data for this linkdata
-			iSTAT* stat1 = myDoc->STAT_get(node1->statId());
-			iSTAT* stat2 = myDoc->STAT_get(node2->statId());
-			if(!stat1 || !stat2)
-				break;
-
-			DiagramItem *startItem	= stat1->myItem();
-			DiagramItem *endItem	= stat2->myItem();
-			if(!startItem || !endItem)
-				break;
-
-			iSLINK* slink = myDoc->SLINK_get(stat1,stat2);
-			if(!slink)
-			{
-				slink = myDoc->SLINK_new(stat1,stat2);
-				if(slink)
-				{
-					slink->setStartItem(startItem);
-					slink->setEndItem(endItem);
-					stat1->addSlink(slink);
-					stat2->addSlink(slink);
-					listSLINK.append(slink);														//newly created station link
-				}
-			}
-
-			if(slink)
-			{
-				slink->addLinkData(1,linkdata);														//default groupid=1
-			}
-		}
-
-	}
-
-	foreach(iSLINK *slink,listSLINK)
-	{
-		int nGroups = slink->groupCount();
-		for(int i=1;i<=nGroups;i++)
-		{
-			DiagramItem *startItem	= slink->startItem();
-			DiagramItem *endItem	= slink->endItem();
-			if(!startItem || !endItem)
-				continue;
-			Arrow *arrow = new Arrow(startItem, endItem,slink,i);									//create arrow item for one line group
-			arrow->setColor(myLineColor);
-			startItem->addArrow(arrow);
-			endItem->addArrow(arrow);
-			arrow->setZValue(-1000.0);
-			addItem(arrow);
-			arrow->updatePosition();
-
-
-			//text for arrow
-			//QGraphicsSimpleTextItem* arrowName = new QGraphicsSimpleTextItem(0,this);
-			//arrowName->setFont(myFont);
-			//arrowName->setText("Arrow");
-			//arrowName->setPos(QPointF(arrow->line().length()/2,0));
-			//addItem(arrowName);
-
-		}
-	}
 	item->setSelected(true);
 
 }
-
 void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 {	
 	AddDialog dlg(myDoc,stat,pMain);
@@ -605,89 +608,7 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 		item->removeArrows();
 		stat->removeSlinks();
 
-		QList<iSLINK*> listSLINK;
-		foreach(iNodeData* node,stat->nodeDatas())
-		{
-			if(!node)
-				break;
-
-			//to check if both fromBus and toBus of the attached data to this bus are already added
-			foreach(iLinkData* linkdata,node->linkDatas())
-			{
-				if(!linkdata)
-					break;
-
-				int from = linkdata->fromUid();
-				int to	 = linkdata->toUid();
-				iNodeData* node1 = myDoc->getNode(from);
-				iNodeData* node2 = myDoc->getNode(to);
-				if(!node1 || !node2)
-					break;
-
-				//the from and to node of this linkdata are both added to two different stations
-				if(node1->statId() == 0 || node2->statId() == 0 || node1->statId() == node2->statId())
-					break;
-
-				//get the from and to station data for this linkdata
-				iSTAT* stat1 = myDoc->STAT_get(node1->statId());
-				iSTAT* stat2 = myDoc->STAT_get(node2->statId());
-				if(!stat1 || !stat2)
-					break;
-
-				DiagramItem *startItem	= stat1->myItem();
-				DiagramItem *endItem	= stat2->myItem();
-				if(!startItem || !endItem)
-					break;
-
-				iSLINK* slink = myDoc->SLINK_get(stat1,stat2);
-				if(!slink)
-				{
-					slink = myDoc->SLINK_new(stat1,stat2);
-					if(slink)
-					{
-						slink->setStartItem(startItem);
-						slink->setEndItem(endItem);
-						stat1->addSlink(slink);
-						stat2->addSlink(slink);
-						listSLINK.append(slink);														//newly created station link
-					}
-				}
-
-				if(slink)
-				{
-					slink->addLinkData(1,linkdata);														//default groupid=1
-				}
-			}
-
-		}
-
-		foreach(iSLINK *slink,listSLINK)
-		{
-			int nGroups = slink->groupCount();
-			for(int i=1;i<=nGroups;i++)
-			{
-				DiagramItem *startItem	= slink->startItem();
-				DiagramItem *endItem	= slink->endItem();
-				if(!startItem || !endItem)
-					continue;
-				Arrow *arrow = new Arrow(startItem, endItem,slink,i);									//create arrow item for one line group
-				arrow->setColor(myLineColor);
-				startItem->addArrow(arrow);
-				endItem->addArrow(arrow);
-				arrow->setZValue(-1000.0);
-				addItem(arrow);
-				arrow->updatePosition();
-
-
-				//text for arrow
-				//QGraphicsSimpleTextItem* arrowName = new QGraphicsSimpleTextItem(0,this);
-				//arrowName->setFont(myFont);
-				//arrowName->setText("Arrow");
-				//arrowName->setPos(QPointF(arrow->line().length()/2,0));
-				//addItem(arrowName);
-
-			}
-		}
+		updateArrows(stat);																			//udpate station links and arrows
 	}
 }
 void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
