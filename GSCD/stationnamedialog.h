@@ -23,6 +23,7 @@ private slots:
 		void OnFontchanged();
 		void OnCheckBoxChanged(int state);
 		void OnshowNodeChanged(const QModelIndex& index);
+		void OnOk();
 private:
 	Ui::StationNameDialog ui;
 	iSTAT *m_stat;

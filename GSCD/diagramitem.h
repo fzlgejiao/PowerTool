@@ -36,6 +36,7 @@ public:
     //    { return myPath;}
 
     void addArrow(Arrow *arrow);
+	QList<Arrow *>&  getArows(){return arrows;}
     QPixmap image() const;
     int type() const
 		{ return Type;}

@@ -41,6 +41,9 @@ public:
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
 	QMap<int,iSTAT *>&   getStatlist(){return listSTAT;}
 
+	ControlPanel getControlPanel(){return m_controlpanel;}
+	void setControlPanel(ControlPanel &value,uint changes);
+
 	iAREA*	getAREA(const QString& name);
 
 	iData*	Uid2Data(int uid);
@@ -85,6 +88,10 @@ private:
 	QString Prefix_keyword;
 	QString Suffix_keyword;
 	QString	ColumnName_keyword;
+	ControlPanel	m_controlpanel;
+signals:
+	void controlpanelChanged(ControlPanel &settings,uint changes);
+
 };
 
 #endif // IDOC_H

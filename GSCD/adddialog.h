@@ -54,6 +54,7 @@ private slots:
 		void OnStatTypeChanged(int index);
 		void OnBranchNodeAdd();
 		void OnnameChanged(const QString &name);
+		void OnOk();
 		
 private:
 	Ui::AddDialog ui;

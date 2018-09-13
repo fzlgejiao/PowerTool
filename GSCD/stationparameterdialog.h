@@ -32,6 +32,7 @@ public:
 private  slots:
 	void OnShowVoltage();
 	void OnPowerFlow();
+	void OnOk();
 
 private:
 	Ui::StationParameterDialog ui;

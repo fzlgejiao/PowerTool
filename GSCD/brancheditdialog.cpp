@@ -60,8 +60,11 @@ void BranchEditDialog::Onparalleltoggled(bool toggle)
 void BranchEditDialog::OntreeitemPressed(QTreeWidgetItem *item,int column)
 {
 	int index=ui.treeWidget->indexOfTopLevelItem(item);
-	if(index>=0) return ;									//if this item is top level item ,return 
-
+	if(index>=0) //if this item is top level item ,return 
+	{
+		ui.pushButton_addgroup->setEnabled(false);
+		return ;									
+	}
 	if(item->parent()->childCount()>1) 
 		ui.pushButton_addgroup->setEnabled(true);
 	else 

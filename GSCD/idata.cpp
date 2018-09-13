@@ -1,6 +1,8 @@
 #include "idata.h"
 #include "diagramitem.h"
 #include "idoc.h"
+#include "controlpaneldialog.h"
+#include "arrow.h"
 
 iData::iData(int id,QObject *parent)
 	: QObject(parent)
@@ -80,6 +82,112 @@ void iSTAT::removeSlink(iSLINK* slink)
 
     if (index != -1)
         m_sLinks.removeAt(index);
+}
+QString iSTAT::nodeVoltage(bool withangle,UNIT_TYPE unit) const
+{
+	QString value;
+	foreach(iNodeData* node,m_nodeDatas)
+	{
+		double voltage=0;
+		switch(unit)
+		{
+		case UNIT_ACTUALVALUE:
+		  voltage	= node->GetVoltage() * node->GetRefVoltage();
+		  break;
+
+		case UNIT_PERUNIT:
+			voltage	= node->GetVoltage();
+			break;
+		}
+
+		double angle	= node->GetAngle();
+
+		if(node->isShowVoltge())
+		{
+			if(withangle)
+				value += QString::number(voltage,10,1)+" < "+QString::number(angle,10,1) + "\n";
+			else
+				value += QString::number(voltage,10,1)+ "\n";
+		}
+	}
+	return value;
+}
+QString iSTAT::allNodeVoltage(bool withangle,UNIT_TYPE unit) const
+{
+	QString value;
+	foreach(iNodeData* node,m_nodeDatas)
+	{
+		double voltage=0;
+		switch(unit)
+		{
+		case UNIT_ACTUALVALUE:
+			voltage	= node->GetVoltage() * node->GetRefVoltage();
+			break;
+
+		case UNIT_PERUNIT:
+			voltage	= node->GetVoltage();
+			break;
+		}
+		double angle	= node->GetAngle();
+		if(withangle)
+			value += QString::number(voltage,10,1)+" < "+QString::number(angle,10,1) + "\n";
+		else
+			value += QString::number(voltage,10,1)+ "\n";
+	}
+	return value;
+}
+void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
+{
+	if(changes & CHG_CONTROLPANEL_SHOWTYPE)
+	{
+		switch(settings.showtype)
+		{
+		case SHOW_ONLYNAME:
+			break;
+
+		case SHOW_POWERFLOW:
+			break;
+
+		case SHOW_RESISTANCE:
+			break;
+		}
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWSTATNAME)
+	{
+		this->itemName()->setVisible(settings.isShowStationName);
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWSTATVALUE)
+	{
+		this->itemValue()->setVisible(settings.isShowStationValue);
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWBRNACHLINE)
+	{
+		foreach(Arrow *arrow,this->myItem()->getArows())
+		{
+			arrow->setVisible(settings.isShowBranchLine);
+		}
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWBRNACHVALUE)
+	{	
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWREACTIVEVALUE)
+	{	
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWADMITTANCE)
+	{	
+	}
+	if( (changes & CHG_CONTROLPANEL_SHOWANGLE)		||
+		(changes & CHG_CONTROLPANEL_SHOWALLVOLTAGE) ||
+		(changes & CHG_CONTROLPANEL_UNIT))
+	{	
+		if(settings.isShowAllNodeVoltage)
+		{
+			this->itemName()->setPlainText(this->allNodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
+		}else
+		{
+			this->itemName()->setPlainText(this->nodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
+		}
+	}
 }
 //--------------------------------------------------------------------------------------------------
 //	iSLINK funcs

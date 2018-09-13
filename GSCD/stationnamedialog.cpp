@@ -9,6 +9,9 @@ StationNameDialog::StationNameDialog(iSTAT *stat,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+
+	ui.lwNodes->setStyleSheet("QListWidget::item:selected{background: rgb(128,128,255);}");
+
 	m_stat=stat;
 	m_textitem=stat->itemName();
 	this->setFixedSize(this->size());
@@ -26,30 +29,22 @@ StationNameDialog::StationNameDialog(iSTAT *stat,QWidget *parent)
 		if(node->type()==T_BUS)
 		{
 			iBUS *bus=(iBUS *)node;			
-			QString str=QString("%1 --- %2kV").arg(bus->name()).arg(node->GetRefVoltage());
-			list.append(str);
+			QString str=QString("%1 --- %2kV").arg(bus->name()).arg(node->GetRefVoltage(),4,'f',1);
+			QListWidgetItem* item = new QListWidgetItem(str);
+			item->setData(Qt::UserRole,(uint)node);
+			ui.lwNodes->addItem(item);
+			if(node->isShowVoltge())
+				ui.lwNodes->setCurrentRow(ui.lwNodes->count()-1);
 		}
-	}
-	
-	QStringListModel *model= new QStringListModel(this);
-    model->setStringList(list);
-	
-	ui.listView_shownnodes->setModel(model);
-	
-	for(int row=0;row<list.count();row++)
-	{
-		QModelIndex index = model->index(row);
-		if(m_stat->nodeDatas()[row]->isShowVoltge()) 
-			ui.listView_shownnodes->setCurrentIndex(index);
 	}
 
 	connect(ui.pushButton_clear,SIGNAL(clicked()),this,SLOT(OnclearshownNodes()));
 	connect(ui.pushButton_font,SIGNAL(clicked()),this,SLOT(OnFontchanged()));
 	connect(ui.checkBox_applyall,SIGNAL(stateChanged (int)),this,SLOT(OnCheckBoxChanged(int)));
 	connect(ui.lineEdit_name,SIGNAL(textChanged ( const QString & )),ui.lineEdit_namepreview,SLOT(setText(const QString &)));
-	connect(ui.listView_shownnodes,SIGNAL(clicked(const QModelIndex&)),this,SLOT(OnshowNodeChanged(const QModelIndex&)));
+	//connect(ui.listView_shownnodes,SIGNAL(clicked(const QModelIndex&)),this,SLOT(OnshowNodeChanged(const QModelIndex&)));
 	
-	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(OnOk()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
 }
 StationNameDialog::~StationNameDialog()
@@ -70,15 +65,27 @@ void StationNameDialog::OnCheckBoxChanged(int state)
 }
 void StationNameDialog::OnclearshownNodes()
 {
-	ui.listView_shownnodes->clearSelection();
+	ui.lwNodes->clearSelection();
 }
 void StationNameDialog::OnFontchanged()
 {
 	bool ok;
-	QFont font=QFontDialog::getFont(&ok,m_font);
+	QFont font=QFontDialog::getFont(&ok,m_font,this);
 	if(ok)
 	{
 		m_font=font;
 		ui.lineEdit_namepreview->setFont(m_font);
 	}
+}
+void StationNameDialog::OnOk()
+{
+	m_stat->setName(ui.lineEdit_name->text().trimmed());
+	for(int row=0;row<ui.lwNodes->count();row++)
+	{
+		QListWidgetItem *item = ui.lwNodes->item(row);
+		iNodeData *node = (iNodeData *)item->data(Qt::UserRole).toUInt();
+		if(node)
+			node->setShowVoltage(item->isSelected());
+	}
+	accept();
 }

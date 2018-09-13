@@ -187,7 +187,7 @@
     <item>
      <widget class="QRadioButton" name="radioButton_unit1">
       <property name="text">
-       <string>Unit1</string>
+       <string>Actual Value</string>
       </property>
      </widget>
     </item>
