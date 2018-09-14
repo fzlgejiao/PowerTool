@@ -34,14 +34,16 @@ iData* Arrow::myData()
 //! [1]
 QRectF Arrow::boundingRect() const
 {
-	//qreal extra = (pen().width() + 20) / 2.0;
+	qreal extra = (pen().width() + 20) / 2.0;
 
-	//return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
-	//	line().p2().y() - line().p1().y()))
-	//	.normalized()
-	//	.adjusted(-extra, -extra, extra, extra)| childrenBoundingRect();
+	QRectF rect = arrowLine.boundingRect();
 
-	return arrowLine.boundingRect() | arrowHead.boundingRect();
+	return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
+		line().p2().y() - line().p1().y()))
+		.normalized()
+		.adjusted(-extra, -extra, extra, extra)| arrowLine.boundingRect() | arrowHead.boundingRect() | childrenBoundingRect();
+
+	//return arrowLine.boundingRect() | arrowHead.boundingRect();
 }
 //! [1]
 
@@ -184,6 +186,7 @@ void Arrow::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
 		scene()->clearSelection();
 		setSelected(true);
 		count = scene()->selectedItems().count();
+		mouseEvent->accept();
 	}
 	else if(mouseEvent->button() == Qt::LeftButton)
 	{

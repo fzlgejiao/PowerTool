@@ -82,9 +82,10 @@ protected:
 	void viewStationName(DiagramTextItem *item,iSTAT* stat);
 	void viewStationValue(DiagramTextItem *item,iSTAT* stat);
 
-	//actions for station link
+	//actions for station link and arrows
 	void viewSLink(iSLINK* slink);																//for 'property' of branch menu item
 	void editSLink(iSLINK* slink);																//for 'edit link' menu item
+	void updateArrows(iSTAT* stat);
 
 	//actions for note
 	void addNote(const QPointF& pos);

@@ -11,7 +11,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
     isUntitled = true;
 	m_scene = (DiagramScene *)scene;
 	m_doc	= doc;
-
+	int dpi=5;
 
     QMatrix oldMatrix = matrix();
     resetMatrix();
@@ -20,8 +20,14 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	setDragMode(QGraphicsView::RubberBandDrag);
 	//setDragMode(QGraphicsView::ScrollHandDrag);
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-
-	m_scene->setSceneRect(QRectF(0, 0, 1240, 1754));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç	
+	
+	QSizeF viewsize=m_doc->getAreaSize();
+	int width=viewsize.width()*dpi;
+	int height=viewsize.height()*dpi;
+	//m_scene->addRect(QRectF(0,0,width,height),QPen(Qt::blue, 1, Qt::SolidLine));
+	
+	setSceneRect(QRectF(0,0,width*2,height*2));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç	
+	//m_scene->setSceneRect(QRectF(0,0,width*2,height*2));
 }
 MdiChild::~MdiChild()
 {

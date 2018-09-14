@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QFile>
 #include "idata.h"
-
+#include <QSize>
 
 class iDoc : public QObject
 {
@@ -46,6 +46,9 @@ public:
 
 	iAREA*	getAREA(const QString& name);
 
+	QSize getAreaSize(){return m_AreaSize; }
+	void  setAreaSize(const QSize &size){m_AreaSize=size; }
+
 	iData*	Uid2Data(int uid);
 
 	//test func
@@ -84,7 +87,7 @@ private:
 	void CloseDataFile();
 
 	QFile *m_file;
-
+	QSize m_AreaSize;
 	QString Prefix_keyword;
 	QString Suffix_keyword;
 	QString	ColumnName_keyword;
