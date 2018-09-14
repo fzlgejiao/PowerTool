@@ -268,7 +268,7 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 	}
 	else																							//one-selected
 	{
-		QGraphicsItem* item = itemAt( event->scenePos());
+		QGraphicsItem* item = qgraphicsitem_cast<QGraphicsItem *>(selectedItems().first());//itemAt( event->scenePos());
 		if(!item)
 			return;
 		iData* data = (iData *)item->data(ITEM_DATA).toUInt();
