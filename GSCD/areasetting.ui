@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AreaSetting</class>
+ <widget class="QDialog" name="AreaSetting">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>386</width>
+    <height>168</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>AreaSetting</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>25</y>
+     <width>101</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>231</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Area Size</string>
+   </property>
+   <widget class="QComboBox" name="comboBox_size">
+    <property name="geometry">
+     <rect>
+      <x>57</x>
+      <y>25</y>
+      <width>120</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>A5</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>A4</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>A3</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>A2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>A1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>A0</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Custom</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>25</y>
+      <width>23</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Size:</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_width">
+    <property name="geometry">
+     <rect>
+      <x>57</x>
+      <y>60</y>
+      <width>120</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>9999</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_height">
+    <property name="geometry">
+     <rect>
+      <x>57</x>
+      <y>95</y>
+      <width>120</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>9999</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>95</y>
+      <width>35</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Height:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>60</y>
+      <width>32</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Width:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>62</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mm</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>97</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>mm</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,13 +1,13 @@
 #include "controlpaneldialog.h"
 #include "diagramscene.h"
 
-ControlPanelDialog::ControlPanelDialog(ControlPanel controlpanel,QWidget *parent)
+ControlPanelDialog::ControlPanelDialog(ControlPanel &controlpanel,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
 	this->setFixedSize(this->size());
 	m_panel=controlpanel;
-
+	m_changes=0;
 
 	switch(m_panel.showtype)
 	{
@@ -76,6 +76,8 @@ void ControlPanelDialog::Onshowtypechanged()
 	else if(ui.radioButton_resistance->isChecked())
 		m_panel.showtype=SHOW_RESISTANCE;
 	else m_panel.showtype=SHOW_NONE;
+
+	m_changes|=CHG_CONTROLPANEL_SHOWTYPE;
 }
 void ControlPanelDialog::Onunitchanged()
 {
@@ -84,36 +86,46 @@ void ControlPanelDialog::Onunitchanged()
 	else if(ui.radioButton_unit2->isChecked())
 		m_panel.unittype=UNIT_PERUNIT;
 	else m_panel.unittype=UNIT_NONE;
+
+	m_changes|=CHG_CONTROLPANEL_UNIT;
 }
 void ControlPanelDialog::Onshowstationnametoggled(bool toggle)
 {
 	m_panel.isShowStationName=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWSTATNAME;
 }
 void ControlPanelDialog::Onshowstationvaluetoggled(bool toggle)
 {
 	m_panel.isShowStationValue=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWSTATVALUE;
 }
 void ControlPanelDialog::Onshowbranchlinetoggled(bool toggle)
 {
 	m_panel.isShowBranchLine=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWBRNACHLINE;
 }
 void ControlPanelDialog::Onshowbranchvaluetoggled(bool toggle)
 {
 	m_panel.isShowBranchValue=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWBRNACHVALUE;
 }
 void ControlPanelDialog::Onshowreactivepowertoggled(bool toggle)
 {
 	m_panel.isShowReactivePowerValue=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWREACTIVEVALUE;
 }
 void ControlPanelDialog::Onshowadmittancetoggled(bool toggle)
 {
 	m_panel.isShowAdmittance=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWADMITTANCE;
 }
 void ControlPanelDialog::Onshowvoltageangletoggled(bool toggle)
 {
 	m_panel.isShowVoltageAngle=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWANGLE;
 }
 void ControlPanelDialog::Onshowallvoltagetoggled(bool toggle)
 {
 	m_panel.isShowAllNodeVoltage=toggle;
+	m_changes|=CHG_CONTROLPANEL_SHOWALLVOLTAGE;
 }

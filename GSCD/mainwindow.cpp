@@ -9,6 +9,7 @@
 #include "idata.h"
 #include "scaledialog.h"
 #include "controlpaneldialog.h"
+#include "areasetting.h"
 
 const int InsertTextButton = 10;
 
@@ -821,14 +822,19 @@ void MainWindow::OnControlPanelDialog()
 {
 	MdiChild* child = activeMdiChild();
 	if(!child)	return;
-	ControlPanelDialog dlg(child->scene()->getControlPanel(),this);
+	ControlPanelDialog dlg(child->doc()->getControlPanel(),this);
 	if(dlg.exec()==QDialog::Accepted)
 	{
-		child->scene()->setControlPanel(dlg.getControlPanel());
+		child->doc()->setControlPanel(dlg.getControlPanel(),dlg.getchanges());
 	}
 }
 void MainWindow::imageArea()
 {
+	MdiChild* child = activeMdiChild();
+	if(!child)	return;
+	AreaSetting dlg(this);
+	if(dlg.exec()==QDialog::Accepted)
+	{}
 }
 void MainWindow::viewFont()
 {

@@ -3,13 +3,26 @@
 #include <QStringList>
 #include <QDebug>
 
+
 iDoc::iDoc(QObject *parent)
 	: QObject(parent)
 	,Prefix_keyword("BEGIN ")
 	,Suffix_keyword("0 / END OF ")
 	,ColumnName_keyword("@!")
 {
-
+	// my   control panle default settings
+	m_controlpanel.showtype=SHOW_POWERFLOW;
+	m_controlpanel.isShowStationName=true;
+	m_controlpanel.isShowStationValue=true;
+	m_controlpanel.isShowBranchLine=true;
+	m_controlpanel.isShowBranchValue=false;
+	m_controlpanel.isShowReactivePowerValue=false;
+	m_controlpanel.isShowAdmittance=false;
+	m_controlpanel.isShowVoltageAngle=true;
+	m_controlpanel.isShowAllNodeVoltage=false;
+	m_controlpanel.unittype=UNIT_ACTUALVALUE;
+	
+	m_AreaSize=QSize(297,210);
 }
 
 iDoc::~iDoc()
@@ -215,21 +228,19 @@ void iDoc::GetDataModel(T_DATA datatype)
 
 					case T_TRANSFORMER:																//Transformer Data Area 
 						{
-							int from,to;
+							int from,to,k;
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
-							iTRANSFORMER* transformer = new iTRANSFORMER(datarows,from,to,this);	//row index is the transformer id
+							k=datalist[2].toInt();
 
-							//add transformer into bus link list
-							iBUS* bus1 = getBUS(from);
-							if(bus1)
-								bus1->addLink(transformer);
-							iBUS* bus2 = getBUS(to);
-							if(bus2)
-								bus2->addLink(transformer);
-							addTRANSFORMER(transformer);											//add transformer into transformer list
-				
-							int k=datalist[2].toInt();
+							iBUS* frombus = getBUS(from);
+							iBUS* tobus = getBUS(to);
+							if((frombus!=NULL)&&(tobus!=NULL))
+							{
+								iTRANSFORMER* transformer = new iTRANSFORMER(datarows,frombus->Uid(),tobus->Uid(),this);	//row index is the transformer id
+								addTRANSFORMER(transformer);											//add transformer into transformer list
+							}
+
 							if(k==0)
 							{
 								TranformerDummylines=3;
@@ -312,6 +323,7 @@ int	iDoc::STAT_getId()
 iSTAT* iDoc::STAT_new(const QString& name)
 {
 	iSTAT* stat = new iSTAT(STAT_getId(),name,this);
+	connect(this,SIGNAL(controlpanelChanged(ControlPanel &,uint)),stat,SLOT(OncontrolpanelChanged(ControlPanel &,uint)));
 	listSTAT.insert(stat->Id(),stat);
 	return stat;
 }
@@ -384,4 +396,12 @@ iAREA*	iDoc::getAREA(const QString& name)
 		   return it.value();
    }
 	return NULL;
+}
+void iDoc::setControlPanel(ControlPanel &value,uint changes)
+{
+	if(listSTAT.count()>0)
+	{
+		m_controlpanel=value;
+		emit controlpanelChanged(m_controlpanel,changes);
+	}
 }

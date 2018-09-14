@@ -15,31 +15,6 @@ typedef enum{
 	ACT_DELETE,
 }ACT_TYPE;
 
-typedef enum{
-	SHOW_NONE		=0,	
-	SHOW_ONLYNAME,
-	SHOW_POWERFLOW,
-	SHOW_RESISTANCE,
-}SHOW_TYPE;
-
-typedef enum{
-	UNIT_NONE		=0,	
-	UNIT_PERUNIT,
-	UNIT_ACTUALVALUE,
-}UNIT_TYPE;
-
-typedef struct{
-	SHOW_TYPE showtype;
-	bool isShowStationName;
-	bool isShowStationValue;
-	bool isShowBranchLine;
-	bool isShowBranchValue;
-	bool isShowReactivePowerValue;
-	bool isShowAdmittance;
-	bool isShowVoltageAngle;
-	bool isShowAllNodeVoltage;
-	UNIT_TYPE unittype;
-}ControlPanel;
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -82,8 +57,8 @@ public:
 
 	void addMenu(MENU_TYPE type,QMenu *menu){myMenus.insert(type,menu);}
 	QMenu* getMenu(MENU_TYPE type){return myMenus.value(type,NULL);}
-	ControlPanel getControlPanel(){return m_controlpanel;}
-	void DiagramScene::setControlPanel(ControlPanel value);
+	
+	
 
 	void viewItem();																				//to deal with view property event from main menu
 	void editItem();																				//to deal with edit object event from main menu
@@ -145,9 +120,10 @@ private:
     QColor		myItemColor;
     QColor		myLineColor;
 
-	ControlPanel	m_controlpanel;
+	
 
 public slots:
+	
 
 signals:
 	void modeDone();

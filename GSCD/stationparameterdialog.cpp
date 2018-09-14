@@ -1,6 +1,6 @@
 #include "stationparameterdialog.h"
 #include "idata.h"
-
+#include "stationnamedialog.h"
 
 StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
 	: QDialog(parent)
@@ -27,7 +27,7 @@ StationParameterDialog::~StationParameterDialog()
 }
 void StationParameterDialog::OnShowVoltage()
 {
-
+	
 }
 void StationParameterDialog::OnPowerFlow()
 {

@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QFile>
 #include "idata.h"
-
+#include <QSize>
 
 class iDoc : public QObject
 {
@@ -39,8 +39,15 @@ public:
 
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
+	QMap<int,iSTAT *>&   getStatlist(){return listSTAT;}
+
+	ControlPanel getControlPanel(){return m_controlpanel;}
+	void setControlPanel(ControlPanel &value,uint changes);
 
 	iAREA*	getAREA(const QString& name);
+
+	QSize getAreaSize(){return m_AreaSize; }
+	void  setAreaSize(const QSize &size){m_AreaSize=size; }
 
 	iData*	Uid2Data(int uid);
 
@@ -80,10 +87,14 @@ private:
 	void CloseDataFile();
 
 	QFile *m_file;
-
+	QSize m_AreaSize;
 	QString Prefix_keyword;
 	QString Suffix_keyword;
 	QString	ColumnName_keyword;
+	ControlPanel	m_controlpanel;
+signals:
+	void controlpanelChanged(ControlPanel &settings,uint changes);
+
 };
 
 #endif // IDOC_H

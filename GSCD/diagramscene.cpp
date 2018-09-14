@@ -80,17 +80,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_STAT_VALUE,statValueMenu);
 	addMenu(MENU_STAT_LINK,statLinkMenu);
 	
-	m_controlpanel.showtype=SHOW_POWERFLOW;
-	m_controlpanel.isShowStationName=true;
-	m_controlpanel.isShowStationValue=true;
-	m_controlpanel.isShowBranchLine=true;
-	m_controlpanel.isShowBranchValue=false;
-	m_controlpanel.isShowReactivePowerValue=false;
-	m_controlpanel.isShowAdmittance=false;
-	m_controlpanel.isShowVoltageAngle=true;
-	m_controlpanel.isShowAllNodeVoltage=true;
-	m_controlpanel.unittype=UNIT_ACTUALVALUE;
-
+	
 }
 //! [0]
 
@@ -240,11 +230,11 @@ void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 {
 	if (mouseEvent->button() == Qt::LeftButton)
 	{
-		QList<QGraphicsItem *> &list = selectedItems();
-		if(list.count() <= 1)																		//none-selected
-		{	
-			viewItem();	
-		}
+	QList<QGraphicsItem *> &list = selectedItems();
+	if(list.count() <= 1)																			//none-selected
+	{	
+		viewItem();	
+	}
 	}
 	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);								
 	qDebug("DoubleClickEvent");
@@ -543,7 +533,7 @@ void DiagramScene::addStation(const QPointF& pos)
 	//create station name text item
 	DiagramTextItem* nameItem = new DiagramTextItem(item,this);
 	nameItem->setFont(dlg.GetFont());
-	nameItem->setPlainText(stat->nodeVoltage() + stat->name());
+	nameItem->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 	nameItem->setDefaultTextColor(Qt::red);
 	nameItem->setPos(QPointF(20,20));
 	nameItem->setDefaultPos(QPointF(20,20));
@@ -599,7 +589,7 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 	{
 		//update station name
 		stat->itemName()->setFont(dlg.GetFont());
-		stat->itemName()->setPlainText(stat->nodeVoltage() + stat->name());
+		stat->itemName()->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 	}
 
 	//change links of station due to nodes changed
@@ -609,7 +599,7 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 		stat->removeSlinks();
 
 		updateArrows(stat);																			//udpate station links and arrows
-	}
+					}
 }
 void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 {
@@ -619,7 +609,13 @@ void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 		//change station name item
 		DiagramTextItem* item = stat->itemName();
 		if(item)
-			item->setPlainText(stat->nodeVoltage() + stat->name());
+		{
+			if(myDoc->getControlPanel().isShowAllNodeVoltage)
+			{
+				stat->itemName()->setPlainText(stat->allNodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
+			}else
+				item->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
+		}
 	}		
 }
 void DiagramScene::deleteStation(DiagramItem *item,iSTAT* stat)
@@ -641,8 +637,13 @@ void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 	if(dlg.exec()==QDialog::Accepted)
 	{		
 		//Update the voltage and name text		
-		stat->itemName()->setFont(dlg.GetFont());		
-		stat->itemName()->setPlainText(stat->nodeVoltage() + stat->name());
+		stat->itemName()->setFont(dlg.GetFont());
+		if(myDoc->getControlPanel().isShowAllNodeVoltage)
+		{
+			stat->itemName()->setPlainText(stat->allNodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
+		}else
+		stat->itemName()->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
+
 		if(dlg.IsApplyAll())
 		{
 			//To do : apply the font to all station 
@@ -683,62 +684,5 @@ void DiagramScene::addNote(const QPointF& pos)
 }
 void DiagramScene::viewNote()
 {
-}
-void DiagramScene::setControlPanel(ControlPanel value)
-{
-	if(value.showtype!=m_controlpanel.showtype)
-	{
-		//To do : change show type
-	}
-	if(value.isShowStationName!=m_controlpanel.isShowStationName)
-	{
-		//to do : show or hidden station name
-		foreach(QGraphicsItem *item ,items())
-		{
-			
-		}
-	}
-	if(value.isShowStationValue!=m_controlpanel.isShowStationValue)
-	{
-		//to do :show or hidden station value
 
-	}
-	if(value.isShowBranchLine!=m_controlpanel.isShowBranchLine)
-	{
-		//to do :show or hidden connection line
-
-	}
-	if(value.isShowBranchValue!=m_controlpanel.isShowBranchValue)
-	{
-		//to do :show or hidden connection value
-
-	}
-	if(value.isShowReactivePowerValue!=m_controlpanel.isShowReactivePowerValue)
-	{
-		//to do :show or hidden reactive part
-
-	}
-	if(value.isShowAdmittance!=m_controlpanel.isShowAdmittance)
-	{
-		//to do :show or hidden Admittance
-
-	}
-	if(value.isShowVoltageAngle!=m_controlpanel.isShowVoltageAngle)
-	{
-		//to do :show or hidden voltage angle
-		
-
-	}
-	if(value.isShowAllNodeVoltage!=m_controlpanel.isShowAllNodeVoltage)
-	{
-		//to do :show or hidden all node voltage
-		
-
-	}
-	if(value.unittype!=m_controlpanel.unittype)
-	{
-		//to do :change the unit of all values
-
-	}
-	m_controlpanel=value;
 }

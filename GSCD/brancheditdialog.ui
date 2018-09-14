@@ -178,6 +178,10 @@
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
+         <property name="styleSheet">
+          <string notr="true"> QPushButton:checked{ background-color: rgb(128,128, 255);border: outlet; }
+</string>
+         </property>
          <property name="text">
           <string>Parallel Line</string>
          </property>

@@ -51,6 +51,31 @@ typedef enum{
 	MENU_LEGEND
 }MENU_TYPE;
 
+typedef enum{
+	SHOW_NONE		=0,	
+	SHOW_ONLYNAME,
+	SHOW_POWERFLOW,
+	SHOW_RESISTANCE,
+}SHOW_TYPE;
+
+typedef enum{
+	UNIT_NONE		=0,	
+	UNIT_PERUNIT,
+	UNIT_ACTUALVALUE,
+}UNIT_TYPE;
+//control panel settings
+typedef struct{
+	SHOW_TYPE showtype;
+	bool isShowStationName;
+	bool isShowStationValue;
+	bool isShowBranchLine;
+	bool isShowBranchValue;
+	bool isShowReactivePowerValue;
+	bool isShowAdmittance;
+	bool isShowVoltageAngle;
+	bool isShowAllNodeVoltage;
+	UNIT_TYPE unittype;
+}ControlPanel;
 
 #define Uid2Type(uid)	((uid) >> 16)
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
@@ -143,6 +168,8 @@ class DiagramTextItem;
 class iSLINK;
 class iSTAT : public iData
 {
+	Q_OBJECT
+
 public:
 	iSTAT(int id,const QString& name,QObject *parent=0);
 	~iSTAT();
@@ -151,7 +178,8 @@ public:
 	void	setName(const QString& name){m_Name=name;}
 	QString value(){return m_Value;}
 	void	setValue(const QString& value){m_Value = value;}
-	QString nodeVoltage() const;
+	QString nodeVoltage(bool withangle,UNIT_TYPE unit) const;
+	QString allNodeVoltage(bool withangle,UNIT_TYPE unit) const;
 
 	STAT_TYPE	sType(){return m_sType;}
 	void	setsType(STAT_TYPE type){m_sType = type;}
@@ -173,6 +201,9 @@ public:
 	void	addSlink(iSLINK* slink);
 	void	removeSlinks();
 	void	removeSlink(iSLINK* slink);
+
+public slots:
+		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
 
 private:
 	friend class iDoc;

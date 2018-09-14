@@ -353,7 +353,9 @@ void AddDialog::OnRevoke()
 	
 	if(ui.tableWidget_added->rowCount()==0)
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-	
+	else
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+
 	ui.tableWidget_added->clearSelection();
 	ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);

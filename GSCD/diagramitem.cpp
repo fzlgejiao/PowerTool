@@ -190,29 +190,29 @@ void DiagramItem::updateData()
 		case STAT_NUCLEARPLANT:
 			{					
 			myPath.addRect(-15,-10,30,20);		
-			myPath.addEllipse(QPointF(0,0),8,8);			
+			myPath.addEllipse(QPointF(0,0),6,6);			
 			//myPolygon = path.toFillPolygon();			
 			}
 			break;
 		case STAT_110KV:
 			{			 
-			 myPath.addEllipse(QPointF(0,0),15,15);			 
+			 myPath.addEllipse(QPointF(0,0),9,9);			 
 			 //myPolygon = path.toFillPolygon();
 			}
 			break;
         case STAT_220KV:
 			{			
-			 myPath.addEllipse(QPointF(0,0),15,15);				
-			 myPath.addEllipse(QPointF(0,0),20,20);			
+			 myPath.addEllipse(QPointF(0,0),7,7);				
+			 myPath.addEllipse(QPointF(0,0),11,11);			
 			// myPolygon = path.toFillPolygon();
 			}
             break;
 		case STAT_330KV:
 		case STAT_550KV:
            {			
-			 myPath.addEllipse(QPointF(0,0),15,15);	
-			 myPath.addEllipse(QPointF(0,0),20,20);
-			 myPath.addEllipse(QPointF(0,0),25,25);			 
+			 myPath.addEllipse(QPointF(0,0),7,7);	
+			 myPath.addEllipse(QPointF(0,0),11,11);
+			 myPath.addEllipse(QPointF(0,0),15,15);			 
 			 //myPolygon = path.toFillPolygon();
 			}
             break;
@@ -236,41 +236,41 @@ void DiagramItem::updateData()
 			break;
 		case STAT_T_STATION:
 			{			
-			 myPath.addEllipse(QPointF(0,0),5,5);				
+			 myPath.addEllipse(QPointF(0,0),4,4);				
 			}
 			break;
 		case STAT_SERIESCOMPENSATION:
 			{			
-			 myPath.addEllipse(QPointF(0,0),25,25);
-			 myPath.moveTo(-25,0);
-			 myPath.lineTo(-8,0);
-			 myPath.moveTo(-8,-15);
-			 myPath.lineTo(-8,15);
-			 myPath.moveTo(8,-15);
-			 myPath.lineTo(8,15);
-			 myPath.moveTo(8,0);
-			 myPath.lineTo(25,0);
+			 myPath.addEllipse(QPointF(0,0),16,16);
+			 myPath.moveTo(-16,0);
+			 myPath.lineTo(-5,0);
+			 myPath.moveTo(-5,-9);
+			 myPath.lineTo(-5,9);
+			 myPath.moveTo(5,-9);
+			 myPath.lineTo(5,9);
+			 myPath.moveTo(5,0);
+			 myPath.lineTo(16,0);
 			}
 			break;
 		case STAT_CONVERTER:
 			{			
-			 myPath.addEllipse(QPointF(0,0),25,25);		
-			 myPath.moveTo(-17,-17);
-			 myPath.lineTo(17,17);
-			 myPath.moveTo(-14,10);
-			 myPath.lineTo(3,10);
+			 myPath.addEllipse(QPointF(0,0),16,16);		
+			 myPath.moveTo(-11,-11);
+			 myPath.lineTo(11,11);
+			 myPath.moveTo(-7,7);
+			 myPath.lineTo(3,7);
 
-			 myPath.moveTo(-5,-10);
-			 myPath.arcTo(-5,-15,10,10,180,-180);
-			 myPath.moveTo(15,-10);
-			 myPath.arcTo(5,-15,10,10,360,-180);
+			 myPath.moveTo(-1,-5);
+			 myPath.arcTo(-1,-8,6,6,180,-180);
+			 myPath.moveTo(11,-5);
+			 myPath.arcTo(5,-8,6,6,0,-180);		
 			}
 			break;
 		case STAT_SWITCHING:
 			{			
-			 myPath.addEllipse(QPointF(0,0),20,20);		
-			 myPath.moveTo(-14,14);
-			 myPath.lineTo(14,-14);
+			 myPath.addEllipse(QPointF(0,0),13,13);		
+			 myPath.moveTo(-9,9);
+			 myPath.lineTo(9,-9);
 			}
 			break;		
         default:
