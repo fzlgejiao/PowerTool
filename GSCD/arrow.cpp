@@ -60,8 +60,19 @@ QPainterPath Arrow::shape() const
 //! [3]
 void Arrow::updatePosition()
 {
-	QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
+	QPointF startPoint	=myStartItem->scenePos();
+	QPointF endPoint	=myEndItem->scenePos();
+	QPointF centerPoint= QPointF((endPoint.x() + startPoint.x()) / 2.0, (startPoint.y() + endPoint.y()) / 2.0);
+	setPos(centerPoint);
+	QPointF pt = this->pos();
+
+	//QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
+	qreal dx = endPoint.x() - startPoint.x();
+	qreal dy = endPoint.y() - startPoint.y();
+	QLineF line(-dx/2,-dy/2,dx/2,dy/2);
 	setLine(line);
+
+
 }
 //! [3]
 
@@ -70,6 +81,9 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 {
 	if (myStartItem->collidesWithItem(myEndItem))
 		return;
+
+	//QGraphicsLineItem::paint(painter,op,widget);
+	//return;
 	
 	QPen myPen = pen();
 	myPen.setColor(myColor);
@@ -78,7 +92,9 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	painter->setBrush(Qt::white);
 	//! [4] //! [5]
 
-	QLineF centerLine(myStartItem->pos(), myEndItem->pos());
+	QPointF startPoint=myStartItem->scenePos();
+	QPointF endPoint=myEndItem->scenePos();	
+	QLineF centerLine(startPoint, endPoint);
 	////QPolygonF endPolygon = myEndItem->polygon();
 	//QPolygonF endPolygon = myEndItem->path().toFillPolygon();
 	//
@@ -95,22 +111,19 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	//		break;
 	//	p1 = p2;
 	//}
-	QPointF startPoint=myStartItem->pos();
-	QPointF endPoint=myEndItem->pos();
 
-	setLine(QLineF(endPoint,startPoint));
+
+	//setLine(QLineF(endPoint,startPoint));
 	//! [5] //! [6]
 
-	QPointF middlepoint= QPointF((endPoint.x() + startPoint.x()) / 2.0, (startPoint.y() + endPoint.y()) / 2.0);
+	QPointF middlepoint= QPointF((endPoint.x() + startPoint.x()) / 2.0, (startPoint.y() + endPoint.y()) / 2.0) - pos();
 
 	double angle = ::acos(line().dx() / line().length());
 	if (line().dy() >= 0)
 		angle = (M_PI * 2) - angle;
 
-	QPointF arrowP1 = middlepoint + QPointF(sin(angle + M_PI / 3) * arrowSize,
-		cos(angle + M_PI / 3) * arrowSize);
-	QPointF arrowP2 = middlepoint + QPointF(sin(angle + M_PI - M_PI / 3) * arrowSize,
-		cos(angle + M_PI - M_PI / 3) * arrowSize);
+	QPointF arrowP1 = middlepoint + QPointF(sin(angle + M_PI / 3) * arrowSize,cos(angle + M_PI / 3) * arrowSize);
+	QPointF arrowP2 = middlepoint + QPointF(sin(angle + M_PI - M_PI / 3) * arrowSize,cos(angle + M_PI - M_PI / 3) * arrowSize);
 
 	arrowHead.clear();
 	//arrowHead << line().p1() << arrowP1 << arrowP2;	
@@ -122,6 +135,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	else
 		oldPen.setColor(myColor);
 	painter->setPen(oldPen);
+	QLineF line1 = line();
 	//painter->drawLine(line());
 
 	//draw lines
@@ -137,8 +151,8 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 		qreal dy = (nLines-1-i*2) * LINE_HALF_GAP * cos(radAngle);
 		QPointF offset = QPointF(dx, dy);
 		QLineF  xline;
-		xline.setP1(centerLine.p1() + offset);
-		xline.setP2(centerLine.p2() + offset);
+		xline.setP1(centerLine.p1() + offset - pos());
+		xline.setP2(centerLine.p2() + offset - pos());
 		if(i == 0)
 		{
 			arrowLine.append(xline.p1());

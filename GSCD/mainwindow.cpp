@@ -10,6 +10,8 @@
 #include "scaledialog.h"
 #include "controlpaneldialog.h"
 #include "areasetting.h"
+#include "diagramitem.h"
+#include "arrow.h"
 
 const int InsertTextButton = 10;
 
@@ -685,11 +687,31 @@ void MainWindow::OnSelectionChanged()
 			switch(data->type())
 			{
 			case T_STAT:
-				deleteAction->setEnabled(true);
-				editObjectAction->setEnabled(true);
+				if(item->type() == DiagramItem::Type)
+				{
+					deleteAction->setEnabled(true);
+					editObjectAction->setEnabled(true);
+				}
+				else
+				{
+					deleteAction->setEnabled(false);
+					editObjectAction->setEnabled(false);
+				}
 				break;
 			case T_BRANCH:
 				editObjectAction->setEnabled(true);
+				break;
+			case T_SLINK:
+				if(item->type() == Arrow::Type)
+				{
+					deleteAction->setEnabled(false);
+					editObjectAction->setEnabled(true);
+				}
+				else
+				{
+					deleteAction->setEnabled(false);
+					editObjectAction->setEnabled(false);
+				}
 				break;
 			}
 		}

@@ -24,7 +24,8 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     myTextColor = Qt::black;
     myLineColor = Qt::black;
 
-	myFont.setWeight(QFont::Bold);
+	myFont =  QFont("Times New Roman", 14, QFont::Bold);
+	//myFont.setWeight(QFont::Bold);
 
 	//context menus
 	propertyAction = new QAction(tr("&Properties..."), this);
@@ -315,16 +316,28 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 		case T_SLINK:
 			{
 				iSLINK* slink = (iSLINK *)data;
-				if(item->type() == Arrow::Type)
+				if(item->type() == Arrow::Type)														//arrow item
 				{
-						QMenu* menu = getMenu(MENU_STAT_LINK);
-						if(!menu)
-							return;
-						QAction* action = menu->exec(event->screenPos());
-						if(action == propertyAction)
-							viewSLink(slink);
-						else if(action == editSLinkAction)
-							editSLink(slink);
+					QMenu* menu = getMenu(MENU_STAT_LINK);
+					if(!menu)
+						return;
+					QAction* action = menu->exec(event->screenPos());
+					if(action == propertyAction)
+						viewSLink(slink);
+					else if(action == editSLinkAction)
+						editSLink(slink);
+				}
+				else if(item->type() == DiagramTextItem::Type)										//arrow value item
+				{
+					DiagramTextItem *textItem = qgraphicsitem_cast<DiagramTextItem *>(item);
+					QMenu* menu = getMenu(MENU_STAT_NAME);
+					if(!menu)
+						return;
+					propertyAction->setEnabled(false);
+					QAction* action = menu->exec(event->screenPos());
+					if(action == defPositionAction)
+						textItem->backToDefaultPos();
+					propertyAction->setEnabled(true);
 				}
 			}
 			break;
@@ -413,7 +426,8 @@ void DiagramScene::procItem(ACT_TYPE act,QGraphicsItem* item)
 		break;
 	case T_SLINK:
 		{
-			viewSLink((iSLINK *)data);
+			if(item->type() == Arrow::Type)														//arrow item		
+				viewSLink((iSLINK *)data);
 		}
 		break;
 	case T_NOTE:
@@ -488,7 +502,9 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			DiagramItem *endItem	= slink->endItem();
 			if(!startItem || !endItem)
 				continue;
-			Arrow *arrow = new Arrow(startItem, endItem,slink,i);									//create arrow item for one line group
+
+			//arrow item
+			Arrow *arrow = new Arrow(startItem, endItem,slink,i,0,this);							//create arrow item for one line group
 			arrow->setColor(myLineColor);
 			startItem->addArrow(arrow);
 			endItem->addArrow(arrow);
@@ -496,14 +512,16 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			addItem(arrow);
 			arrow->updatePosition();
 
-
-			//text for arrow
-			//QGraphicsSimpleTextItem* arrowName = new QGraphicsSimpleTextItem(arrow,this);
-			//arrowName->setFont(myFont);
-			//arrowName->setText("Arrow");
-			//arrowName->setPos(QPointF(arrow->line().length()/2,0));
-			//addItem(arrowName);
-
+			//arrow text item
+			DiagramTextItem* nameItem = new DiagramTextItem(arrow,this);
+			nameItem->setPlainText("Arrow Text");
+			nameItem->setFont(myFont);
+			//nameItem->setDefaultTextColor(Qt::red);
+			//nameItem->setPos(QPointF(20,20));
+			//nameItem->setDefaultPos(QPointF(20,20));
+			nameItem->setData(ITEM_DATA,(uint)slink);
+			nameItem->setZValue(-1000.0);
+			addItem(nameItem);		
 		}
 	}
 }
