@@ -21,10 +21,10 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     line = 0;
     textItem = 0;
     myItemColor = Qt::white;
-    myTextColor = Qt::black;
-    myLineColor = Qt::black;
+    myTextColor = Qt::darkCyan;
+	myLineColor = Qt::darkCyan;
 
-	myFont =  QFont("Times New Roman", 14, QFont::Bold);
+	myFont =  QFont("Times New Roman", 12, QFont::Bold);
 	//myFont.setWeight(QFont::Bold);
 
 	//context menus
@@ -510,18 +510,19 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			endItem->addArrow(arrow);
 			arrow->setZValue(-1000.0);
 			addItem(arrow);
-			arrow->updatePosition();
 
 			//arrow text item
 			DiagramTextItem* nameItem = new DiagramTextItem(arrow,this);
 			nameItem->setPlainText("Arrow Text");
 			nameItem->setFont(myFont);
 			//nameItem->setDefaultTextColor(Qt::red);
-			//nameItem->setPos(QPointF(20,20));
-			//nameItem->setDefaultPos(QPointF(20,20));
+			//nameItem->setPos(QPointF(10,10));
+			//nameItem->setDefaultPos(QPointF(10,10));
 			nameItem->setData(ITEM_DATA,(uint)slink);
 			nameItem->setZValue(-1000.0);
-			addItem(nameItem);		
+			addItem(nameItem);	
+			arrow->setTextItem(nameItem);
+			arrow->updatePosition();
 		}
 	}
 }
@@ -553,8 +554,8 @@ void DiagramScene::addStation(const QPointF& pos)
 	nameItem->setFont(dlg.GetFont());
 	nameItem->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 	nameItem->setDefaultTextColor(Qt::red);
-	nameItem->setPos(QPointF(20,20));
-	nameItem->setDefaultPos(QPointF(20,20));
+	nameItem->setPos(QPointF(10,10));
+	nameItem->setDefaultPos(QPointF(10,10));
 	nameItem->setData(ITEM_DATA,(uint)stat);
 	addItem(nameItem);
 	stat->setItemName(nameItem);
@@ -564,8 +565,8 @@ void DiagramScene::addStation(const QPointF& pos)
 	valueItem->setFont(myFont);	
 	valueItem->setPlainText(stat->value());
 	valueItem->setDefaultTextColor(Qt::red);
-	valueItem->setPos(QPointF(20,-20));
-	valueItem->setDefaultPos(QPointF(20,-20));
+	valueItem->setPos(QPointF(10,-10));
+	valueItem->setDefaultPos(QPointF(10,-10));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);
 	valueItem->setVisible(false);

@@ -13,7 +13,7 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
     setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
-	defPos = QPointF(20,20);
+	defPos = QPointF(10,10);
 }
 //! [0]
 
@@ -68,7 +68,7 @@ void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 		op.state = QStyle::State_None;
 	}
 	else
-		setDefaultTextColor(Qt::black);
+		setDefaultTextColor(Qt::darkCyan);
 	// call default func to draw
 	QGraphicsTextItem::paint(painter, &op, widget);
 }

@@ -18,13 +18,16 @@ Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int grou
 	myGroupId	= groupId;
 	myStartItem = startItem;
 	myEndItem	= endItem;
+	myTextItem  = NULL;
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
-	myColor = Qt::black;
+	myColor = Qt::darkCyan;
 	setPen(QPen(myColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
 Arrow::~Arrow()
 {
+	if(myTextItem)
+		delete myTextItem;
 }
 //! [0]
 iData* Arrow::myData()
@@ -72,6 +75,13 @@ void Arrow::updatePosition()
 	QLineF line(-dx/2,-dy/2,dx/2,dy/2);
 	setLine(line);
 
+	//rotate line text item
+	if(myTextItem)
+	{
+		float degree = ::atanf((endPoint.y() - startPoint.y())/(endPoint.x() - startPoint.x()));
+		myTextItem->setRotation(degree*180/M_PI);
+		//qDebug(qPrintable(QString("degree::%1").arg(degree,4,'f',1)));
+	}
 
 }
 //! [3]
