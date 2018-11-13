@@ -1,20 +1,23 @@
 #include "stationparameterdialog.h"
-#include "idata.h"
 #include "stationnamedialog.h"
+#include "stationvaluedialog.h"
+#include "diagramtextitem.h"
 
-StationParameterDialog::StationParameterDialog(iSTAT *station,QWidget *parent)
+StationParameterDialog::StationParameterDialog(iSTAT *station,const ControlPanel &controlpanel,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
 	this->setFixedSize(this->size());
 	m_station=station;	
+	m_panel=controlpanel;
+	m_Sbase=m_station->nodeDatas().first()->getSBase();
 	SetTableStyle(ui.tableWidget_parameter);
 
 	ui.lineEdit_name->setText(m_station->name());
 
 	foreach(iNodeData *node,m_station->nodeDatas())
 	{
-			AddNodeToTable(node);
+		AddNodeToTable(node);
 	}			
 	connect(ui.pushButton_OK,SIGNAL(clicked()),this,SLOT(OnOk()));	
 	connect(ui.pushButton_tideway,SIGNAL(clicked()),this,SLOT(OnPowerFlow()));
@@ -27,11 +30,30 @@ StationParameterDialog::~StationParameterDialog()
 }
 void StationParameterDialog::OnShowVoltage()
 {
-	
+	StationNameDialog dlg(m_station,this);
+	if(dlg.exec()==QDialog::Accepted)
+	{		
+		//Update the voltage and name text		
+		m_station->itemName()->setFont(dlg.GetFont());
+		if(m_panel.isShowAllNodeVoltage)
+		{
+			m_station->itemName()->setPlainText(m_station->allNodeVoltage(m_panel.isShowVoltageAngle,m_panel.unittype) + m_station->name());
+		}else
+		m_station->itemName()->setPlainText(m_station->nodeVoltage(m_panel.isShowVoltageAngle,m_panel.unittype) + m_station->name());
+
+		if(dlg.IsApplyAll())
+		{
+			//To do : apply the font to all station 
+		}
+	}
 }
 void StationParameterDialog::OnPowerFlow()
 {
-
+	StationValueDialog dlg(m_station,this);
+	if(dlg.exec()==QDialog::Accepted)
+	{			
+		m_station->itemValue()->setPlainText(m_station->value(m_Sbase,m_panel.unittype));
+	}
 }
 void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 {
@@ -70,7 +92,9 @@ void StationParameterDialog::AddNodeToTable(iNodeData *node)
 	QTableWidgetItem *refvoltageitem = new QTableWidgetItem();
 	QTableWidgetItem *voltageitem = new QTableWidgetItem();
 	QTableWidgetItem *angleitem = new QTableWidgetItem();
-
+	QTableWidgetItem *poweritem = new QTableWidgetItem();
+	QTableWidgetItem *loaditem = new QTableWidgetItem();
+	QTableWidgetItem *compensationitem = new QTableWidgetItem();
 	if(node->type()==T_BUS) 
 	{
 		iBUS *bus=(iBUS *)node;
@@ -78,10 +102,21 @@ void StationParameterDialog::AddNodeToTable(iNodeData *node)
 		refvoltageitem->setText( QString::number(bus->GetRefVoltage(),10,1));
 		voltageitem->setText( QString::number(bus->GetVoltage(),10,3));
 		angleitem->setText(QString::number(bus->GetAngle(),10,1));
+
+		if(bus->getPower()!=NULL)
+			poweritem->setText(bus->getPower());
+		if(bus->getLoad()!=NULL)
+			loaditem->setText(bus->getLoad());
+		if(bus->getCompensation()!=NULL)
+			compensationitem->setText(bus->getCompensation());
+
 		ui.tableWidget_parameter->setItem(row, NAME, item);	
 		ui.tableWidget_parameter->setItem(row, Ref_Volatge, refvoltageitem);
 		ui.tableWidget_parameter->setItem(row, Voltage, voltageitem);
 		ui.tableWidget_parameter->setItem(row, Angle, angleitem);
+		ui.tableWidget_parameter->setItem(row, Energy, poweritem);
+		ui.tableWidget_parameter->setItem(row, Load, loaditem);
+		ui.tableWidget_parameter->setItem(row, Compensation, compensationitem);
 	}
 }
 void StationParameterDialog::OnOk()

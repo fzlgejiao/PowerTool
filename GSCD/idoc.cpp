@@ -18,11 +18,12 @@ iDoc::iDoc(QObject *parent)
 	m_controlpanel.isShowBranchValue=false;
 	m_controlpanel.isShowReactivePowerValue=false;
 	m_controlpanel.isShowAdmittance=false;
-	m_controlpanel.isShowVoltageAngle=true;
+	m_controlpanel.isShowVoltageAngle=false;
 	m_controlpanel.isShowAllNodeVoltage=false;
 	m_controlpanel.unittype=UNIT_ACTUALVALUE;
 	
 	m_AreaSize=QSize(297,210);
+	SBase=1;
 }
 
 iDoc::~iDoc()
@@ -100,13 +101,18 @@ bool iDoc::openDataFile(const QString& file)
 	//todo:: process data file
 	if(OpenDataFile(file))
 	{
-	GetDataModel(T_BUS);	
-	GetDataModel(T_BRANCH);
-	GetDataModel(T_TRANSFORMER);
-	GetDataModel(T_AREA);
-	CloseDataFile();
+		GetBaseParameter();
+		GetDataModel(T_BUS);	
+		GetDataModel(T_LOAD);	
+		GetDataModel(T_COMPENSATION);
+		GetDataModel(T_GENERATOR);
+		GetDataModel(T_BRANCH);
+		GetDataModel(T_TRANSFORMER);
+		GetDataModel(T_AREA);
+		CloseDataFile();
+		return true;
 	}
-	return true;
+	return false;
 }
 
 
@@ -151,6 +157,22 @@ void iDoc::CloseDataFile()
 	}
 }
 
+void iDoc::GetBaseParameter()
+{
+	QTextStream stream(m_file);
+	stream.seek(0);
+	while(!stream.atEnd())
+	{
+		QString readline=stream.readLine();
+		if(readline.contains(ColumnName_keyword)&&(readline.contains("SBASE")))
+		{
+			readline=stream.readLine();
+			QStringList datalist=readline.split(",",QString::SkipEmptyParts);
+			SBase=datalist[1].toDouble();
+			break;
+		}
+	}
+}
 void iDoc::GetDataModel(T_DATA datatype)
 {
 	int datarows=0;		
@@ -158,6 +180,12 @@ void iDoc::GetDataModel(T_DATA datatype)
 	QString dataname;
 	if(datatype==T_BUS)
 		dataname="BUS";
+	else if(datatype==T_GENERATOR)
+		dataname="GENERATOR";
+	else if(datatype==T_LOAD)
+		dataname="LOAD";
+	else if(datatype==T_COMPENSATION)
+		dataname="FIXED SHUNT";
 	else if(datatype==T_BRANCH)
 		dataname="BRANCH";
 	else if(datatype==T_TRANSFORMER)
@@ -200,16 +228,70 @@ void iDoc::GetDataModel(T_DATA datatype)
 							bus->m_refvoltage=datalist[2].toDouble();
 							bus->m_voltage=datalist[7].toDouble();
 							bus->m_angle=angel;
+							bus->sbase=SBase;
 							addBUS(bus);
 						}
+					break;
+
+					case T_LOAD:
+					{
+						int busid;
+						double pl,ql,ip,iq;
+						busid=datalist[0].toInt();
+						pl=datalist[5].toDouble();
+						ql=datalist[6].toDouble();
+						ip=datalist[7].toDouble();
+						iq=datalist[8].toDouble();
+						iBUS* bus = getBUS(busid);
+						if(bus)
+						{
+							bus->Load_PL=(pl+ip)/SBase;
+							bus->Load_QL=(ql+iq)/SBase;
+						}
+					}
+					break;
+
+					case T_COMPENSATION:
+					{
+						int busid;
+						double Gl,Bl;
+						busid=datalist[0].toInt();
+						Gl=datalist[3].toDouble();
+						Bl=datalist[4].toDouble();
+						iBUS* bus = getBUS(busid);
+						if(bus)
+						{
+							bus->Compensation_GL=Gl/SBase;
+							bus->Compensation_BL=Bl/SBase;
+						}
+					}
+					break;
+
+					case T_GENERATOR:
+					{
+						int busid;
+						double pg,qg;
+						busid=datalist[0].toInt();
+						pg=datalist[2].toDouble();
+						qg=datalist[3].toDouble();
+						iBUS* bus = getBUS(busid);
+						if(bus)
+						{
+							bus->power_PG=pg/SBase;
+							bus->power_QG=qg/SBase;
+						}
+					}
 					break;
 
 					case T_BRANCH:
 						{
 							int from,to;
+							double r,x;
 							QString CKT= datalist[2].replace(QString("'"),QString("")).trimmed();
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
+							r=datalist[3].toDouble();
+							x=datalist[4].toDouble();
 							iBUS* frombus = getBUS(from);
 							iBUS* tobus = getBUS(to);
 							if((frombus!=NULL)&&(tobus!=NULL))
@@ -218,6 +300,8 @@ void iDoc::GetDataModel(T_DATA datatype)
 								branch->frombus=frombus;
 								branch->tobus=tobus;
 								branch->ParallelCode=CKT.toInt();
+								branch->branch_R=r;
+								branch->branch_X=x;
 									//add branch into bus link list	
 								frombus->addLink(branch);	
 								tobus->addLink(branch);
@@ -238,6 +322,9 @@ void iDoc::GetDataModel(T_DATA datatype)
 							if((frombus!=NULL)&&(tobus!=NULL))
 							{
 								iTRANSFORMER* transformer = new iTRANSFORMER(datarows,frombus->Uid(),tobus->Uid(),this);	//row index is the transformer id
+								// transformer  add into linkdatas
+								/*frombus->addLink(transformer);
+								tobus->addLink(transformer);*/
 								addTRANSFORMER(transformer);											//add transformer into transformer list
 							}
 
@@ -404,4 +491,10 @@ void iDoc::setControlPanel(ControlPanel &value,uint changes)
 		m_controlpanel=value;
 		emit controlpanelChanged(m_controlpanel,changes);
 	}
+}
+
+void iDoc::setAreaSize(const QSize &size)
+{
+	m_AreaSize=size; 
+	emit areaSizeChanged(m_AreaSize);
 }

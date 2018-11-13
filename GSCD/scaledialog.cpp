@@ -7,7 +7,7 @@ ScaleDialog::ScaleDialog(int scale,QWidget *parent)
 	this->setFixedSize(this->size());
 	m_scale=scale;
 	scalemin=10;
-	scalemax=200;
+	scalemax=500;
 	ui.ScaleSlider->setMinimum(scalemin);
 	ui.ScaleSlider->setMaximum(scalemax);
 	ui.ScaleSlider->setValue(m_scale);

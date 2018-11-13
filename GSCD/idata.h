@@ -14,6 +14,9 @@ typedef enum{
 	T_BUS,
 	T_BRANCH,
 	T_TRANSFORMER,
+	T_GENERATOR,
+	T_LOAD,
+	T_COMPENSATION,
 
 	T_NOTE,
 	T_SYSINFO,
@@ -77,6 +80,11 @@ typedef struct{
 	UNIT_TYPE unittype;
 }ControlPanel;
 
+typedef enum{	
+	VALUE_ADDUP			=0,
+	VALUE_LIST
+}STATION_VALUE_SHOW_TYPE;
+
 #define Uid2Type(uid)	((uid) >> 16)
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
 #define	UID(type,id)	(((type)<<16)|(id))
@@ -135,6 +143,20 @@ public:
 	void setShowVoltage(bool value){m_isShowVoltage=value;}
 	bool isShowVoltge(){return m_isShowVoltage;}
 
+	double getPowerPG(){return power_PG;}						//All bus values is in per unit ,default
+	double getPowerQG(){return power_QG;}
+
+	double getLoadPL(){return Load_PL;}						
+	double getLoadQL(){return Load_QL;}
+
+	double getGL(){return Compensation_GL;}						
+	double getBL(){return Compensation_BL;}
+
+	double getSBase(){return sbase;}
+	QString getPower();
+	QString getLoad();
+	QString getCompensation();
+
 protected:
 	int			m_statId;																			//station id(0: not assigned to a station, x: station id)
 	
@@ -144,6 +166,17 @@ protected:
 	double      m_voltage;
 	double      m_angle;
 	bool		m_isShowVoltage;
+
+	double power_PG;
+	double power_QG;
+
+	double Load_PL;
+	double Load_QL;
+
+	double Compensation_GL;
+	double Compensation_BL;
+
+	double sbase;
 };
 
 class iAREA : public iData
@@ -177,6 +210,7 @@ public:
 	QString name(){return m_Name;}
 	void	setName(const QString& name){m_Name=name;}
 	QString value(){return m_Value;}
+	QString value(double sbase,UNIT_TYPE type);
 	void	setValue(const QString& value){m_Value = value;}
 	QString nodeVoltage(bool withangle,UNIT_TYPE unit) const;
 	QString allNodeVoltage(bool withangle,UNIT_TYPE unit) const;
@@ -202,6 +236,17 @@ public:
 	void	removeSlinks();
 	void	removeSlink(iSLINK* slink);
 
+	STATION_VALUE_SHOW_TYPE powerShowtype(){return m_power_showtype;}
+	void setPowerType(STATION_VALUE_SHOW_TYPE type){m_power_showtype=type;}
+
+	STATION_VALUE_SHOW_TYPE loadShowtype(){return m_load_showtype;}
+	void setLoadType(STATION_VALUE_SHOW_TYPE type){m_load_showtype=type;}
+
+	bool isshowload(){return is_loadshown;}
+	void setloadshown(bool value){is_loadshown=value;}
+
+	bool isshowcompensation(){return is_compensationshown;}
+	void setcompensationshown(bool value){is_compensationshown=value;}
 public slots:
 		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
 
@@ -211,12 +256,19 @@ private:
 	QString			m_Value;																		//nodes voltage value(can be more than one node,e.g "v1:v2")
 	STAT_TYPE		m_sType;																		//station type
 
+	STATION_VALUE_SHOW_TYPE m_power_showtype;
+	STATION_VALUE_SHOW_TYPE m_load_showtype;
+
 	DiagramItem*	 m_itemStat;																	//pointer to station diagram item
 	DiagramTextItem* m_itemName;																	//pointer to station name text item
 	DiagramTextItem* m_itemValue;																	//pointer to station value text item
 
 	QList<iNodeData *>	m_nodeDatas;
 	QList<iSLINK *>		m_sLinks;
+
+	
+	bool is_loadshown;
+	bool is_compensationshown;
 };
 
 class iSLINK : public iData
@@ -262,9 +314,11 @@ public:
 	QString name(){return m_Name;}
 	
 
+
 private:
 	friend class iDoc;
 
+	
 	//properties
 	QString		m_Name;
 	int         m_areaID;
@@ -279,11 +333,15 @@ public:
 	iBUS * getFromBus(){return frombus;}
 	iBUS * getToBus(){return tobus;}
 	int    getParallelCode(){return ParallelCode;}
+	QString getRX(){return QString("%1+j%2").arg(branch_R,0,'f',5).arg(branch_X,0,'f',5);}
+
 private:
 	friend class iDoc;
 	iBUS *frombus;
 	iBUS *tobus;
 	int ParallelCode;
+	double branch_R;
+	double branch_X;
 	//properties
 };
 
@@ -300,7 +358,6 @@ private:
 
 	//properties
 };
-
 class iNote : public iData
 {
 public:

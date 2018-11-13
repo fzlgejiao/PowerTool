@@ -6,28 +6,36 @@
 
 MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	: QGraphicsView(scene)
+	,dpi(100)
+	,scale_min(10)
+	,scale_max(500)
+	,m_scale(80)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     isUntitled = true;
 	m_scene = (DiagramScene *)scene;
 	m_doc	= doc;
-	int dpi=5;
-
-    QMatrix oldMatrix = matrix();
-    resetMatrix();
-    translate(oldMatrix.dx(), oldMatrix.dy());
-    scale(1, 1);
-	setDragMode(QGraphicsView::RubberBandDrag);
-	//setDragMode(QGraphicsView::ScrollHandDrag);
-	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 	
 	QSizeF viewsize=m_doc->getAreaSize();
-	int width=viewsize.width()*dpi;
-	int height=viewsize.height()*dpi;
-	//m_scene->addRect(QRectF(0,0,width,height),QPen(Qt::blue, 1, Qt::SolidLine));
+	int width=viewsize.width()*dpi/25.4;
+	int height=viewsize.height()*dpi/25.4;
+   /* QMatrix oldMatrix = matrix();
+    resetMatrix();
+    translate(oldMatrix.dx(), oldMatrix.dy());*/
+	m_scene->setSceneRect(0, 0, width, height);												
+	setScene(m_scene);
+	setCacheMode(CacheBackground);
+    scale(qreal(m_scale/100.0), qreal(m_scale/100.0));
 	
-	setSceneRect(QRectF(0,0,width*2,height*2));												//·Ö±æÂÊ:150ÏñËØ/Ó¢´ç	
-	//m_scene->setSceneRect(QRectF(0,0,width*2,height*2));
+	setDragMode(QGraphicsView::RubberBandDrag);
+	//setDragMode(QGraphicsView::ScrollHandDrag);	
+	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+		
+	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+	setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+	
+	//m_scene->addEllipse(QRectF(0,0,200,200),QPen(Qt::green, 1, Qt::SolidLine));	
+	//m_scene->addEllipse(QRectF(500,500,100,100),QPen(Qt::red, 1, Qt::SolidLine));	
 }
 MdiChild::~MdiChild()
 {
@@ -173,12 +181,57 @@ QString MdiChild::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
 }
-void MdiChild::OnScaleChanged(const QString &scale)
+//void MdiChild::OnScaleChanged(const QString &scale)
+//{
+//    double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
+//	m_scale=scale.left(scale.indexOf(tr("%"))).toInt();
+//    QMatrix oldMatrix = this->matrix();
+//    this->resetMatrix();
+//    this->translate(oldMatrix.dx(), oldMatrix.dy());
+//    this->scale(newScale, newScale);
+//}
+
+void MdiChild::setchildScale(const QString &scale)
 {
-    double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
+	double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
+	m_scale=scale.left(scale.indexOf(tr("%"))).toInt();
     QMatrix oldMatrix = this->matrix();
     this->resetMatrix();
     this->translate(oldMatrix.dx(), oldMatrix.dy());
     this->scale(newScale, newScale);
+}
+
+void MdiChild::wheelEvent(QWheelEvent * wheelEvent)
+{
+	int delta=wheelEvent->delta();
+	if (wheelEvent->modifiers() == Qt::ControlModifier){		//scale function: Ctrl+ wheel,up is zoom in ,down is zoom out		
+		//qreal ss= pow((double)2, delta / 240.0);
+		qreal ss=0;
+		if(delta>0) ss=1.1;else ss=0.9;
+	
+		qreal factor = transform().scale(ss, ss).mapRect(QRectF(0, 0, 1, 1)).width();
+		m_scale=factor*100;												//this  scale is in percent mode
+		emit wheelscaleChanged(m_scale);
+		if((m_scale<scale_min)||(m_scale>scale_max)) return;	
+				
+		scale(ss,ss);
+		wheelEvent->accept();
+	}else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)	//Shift + wheel . horizontal scrollbar
+	{		
+		if(this->horizontalScrollBar()->isVisible())
+		{
+			int value=this->horizontalScrollBar()->value();
+			this->horizontalScrollBar()->setValue(value-delta);
+		}
+	}else	
+	QGraphicsView::wheelEvent(wheelEvent);
+}
+
+void MdiChild::OnAreaSizeChanged(QSize & size)
+{
+	int width=size.width()*dpi/25.4;
+	int height=size.height()*dpi/25.4;
+  
+	m_scene->setSceneRect(0, 0, width, height);			
 }
 

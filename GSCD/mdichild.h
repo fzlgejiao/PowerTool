@@ -23,18 +23,20 @@ public:
     QString currentFile() { return curFile; }
 	DiagramScene* scene(){return m_scene;}
 	iDoc *doc(){return m_doc;}
-	
+	int getchildScale(){return m_scale;}
+	void setchildScale(const QString &scale);
 
 protected:
     void closeEvent(QCloseEvent *event);
+	void wheelEvent(QWheelEvent * wheelEvent);
 
 public slots:
     void documentWasModified();
-	void OnScaleChanged(const QString &);
-	
+	//void OnScaleChanged(const QString &);
+	void OnAreaSizeChanged(QSize & size);
 
 signals:
-
+	void wheelscaleChanged(int scale);
 
 private:
     bool maybeSave();
@@ -46,6 +48,10 @@ private:
 
     QString curFile;
     bool isUntitled;
+	int dpi;
+	int m_scale;
+	int scale_min;
+	int scale_max;
 
 };
 

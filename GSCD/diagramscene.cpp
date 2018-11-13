@@ -544,13 +544,13 @@ void DiagramScene::addStation(const QPointF& pos)
 	//create station value text item
 	DiagramTextItem* valueItem = new DiagramTextItem(item,this);
 	valueItem->setFont(myFont);	
-	valueItem->setPlainText(stat->value());
+	valueItem->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype));
 	valueItem->setDefaultTextColor(Qt::red);
 	valueItem->setPos(QPointF(20,-20));
 	valueItem->setDefaultPos(QPointF(20,-20));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);
-	valueItem->setVisible(false);
+	//valueItem->setVisible(false);
 	stat->setItemValue(valueItem);
 
 	//QGraphicsRectItem* itemRect = new QGraphicsRectItem(0,0,180,20,0,this);
@@ -603,7 +603,7 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 }
 void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 {
-	StationParameterDialog dlg(stat,pMain);
+	StationParameterDialog dlg(stat,myDoc->getControlPanel(), pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{	
 		//change station name item
@@ -656,7 +656,7 @@ void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 	StationValueDialog dlg(stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{	
-		
+		stat->itemValue()->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype));
 	}
 }
 void DiagramScene::viewSLink(iSLINK* slink)
@@ -685,4 +685,14 @@ void DiagramScene::addNote(const QPointF& pos)
 void DiagramScene::viewNote()
 {
 
+}
+
+void DiagramScene::drawBackground ( QPainter * painter, const QRectF & rect )
+{
+	Q_UNUSED(rect);
+     
+    QRectF sceneRect = this->sceneRect();
+	painter->setPen(QPen(Qt::darkBlue, 1, Qt::SolidLine));
+	painter->setBrush(Qt::NoBrush);
+    painter->drawRect(sceneRect);
 }

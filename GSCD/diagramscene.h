@@ -69,8 +69,8 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
-	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
+	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);	
+	void drawBackground ( QPainter * painter, const QRectF & rect );
 	void procItem(ACT_TYPE act,QGraphicsItem* item);
 
 	//actions for station
