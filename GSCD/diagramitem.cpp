@@ -86,7 +86,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
 				if(txtItem)
 				{
 					//txtItem->setPen(QPen(Qt::green,1));
-					txtItem->setDefaultTextColor(QColor("green"));
+					txtItem->setDefaultTextColor(Qt::green);
 				}				
 			}
         }
@@ -127,12 +127,12 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	// set state to State_None when selected
 	if (option->state & QStyle::State_Selected)
 	{
-		setPen(QPen(Qt::blue,2));		
+		setPen(QPen(Qt::blue,1));		
 		op.state = QStyle::State_None;
 	}
 	else
 	{
-		setPen(QPen(Qt::black,2));
+		setPen(QPen(Qt::darkCyan,1));
 	}
 
 	// call default func to draw

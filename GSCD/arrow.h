@@ -37,6 +37,7 @@ public:
         { return myStartItem; }
     DiagramItem *endItem() const
         { return myEndItem; }
+	void setTextItem(DiagramTextItem* item){myTextItem = item;}
 
     void updatePosition();
 
@@ -50,6 +51,7 @@ protected:
 private:
     DiagramItem*	myStartItem;
     DiagramItem*	myEndItem;
+	DiagramTextItem* myTextItem;
     QColor			myColor;
     QPolygonF		arrowHead;
 	QPolygonF		arrowLine;

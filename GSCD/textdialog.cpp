@@ -11,7 +11,7 @@ TextDialog::TextDialog(const QString& text,QWidget *parent)
 
 	m_text=m_text;
 	defaultfont=QFont("Arial",10);
-	m_color=QColor("Black");
+	m_color=QColor("Blue");
 	m_font=defaultfont;
 	ui.textEdit_inputtext->setText(m_text);
 	//ui.pushButton_color->setMenu(new QMenu());

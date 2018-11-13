@@ -22,6 +22,8 @@ StationNameDialog::StationNameDialog(iSTAT *stat,QWidget *parent)
 	
 	ui.lineEdit_namepreview->setText(m_stat->name());
 	ui.lineEdit_namepreview->setFont(m_font);
+	ui.lineEdit_namepreview->setStyleSheet("color:blue");
+
 
 	QStringList list;
 	foreach(iNodeData *node,m_stat->nodeDatas())

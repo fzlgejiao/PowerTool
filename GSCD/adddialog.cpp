@@ -23,7 +23,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 		ui.comboBox_areas->addItem(area->name());
 	this->setFixedSize(this->size());
 
-	m_font=QFont("Arial",10);
+	m_font=QFont("Times New Roman", 12, QFont::Bold);
 	m_type=STAT_HYDROPLANT;
 
 	if(m_editstation)

@@ -3,7 +3,6 @@
 
 #include <QtGui/QMainWindow>
 #include "ui_mainwindow.h"
-#include "diagramitem.h"
 #include "idef.h"
 
 
