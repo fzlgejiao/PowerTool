@@ -24,6 +24,24 @@ iNodeData::iNodeData(int id,QObject *parent)
 {
 
 }
+QString iNodeData::getPower()
+{
+	if((power_QG!=0)||(power_PG!=0)) 
+		return  QString("%1+i%2").arg(power_PG,0,'f',3,QLatin1Char('0')).arg(power_QG,0,'f',3,QLatin1Char('0'));
+	else return NULL;
+}
+QString iNodeData::getLoad()
+{
+	if((Load_PL!=0)||(Load_QL!=0)) 
+		return  QString("%1+i%2").arg(Load_PL,0,'f',3,QLatin1Char('0')).arg(Load_QL,0,'f',3,QLatin1Char('0'));
+	else return NULL;
+}
+QString iNodeData::getCompensation()
+{
+	if((Compensation_GL!=0)||(Compensation_BL!=0)) 
+		return  QString("%1+i%2").arg(Compensation_GL,0,'f',3,QLatin1Char('0')).arg(Compensation_BL,0,'f',3,QLatin1Char('0'));
+	else return NULL;
+}
 //--------------------------------------------------------------------------------------------------
 //	iSTAT funcs
 //--------------------------------------------------------------------------------------------------
@@ -36,6 +54,11 @@ iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 	m_itemStat = NULL;
 	m_itemName = NULL;
 	m_itemValue= NULL;
+
+	m_power_showtype=VALUE_ADDUP;
+	m_load_showtype=VALUE_ADDUP;
+	is_loadshown=false;
+	is_compensationshown=false;
 }
 iSTAT::~iSTAT()
 {
@@ -53,6 +76,73 @@ void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 	foreach(iNodeData* node,listNodes)
 		node->statAdded(Id());
 	m_nodeDatas = listNodes;
+}
+
+QString iSTAT::value(double sbase,UNIT_TYPE type)
+{
+	QString valueStr="";
+	QString loadlistStr="";
+	double factor=1.0;
+	double totalPG=0;
+	double totalQG=0;
+
+	double totalPL=0;
+	double totalQL=0;
+
+	double totalGL=0;
+	double totalBL=0;
+	if(type==UNIT_ACTUALVALUE)
+		factor=sbase;
+
+	foreach(iNodeData* node,m_nodeDatas)
+	{		
+		double nodePG=node->getPowerPG()*factor;
+		double nodeQG=node->getPowerQG()*factor;
+
+		double nodePL=node->getLoadPL()*factor;
+		double nodeQL=node->getLoadQL()*factor;
+
+		double nodeGL=node->getGL()*factor;
+		double nodeBL=node->getBL()*factor;
+
+		if((nodePG!=0)||(nodeQG!=0)){
+			if(m_power_showtype==VALUE_ADDUP)	
+			{
+				totalPG+=nodePG;
+				totalQG+=nodeQG;
+			}else
+				valueStr+=QString("G:%1+j%2 \n").arg(nodePG,0,'f',3,QLatin1Char('0')).arg(nodeQG,0,'f',3,QLatin1Char('0'));
+		}
+
+		if((nodePL!=0)||(nodeQL!=0)){
+			if(m_load_showtype==VALUE_ADDUP)
+			{
+				totalPL+=nodePL;
+				totalQL+=nodeQL;
+			}else
+				loadlistStr+=QString("L:%1+j%2 \n").arg(nodePL,0,'f',3,QLatin1Char('0')).arg(nodeQL,0,'f',3,QLatin1Char('0'));
+		}
+
+		if((nodeGL!=0)||(nodeBL!=0)){
+			//Compensation is default is in add up mode
+			totalGL+=nodeGL;
+			totalBL+=nodeBL;
+		}
+	}
+	if((valueStr=="")&&((totalPG+totalQG)!=0))
+		valueStr+=QString("G:%1+j%2 \n").arg(totalPG,0,'f',3,QLatin1Char('0')).arg(totalQG,0,'f',3,QLatin1Char('0'));
+	if(is_loadshown)
+	{
+		if((loadlistStr=="")&&((totalPL+totalQL)!=0))
+			valueStr+=QString("L:%1+j%2 \n").arg(totalPL,0,'f',3,QLatin1Char('0')).arg(totalQL,0,'f',3,QLatin1Char('0'));
+		else 
+			valueStr+=loadlistStr;
+	}
+	if((is_compensationshown)&&((totalGL+totalBL)!=0))
+		valueStr+=QString("S:%1+j%2 \n").arg(totalGL,0,'f',3,QLatin1Char('0')).arg(totalBL,0,'f',3,QLatin1Char('0'));
+
+	return valueStr;
+	return "";
 }
 //void iSTAT::removeNodes(const QList<iNodeData *>& listNodes)
 //{
@@ -180,6 +270,12 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 		(changes & CHG_CONTROLPANEL_SHOWALLVOLTAGE) ||
 		(changes & CHG_CONTROLPANEL_UNIT))
 	{	
+		if(changes & CHG_CONTROLPANEL_UNIT)
+			//Change the station value to current unit type
+		{
+			double base=this->nodeDatas().first()->getSBase();
+			this->itemValue()->setPlainText(this->value(base,settings.unittype));
+		}
 		if(settings.isShowAllNodeVoltage)
 		{
 			this->itemName()->setPlainText(this->allNodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
@@ -234,7 +330,34 @@ iBUS::iBUS(int id,int areaid,const QString& name,QObject *parent)
 	m_voltage=0;
 	m_angle=0;
 	m_isShowVoltage=false;
+
+	power_PG=0;
+	power_QG=0;
+
+	Load_PL=0;
+	Load_QL=0;
+
+	Compensation_GL=0;
+	Compensation_BL=0;
 }
+//QString iBUS::getPower()
+//{
+//	if((power_QG!=0)||(power_PG!=0)) 
+//		return  QString("%1+i%2").arg(power_PG,0,'f',3,QLatin1Char('0')).arg(power_QG,0,'f',3,QLatin1Char('0'));
+//	else return NULL;
+//}
+//QString iBUS::getLoad()
+//{
+//	if((Load_PL!=0)||(Load_QL!=0)) 
+//		return  QString("%1+i%2").arg(Load_PL,0,'f',3,QLatin1Char('0')).arg(Load_QL,0,'f',3,QLatin1Char('0'));
+//	else return NULL;
+//}
+//QString iBUS::getCompensation()
+//{
+//	if((Compensation_GL!=0)||(Compensation_BL!=0)) 
+//		return  QString("%1+i%2").arg(Compensation_GL,0,'f',3,QLatin1Char('0')).arg(Compensation_BL,0,'f',3,QLatin1Char('0'));
+//	else return NULL;
+//}
 iBRANCH::iBRANCH(int id,int fromUid,int toUid,QObject *parent)
 	: iLinkData(id,fromUid,toUid,parent)
 {

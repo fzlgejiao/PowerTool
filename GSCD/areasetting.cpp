@@ -1,6 +1,6 @@
 #include "areasetting.h"
 
-AreaSetting::AreaSetting(QWidget *parent)
+AreaSetting::AreaSetting(QSize &size,QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
@@ -14,80 +14,23 @@ AreaSetting::AreaSetting(QWidget *parent)
 	A1: 841  * 594
 	A0: 1189 * 841
 	*/
-	ui.comboBox_size->setCurrentIndex(1);
-	OnAreaSizeChanged(ui.comboBox_size->currentIndex());
-	connect(ui.comboBox_size,SIGNAL(currentIndexChanged(int)),this,SLOT(OnAreaSizeChanged(int)));
+	m_size=size;
+	ui.spinBox_width->setValue(m_size.width());
+	ui.spinBox_height->setValue(m_size.height());
+
+	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
 }
 
 AreaSetting::~AreaSetting()
 {
 
 }
-void AreaSetting::OnAreaSizeChanged(int index)
+
+QSize  AreaSetting::getAreasize()
 {
-	AreaSize size=(AreaSize)index;
-	switch(size)
-	{
-	case A5:
-		{		
-			ui.spinBox_width->setEnabled(false);
-			ui.spinBox_height->setEnabled(false);
-			ui.spinBox_width->setValue(210);
-			ui.spinBox_height->setValue(148);
-		}
-		break;
+	QSize size(ui.spinBox_width->value(),ui.spinBox_height->value());
 
-	case A4:
-		{		
-			ui.spinBox_width->setEnabled(false);
-			ui.spinBox_height->setEnabled(false);
-			ui.spinBox_width->setValue(297);
-			ui.spinBox_height->setValue(210);
-		}
-		break;
-
-	case A3:
-		{		
-			ui.spinBox_width->setEnabled(false);
-			ui.spinBox_height->setEnabled(false);
-			ui.spinBox_width->setValue(420);
-			ui.spinBox_height->setValue(297);
-		}
-		break;
-
-	case A2:
-		{		
-			ui.spinBox_width->setEnabled(false);
-			ui.spinBox_height->setEnabled(false);
-			ui.spinBox_width->setValue(594);
-			ui.spinBox_height->setValue(420);
-		}
-		break;
-
-	case A1:
-		{		
-			ui.spinBox_width->setEnabled(false);
-			ui.spinBox_height->setEnabled(false);
-			ui.spinBox_width->setValue(841);
-			ui.spinBox_height->setValue(594);
-		}
-		break;
-
-	case A0:
-		{		
-			ui.spinBox_width->setEnabled(false);
-			ui.spinBox_height->setEnabled(false);
-			ui.spinBox_width->setValue(1189);
-			ui.spinBox_height->setValue(841);
-		}
-		break;
-
-	case Custom:
-		{		
-			ui.spinBox_width->setEnabled(true);
-			ui.spinBox_height->setEnabled(true);			
-		}
-		break;
-	}
+	return size;
 }
 

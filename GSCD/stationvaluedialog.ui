@@ -56,7 +56,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="groupBox_load">
    <property name="geometry">
     <rect>
      <x>215</x>

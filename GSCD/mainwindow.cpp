@@ -2,7 +2,7 @@
 #include <QtGui>
 #include <QList>
 #include <QDialog>
-
+#include <QPrintPreviewDialog>
 #include "mainwindow.h"
 #include "mdichild.h"
 #include "adddialog.h"
@@ -17,11 +17,11 @@ const int InsertTextButton = 10;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
-	,mScale(100)
-	,mScaleMax(200)
-	,mScaleMin(10)
-	,mScaleStep(10)
-	,mScaleIndex((mScaleMax-mScaleMin)/mScaleStep/2)
+	//,mScale(100)
+	//,mScaleMax(200)
+	//,mScaleMin(10)
+	//,mScaleStep(10)
+	//,mScaleIndex((mScaleMax-mScaleMin)/mScaleStep/2)
 {
 	ui.setupUi(this);
 
@@ -92,6 +92,12 @@ void MainWindow::updateMenus()
 	cutAct->setEnabled(hasSelection);
 	copyAct->setEnabled(hasSelection);
 
+	if(hasMdiChild)
+	{
+		int activescale=activeMdiChild()->getchildScale();
+		QString scaletxt=QString("%1%").arg(activescale,3,10,QChar(' '));	
+		currentScale->setText(scaletxt);
+	}
 	OnSelectionChanged();																			//to update child related menu status
 }
 
@@ -140,10 +146,12 @@ MdiChild *MainWindow::createMdiChild()
 	connect(child, SIGNAL(copyAvailable(bool)),		cutAct, SLOT(setEnabled(bool)));
 	connect(child, SIGNAL(copyAvailable(bool)),		copyAct, SLOT(setEnabled(bool)));
 
-	connect(this,  SIGNAL(scaleChanged(const QString &)),child, SLOT(OnScaleChanged(const QString &)));
+	//connect(this,  SIGNAL(scaleChanged(const QString &)),child, SLOT(OnScaleChanged(const QString &)));
 	connect(scene, SIGNAL(selectionChanged()),this, SLOT(OnSelectionChanged()));
 	connect(scene, SIGNAL(modeDone()),this, SLOT(OnModeDone()));
 
+	connect(doc,SIGNAL(areaSizeChanged(QSize &)),child,SLOT(OnAreaSizeChanged(QSize &)));
+	connect(child,SIGNAL(wheelscaleChanged(int)),this,SLOT(OnwheelscaleChanged(int)));
 	return child;
 }
 
@@ -244,7 +252,7 @@ void MainWindow::createActions()
 	addNoteAction->setStatusTip(tr("Add Note"));
 	addNoteAction->setCheckable(true);
 
-	zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
+	/*zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
 		tr("Zoom &Out"), this);
 	zoomOutAction->setShortcut(tr("ZommOut"));
 	zoomOutAction->setStatusTip(tr("Zoom out"));
@@ -254,12 +262,12 @@ void MainWindow::createActions()
 		tr("Zoom &In"), this);
 	zoomInAction->setShortcut(tr("ZommIn"));
 	zoomInAction->setStatusTip(tr("Zoom in"));
-	connect(zoomInAction, SIGNAL(triggered()),this, SLOT(OnZoomIn()));
+	connect(zoomInAction, SIGNAL(triggered()),this, SLOT(OnZoomIn()));*/
 
 	zoomResetAction = new QAction(QIcon(":/images/reset.png"),
-		tr("Zoom &Reset"), this);
-	zoomResetAction->setShortcut(tr("ZommReset"));
-	zoomResetAction->setStatusTip(tr("Normal Size"));
+		tr("Fit to &View"), this);
+	zoomResetAction->setShortcut(tr("Fit to Screen"));
+	zoomResetAction->setStatusTip(tr("Fit Size to This View"));
 	connect(zoomResetAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
 
 	toolbarAct = new QAction(tr("Show &Toolbar"), this);
@@ -451,12 +459,12 @@ void MainWindow::createToolBars()
 	tBar->addWidget(btnAddNote);
 
 	tBar->addWidget(new QLabel("      "));
-	tBar->addAction(zoomOutAction);
-	currentScale=new QLabel("100%");	
+	//tBar->addAction(zoomOutAction);
+	currentScale=new QLabel("80%");	
 	currentScale->setFixedWidth(40);
 	currentScale->setAlignment(Qt::AlignCenter);
 	tBar->addWidget(currentScale);
-	tBar->addAction(zoomInAction);
+	//tBar->addAction(zoomInAction);
 	tBar->addAction(zoomResetAction);
 
 	//tBar->addAction(toFrontAction);
@@ -777,11 +785,45 @@ void MainWindow::print()
 	//document->print(&printer);
 
 	//statusBar()->showMessage(tr("Ready"), 2000);
+
+	 MdiChild* child = activeMdiChild(); 
+	 if(!child) return;
+	 child->scene()->clearSelection();
+	 QPrinter printer(QPrinter::HighResolution);
+	 printer.setOrientation(QPrinter::Landscape);
+	 printer.setPageMargins(0.7,0.75,0.7,0.75,QPrinter::Inch);				//Default Margins
+     QPrintDialog dialog(&printer, this);
+     if (dialog.exec() == QDialog::Accepted) {
+         QPainter painter(&printer);
+		 child->scene()->render(&painter,QRectF(),QRectF(),Qt::IgnoreAspectRatio);
+     }
+
 #endif
 }
 void MainWindow::printPreview()
 {
+	MdiChild* child = activeMdiChild(); 
+	if(!child) return;
+
+	//child->scene()->clearSelection();
+	QPrinter printer(QPrinter::ScreenResolution);
+	printer.setOrientation(QPrinter::Landscape);						//Default to landscape
+	QPrintPreviewDialog preview(&printer,this);	
+	preview.setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint);		
+
+	connect(&preview, SIGNAL(paintRequested(QPrinter*)), SLOT(Onpaintrequested(QPrinter*)));
+	preview.showMaximized();
+	preview.exec();	
 }
+
+void MainWindow::Onpaintrequested(QPrinter *printer)
+{		
+	printer->setPageMargins(0.7,0.75,0.7,0.75,QPrinter::Inch);				//Default Margins
+	
+	QPainter painter(printer);	
+	activeMdiChild()->scene()->render(&painter,QRectF(),QRectF(),Qt::IgnoreAspectRatio);
+}
+
 void MainWindow::openRecentFile()
 {
 	QAction *action = qobject_cast<QAction *>(sender());
@@ -854,9 +896,11 @@ void MainWindow::imageArea()
 {
 	MdiChild* child = activeMdiChild();
 	if(!child)	return;
-	AreaSetting dlg(this);
+	AreaSetting dlg(child->doc()->getAreaSize(),this);
 	if(dlg.exec()==QDialog::Accepted)
-	{}
+	{
+		child->doc()->setAreaSize(dlg.getAreasize());
+	}
 }
 void MainWindow::viewFont()
 {
@@ -878,54 +922,76 @@ void MainWindow::esc()
 
 }
 
-void MainWindow::OnScaleChanged(const QString &scale)
-{
-	emit scaleChanged(scale);
-}
+//void MainWindow::OnScaleChanged(const QString &scale)
+//{
+//	emit scaleChanged(scale);
+//}
 
 void MainWindow::OnScaleReset()
-{
-	mScale=100;
-	currentScale->setText("100%");
-	OnScaleChanged("100%");
+{	
+	MdiChild* child = activeMdiChild();
+	if(!child)	return;
+
+	int width=child->width();
+	int height=child->height();
+	
+	QRectF FrameRect=child->frameGeometry();
+	QRectF sceneRect=child->sceneRect();
+	
+	qreal xratio=FrameRect.width()/sceneRect.width();
+	qreal yratio=FrameRect.height()/sceneRect.height();
+	
+	int scale=qMin(xratio,yratio)*80;							//fit to 80% of the Screen Area
+	QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));	
+	
+	currentScale->setText(scaletxt);		
+	child->setchildScale(scaletxt);
 }
 
-void MainWindow::OnZoomOut()
-{
-	if(activeMdiChild()==NULL) return;
-	if(mScale==mScaleMin) return;
-	mScale-=mScaleStep;
-	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
-	currentScale->setText(scaletxt);
-	OnScaleChanged(scaletxt);
-}
-
-void MainWindow::OnZoomIn()
-{
-	QList<iSTAT *> list;
-	foreach(iSTAT* stat,list)
-	{
-		QString na = stat->name();
-	}
-	if(activeMdiChild()==NULL) return;
-	if(mScale==mScaleMax) return;
-	mScale+=mScaleStep;
-	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
-	currentScale->setText(scaletxt);
-	OnScaleChanged(scaletxt);
-}
+//void MainWindow::OnZoomOut()
+//{
+//	if(activeMdiChild()==NULL) return;
+//	if(mScale==mScaleMin) return;
+//	mScale-=mScaleStep;
+//	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
+//	currentScale->setText(scaletxt);
+//	OnScaleChanged(scaletxt);
+//}
+//
+//void MainWindow::OnZoomIn()
+//{
+//	QList<iSTAT *> list;
+//	foreach(iSTAT* stat,list)
+//	{
+//		QString na = stat->name();
+//	}
+//	if(activeMdiChild()==NULL) return;
+//	if(mScale==mScaleMax) return;
+//	mScale+=mScaleStep;
+//	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
+//	currentScale->setText(scaletxt);
+//	OnScaleChanged(scaletxt);
+//}
 
 void MainWindow::OnZoomDialog()
 {
-	if(!activeMdiChild()) return;
-	ScaleDialog scaledialog(mScale,this);
+	MdiChild* child = activeMdiChild();
+	if(!child)	return;
+	ScaleDialog scaledialog(child->getchildScale(),this);
 	if(scaledialog.exec()==QDialog::Accepted)
 	{
-		mScale=scaledialog.GetScale();
-		QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
+		int scale=scaledialog.GetScale();
+		QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));	
 		currentScale->setText(scaletxt);
-		OnScaleChanged(scaletxt);
+		//OnScaleChanged(scaletxt);
+		child->setchildScale(scaletxt);
 	}
+}
+
+void MainWindow::OnwheelscaleChanged(int scale)
+{
+	QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));		
+	this->currentScale->setText(scaletxt);
 }
 
 void MainWindow::OnModeDone()

@@ -118,14 +118,17 @@ void BranchEditDialog::addlink2Rows(QTableWidget *tablewidget, iLinkData *link)
 		QTableWidgetItem *fromitem = new QTableWidgetItem();		
 		QTableWidgetItem *enditem = new QTableWidgetItem();
 		QTableWidgetItem *codeitem = new QTableWidgetItem();
+		QTableWidgetItem *rxitem = new QTableWidgetItem();
 
 		fromitem->setText(branch->getFromBus()->name());
 		enditem->setText(branch->getToBus()->name());
 		codeitem->setText(QString::number(branch->getParallelCode()));
+		rxitem->setText(branch->getRX());
 
 		tablewidget->setItem(row, Node1, fromitem);
 		tablewidget->setItem(row, Node2, enditem);
 		tablewidget->setItem(row, ParallelCode, codeitem);
+		tablewidget->setItem(row, R_JX, rxitem);
 	}	
 }
 void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * > linkgroup)

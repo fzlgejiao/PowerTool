@@ -130,11 +130,11 @@ private:
     QAction *recentFileActs[MaxRecentFiles];
 		
 	ACT_MODE	m_nActMode;
-	int mScale;
-	int mScaleMax;
-	int mScaleMin;;
-	int mScaleStep;
-	int mScaleIndex;
+	//int mScale;
+	//int mScaleMax;
+	//int mScaleMin;;
+	//int mScaleStep;
+	//int mScaleIndex;
 
 private slots:
 	//file menu
@@ -144,6 +144,7 @@ private slots:
     void saveAs();
 	void print();
 	void printPreview();
+	void Onpaintrequested(QPrinter *printer);
 	void openRecentFile();
 
 	//edit menu
@@ -180,8 +181,9 @@ private slots:
 
 	//toolbar events
 	void OnScaleReset();
-	void OnZoomOut();
-	void OnZoomIn();
+	void OnwheelscaleChanged(int scale);
+	//void OnZoomOut();
+	//void OnZoomIn();
 
 	
 
@@ -189,7 +191,7 @@ private slots:
 	void OnModeActionGroupClicked(QAction* action);
 	void OnModeButtonGroupClicked(int id);
 	void OnModeDone();
-	void OnScaleChanged(const QString &scale);
+	//void OnScaleChanged(const QString &scale);
 	void OnSelectionChanged();
 
 
@@ -198,7 +200,7 @@ private slots:
     void copy();
     void paste();
 signals:
-    void scaleChanged(const QString &scale);
+ //   void scaleChanged(const QString &scale);
 };
 
 #endif // MAINWINDOW_H

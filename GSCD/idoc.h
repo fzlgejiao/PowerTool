@@ -47,9 +47,10 @@ public:
 	iAREA*	getAREA(const QString& name);
 
 	QSize getAreaSize(){return m_AreaSize; }
-	void  setAreaSize(const QSize &size){m_AreaSize=size; }
+	void  setAreaSize(const QSize &size);
 
 	iData*	Uid2Data(int uid);
+	double sBase(){return SBase;}
 
 	//test func
 	void	test();
@@ -80,7 +81,7 @@ private:
 	void GetBUSData(const QString& dataname="BUS");
 	void GetBRANCHData(const QString& dataname="BRANCH");
 	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");
-
+	void GetBaseParameter();
 	void GetDataModel(T_DATA datatype);
 
 	bool OpenDataFile(const QString& file );
@@ -92,8 +93,10 @@ private:
 	QString Suffix_keyword;
 	QString	ColumnName_keyword;
 	ControlPanel	m_controlpanel;
+	double SBase;
 signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
+	void areaSizeChanged(QSize & size);
 
 };
 
