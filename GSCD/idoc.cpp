@@ -323,8 +323,8 @@ void iDoc::GetDataModel(T_DATA datatype)
 							{
 								iTRANSFORMER* transformer = new iTRANSFORMER(datarows,frombus->Uid(),tobus->Uid(),this);	//row index is the transformer id
 								// transformer  add into linkdatas
-								/*frombus->addLink(transformer);
-								tobus->addLink(transformer);*/
+								frombus->addLink(transformer);
+								tobus->addLink(transformer);
 								addTRANSFORMER(transformer);											//add transformer into transformer list
 							}
 

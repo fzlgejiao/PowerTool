@@ -187,7 +187,7 @@ QString AddDialog::NewStationName()
 	{
 		if(addednodelist.first()->type()==T_BUS)					//if not new the name ,use the first node's name
 		{
-			return ((iBUS *)addednodelist.first())->name();			
+			return ((iBUS *)addednodelist.first())->name(true);			
 		}
 	}		
 	return nametxt;
