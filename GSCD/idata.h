@@ -322,7 +322,13 @@ public:
 	T_DATA type(){return T_BUS;}
 	int    belongedArea(){return m_areaID;}
 	
-	QString name(){return m_Name;}
+	QString name(bool withId = false)
+	{
+		if(withId)
+			return QString("%1\n%2").arg(Id()).arg(m_Name);
+		else
+			return m_Name;
+	}
 	
 
 

@@ -35,7 +35,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	editStationAction = new QAction(tr("&Edit Station..."), this);
 	editStationAction->setStatusTip(tr("Edit station"));
 
-	editSLinkAction = new QAction(tr("&Edit Link..."), this);
+	editSLinkAction = new QAction(tr("&Edit link..."), this);
 	editSLinkAction->setStatusTip(tr("Edit link"));
 
 	deleteAction = new QAction(QIcon(":/images/delete.png"),tr("&Delete"), this);
@@ -45,8 +45,12 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	defPositionAction->setStatusTip(tr("Return to default position"));
 
 	sceneMenu=new QMenu();
-	sceneMenu->addAction("none-select1");
-	sceneMenu->addAction("none-select2");
+	sceneMenu->addAction("Scaling...");
+	sceneMenu->addAction("Select all Stations");
+	sceneMenu->addAction("Return labels to default position");
+	sceneMenu->addAction("Map properties...");
+	sceneMenu->addAction("Image area...");
+	sceneMenu->addAction("Font...");
 
 	multiMenu=new QMenu();
 	multiMenu->addAction("multi-select1");
@@ -143,7 +147,6 @@ void DiagramScene::setFont(const QFont &font)
 void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     QGraphicsScene::mousePressEvent(mouseEvent);
-	qDebug("PressEvent");
 }
 //! [9]
 
@@ -155,7 +158,6 @@ void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }   
 	mouseEvent->accept();
 	QGraphicsScene::mouseMoveEvent(mouseEvent);
-	qDebug("MoveEvent");
 }
 //! [10]
 
@@ -222,7 +224,6 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     line = 0;
 	*/
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
-	qDebug("ReleaseEvent");
 }
 void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 {
@@ -235,7 +236,6 @@ void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
 	}
 	}
 	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);								
-	qDebug("DoubleClickEvent");
 }
 void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
@@ -533,7 +533,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			//nameItem->setPos(QPointF(10,10));
 			//nameItem->setDefaultPos(QPointF(10,10));
 			nameItem->setData(ITEM_DATA,(uint)slink);
-			nameItem->setZValue(-1000.0);
+			//nameItem->setZValue(-1000.0);
 			addItem(nameItem);	
 			arrow->setTextItem(nameItem);
 			arrow->updatePosition();
@@ -631,8 +631,8 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 		item->removeArrows();
 		stat->removeSlinks();
 
-		updateArrows(stat);																			//udpate station links and arrows
-					}
+		updateArrows(stat);																			//udpate station links and arrows				
+	}
 }
 void DiagramScene::viewStation(DiagramItem *item,iSTAT* stat)
 {
