@@ -3,40 +3,39 @@
 
 #include <QDialog>
 #include "ui_textdialog.h"
-
+#include "idata.h"
 
 class QFontDialog;
 class QColor;
-
-enum AlignMode
-{
-	AlignLeft=0,
-	Center,
-	AlignRight
-};
 
 class TextDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	TextDialog(const QString& text ,QWidget *parent = 0);
+	TextDialog(iNote *note ,QWidget *parent = 0);
 	~TextDialog();
-	QString  GetText(){return m_text;}
+	QString  GetText(){return ui.textEdit_inputtext->toPlainText().trimmed();}
 	QFont GetFont() {return m_font;}
 	bool HasBorder() {return hasborder;}
 	QColor GetTextcolor(){return m_color;}
+	Qt::Alignment GetAlignmode(){return m_alignmode;}
 
 private slots:
 	void OnFontdialog();
 	void OnColorChanged();
+	void OnBordertoggled(bool toggle);
+	void OnAlignmodeChanged();
+	void OnOK();
+
 private:
 	Ui::TextDialog ui;
-	QString m_text;
-	QFont m_font;
-	QFont defaultfont;
+	iNote *m_note;
+	QFont m_font;	
 	bool hasborder;
 	QColor m_color;
+	Qt::Alignment m_alignmode;
 };
 
 #endif // TEXTDIALOG_H
+

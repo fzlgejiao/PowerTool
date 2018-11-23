@@ -30,6 +30,11 @@ public:
 	iSLINK*	SLINK_new(iSTAT* startSTAT,iSTAT* endSTAT);
 	iSLINK* SLINK_get(iSTAT* startSTAT,iSTAT* endSTAT);												//get station link by start and end station
 	
+	int		Note_getId();
+	iNote*	Note_get(int id){return listNotes.value(id,NULL);}
+	void	Note_delete(int id);
+	iNote*	Note_new(const QString& name);
+
 	iNodeData* getNode(int uid);
 	iNodeData* getNode(int type,int id);
 
@@ -78,6 +83,8 @@ private:
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id
 	QMap<int,iAREA *>			listAREA;
+
+	QMap<int,iNote *>			listNotes;
 	void GetBUSData(const QString& dataname="BUS");
 	void GetBRANCHData(const QString& dataname="BRANCH");
 	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");

@@ -368,3 +368,9 @@ iTRANSFORMER::iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent)
 {
 
 }
+
+iNote::iNote(int id,const QString& text,QObject *parent)
+	  :iData(id,parent)
+{
+	m_text=text;
+}

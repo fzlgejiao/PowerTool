@@ -4,7 +4,8 @@
 #include <QObject>
 #include <QMap>
 #include <QList>
-
+#include <QColor>
+#include <QFont>
 //data type
 typedef enum{
 	T_NONE			= 0,
@@ -84,6 +85,14 @@ typedef enum{
 	VALUE_ADDUP			=0,
 	VALUE_LIST
 }STATION_VALUE_SHOW_TYPE;
+
+//typedef enum 
+//{
+//	AlignLeft=0,
+//	AlignCenter,
+//	AlignRight,
+//	AlignNONE
+//}TextAlignMode;
 
 #define Uid2Type(uid)	((uid) >> 16)
 #define	Uid2Id(uid)		((uid) & 0xFFFF)
@@ -198,7 +207,9 @@ private:
 
 class DiagramItem;
 class DiagramTextItem;
+class DiagramNoteItem;
 class iSLINK;
+
 class iSTAT : public iData
 {
 	Q_OBJECT
@@ -351,22 +362,49 @@ public:
 	iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent=0);
 	~iTRANSFORMER(){}
 	T_DATA type(){return T_TRANSFORMER;}
-	
+
+	iBUS * getFromBus() {return frombus;}
+	iBUS * getToBus() {return tobus;}
 
 private:
 	friend class iDoc;
-
+	iBUS *frombus;
+	iBUS *tobus;
 	//properties
 };
 class iNote : public iData
 {
+	Q_OBJECT
 public:
 	iNote(int id,const QString& text,QObject *parent=0);
 	~iNote(){}
 	T_DATA type(){return T_NOTE;}
 
+	QString  text(){return m_text;}
+	void setText(QString& text){m_text=text;}
+
+	Qt::Alignment getAlignMode(){return m_alignmode;}
+	void setAlignmode(Qt::Alignment alignmode){ m_alignmode=alignmode;}
+
+	QColor getTextColor(){return m_textcolor;}
+	void setTextColor(QColor color){m_textcolor=color;}
+
+	QFont getTextFont(){return m_font;}
+	void setTextFont(QFont font){m_font=font;}
+
+	bool hasborder(){return m_hasborder;}
+	void setborder(bool border){m_hasborder=border;}
+
+	DiagramNoteItem * noteitem() {return m_noteitem;}
+	void setnoteitem(DiagramNoteItem *item){m_noteitem=item;}
 private:
 	friend class iDoc;
+	QString m_text;
+	Qt::Alignment m_alignmode;
+	QColor m_textcolor;
+	QFont m_font;
+	bool m_hasborder;
+	DiagramNoteItem * m_noteitem;
 };
 
 class iSysInfo : public iData

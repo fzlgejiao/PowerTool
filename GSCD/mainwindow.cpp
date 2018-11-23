@@ -86,6 +86,9 @@ void MainWindow::updateMenus()
 	tileAct->setEnabled(hasMdiChild);
 	cascadeAct->setEnabled(hasMdiChild);
 	separatorAct->setVisible(hasMdiChild);
+	arrowCursor->setEnabled(hasMdiChild);
+	handCursor->setEnabled(hasMdiChild);
+	fitwidthAction->setEnabled(hasMdiChild);
 
 	bool hasSelection = true;//(activeMdiChild() &&
 	//activeMdiChild()->textCursor().hasSelection());
@@ -94,6 +97,11 @@ void MainWindow::updateMenus()
 
 	if(hasMdiChild)
 	{
+		if(activeMdiChild()->dragMode()==QGraphicsView::RubberBandDrag)
+		{
+			arrowCursor->setChecked(true);
+		}else 
+			handCursor->setChecked(true);
 		int activescale=activeMdiChild()->getchildScale();
 		QString scaletxt=QString("%1%").arg(activescale,3,10,QChar(' '));	
 		currentScale->setText(scaletxt);
@@ -151,7 +159,7 @@ MdiChild *MainWindow::createMdiChild()
 	connect(scene, SIGNAL(modeDone()),this, SLOT(OnModeDone()));
 
 	connect(doc,SIGNAL(areaSizeChanged(QSize &)),child,SLOT(OnAreaSizeChanged(QSize &)));
-	connect(child,SIGNAL(wheelscaleChanged(int)),this,SLOT(OnwheelscaleChanged(int)));
+	connect(child,SIGNAL(scaleChanged(int)),this,SLOT(OnscaleChanged(int)));
 	return child;
 }
 
@@ -242,31 +250,52 @@ void MainWindow::createActions()
 	connect(deleteAction, SIGNAL(triggered()),
 		this, SLOT(deleteItems()));
 
-	addStationAction = new QAction(tr("&Add Station"), this);
-	addStationAction->setShortcut(tr("Add Station"));
-	addStationAction->setStatusTip(tr("Add Station"));
+	addStationAction = new QAction(QIcon(":/images/addnet.png"),
+		tr("&Add Station"), this);		
+	addStationAction->setStatusTip(tr("Add a Station"));
 	addStationAction->setCheckable(true);
 
-	addNoteAction = new QAction(tr("Add &Note"), this);
-	addNoteAction->setShortcut(tr("Add Note"));
-	addNoteAction->setStatusTip(tr("Add Note"));
+	addNoteAction = new QAction(QIcon(":/images/addcomment.png"),
+		tr("Add &Note"), this);		
+	addNoteAction->setStatusTip(tr("Add a Note"));
 	addNoteAction->setCheckable(true);
 
-	/*zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
-		tr("Zoom &Out"), this);
-	zoomOutAction->setShortcut(tr("ZommOut"));
+	zoomOutAction = new QAction(QIcon(":/images/zoomout.png"),
+		tr("Zoom &Out"), this);	
 	zoomOutAction->setStatusTip(tr("Zoom out"));
 	connect(zoomOutAction, SIGNAL(triggered()),this, SLOT(OnZoomOut()));
 
 	zoomInAction = new QAction(QIcon(":/images/zoomin.png"),
-		tr("Zoom &In"), this);
-	zoomInAction->setShortcut(tr("ZommIn"));
+		tr("Zoom &In"), this);	
 	zoomInAction->setStatusTip(tr("Zoom in"));
-	connect(zoomInAction, SIGNAL(triggered()),this, SLOT(OnZoomIn()));*/
+	connect(zoomInAction, SIGNAL(triggered()),this, SLOT(OnZoomIn()));
+
+	arrowCursor = new QAction(QIcon(":/images/arrow.png"),
+		tr("&Select Mode"), this);	
+	arrowCursor->setStatusTip(tr("Select Mode"));
+	connect(arrowCursor, SIGNAL(toggled(bool)),this, SLOT(OnSelectModeChanged()));
+	arrowCursor->setCheckable(true);
+	arrowCursor->setChecked(true);
+
+	handCursor = new QAction(QIcon(":/images/hand.png"),
+		tr("&Drag Mode"), this);	
+	handCursor->setStatusTip(tr("Drag Mode"));
+	connect(handCursor, SIGNAL(toggled(bool)),this, SLOT(OnSelectModeChanged()));
+	handCursor->setCheckable(true);
+	handCursor->setChecked(false);
+
+	modeActionGroup=new QActionGroup(this);
+	modeActionGroup->addAction(arrowCursor);
+	modeActionGroup->addAction(handCursor);
+	modeActionGroup->setExclusive(true);
+
+	fitwidthAction = new QAction(QIcon(":/images/fitwidth.png"),
+		tr("&Fit In View"), this);	
+	fitwidthAction->setStatusTip(tr("Fit In View"));
+	connect(fitwidthAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
 
 	zoomResetAction = new QAction(QIcon(":/images/reset.png"),
-		tr("Fit to &View"), this);
-	zoomResetAction->setShortcut(tr("Fit to Screen"));
+		tr("Fit to &View"), this);	
 	zoomResetAction->setStatusTip(tr("Fit Size to This View"));
 	connect(zoomResetAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
 
@@ -427,10 +456,14 @@ void MainWindow::createToolBars()
 	QToolButton *btnAddStation = new QToolButton;
 	btnAddStation->setCheckable(true);
 	btnAddStation->setIcon(QIcon(":/images/addnet.png"));
+	btnAddStation->setStatusTip("Add A New Station");
+	btnAddStation->setShortcut(tr("Add Station"));
 
 	QToolButton *btnAddNote = new QToolButton;
 	btnAddNote->setCheckable(true);
 	btnAddNote->setIcon(QIcon(":/images/addcomment.png"));
+	btnAddNote->setStatusTip("Add A Text Note");
+	btnAddNote->setShortcut(tr("Add Note"));
 
 	buttonModeGroup = new QButtonGroup(this);
 	buttonModeGroup->addButton(btnAddStation, M_AddStation);
@@ -459,16 +492,20 @@ void MainWindow::createToolBars()
 	tBar->addWidget(btnAddNote);
 
 	tBar->addWidget(new QLabel("      "));
-	//tBar->addAction(zoomOutAction);
+	tBar->addAction(zoomOutAction);
 	currentScale=new QLabel("80%");	
 	currentScale->setFixedWidth(40);
 	currentScale->setAlignment(Qt::AlignCenter);
 	tBar->addWidget(currentScale);
-	//tBar->addAction(zoomInAction);
-	tBar->addAction(zoomResetAction);
-
-	//tBar->addAction(toFrontAction);
-	//tBar->addAction(sendBackAction);
+	tBar->addAction(zoomInAction);
+	//tBar->addAction(zoomResetAction);
+	tBar->addWidget(new QLabel("      "));
+	tBar->addSeparator();
+	tBar->addWidget(new QLabel("      "));
+	tBar->addAction(arrowCursor);
+	tBar->addAction(handCursor);
+	tBar->addWidget(new QLabel("      "));
+	tBar->addAction(fitwidthAction);
 
 
 	//tBar->addWidget(new QLabel("      "));
@@ -721,6 +758,13 @@ void MainWindow::OnSelectionChanged()
 					editObjectAction->setEnabled(false);
 				}
 				break;
+
+			case T_NOTE:
+				{
+					deleteAction->setEnabled(true);
+					editObjectAction->setEnabled(true);
+				}
+				break;
 			}
 		}
 	}
@@ -945,34 +989,41 @@ void MainWindow::OnScaleReset()
 	QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));	
 	
 	currentScale->setText(scaletxt);		
-	child->setchildScale(scaletxt);
+	child->setchildScale(scale);
 }
 
-//void MainWindow::OnZoomOut()
-//{
-//	if(activeMdiChild()==NULL) return;
-//	if(mScale==mScaleMin) return;
-//	mScale-=mScaleStep;
-//	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
-//	currentScale->setText(scaletxt);
-//	OnScaleChanged(scaletxt);
-//}
-//
-//void MainWindow::OnZoomIn()
-//{
-//	QList<iSTAT *> list;
-//	foreach(iSTAT* stat,list)
-//	{
-//		QString na = stat->name();
-//	}
-//	if(activeMdiChild()==NULL) return;
-//	if(mScale==mScaleMax) return;
-//	mScale+=mScaleStep;
-//	QString scaletxt=QString("%1%").arg(mScale,3,10,QChar(' '));	
-//	currentScale->setText(scaletxt);
-//	OnScaleChanged(scaletxt);
-//}
+void MainWindow::OnZoomOut()
+{		
+	MdiChild *child=activeMdiChild();
+	if(child==NULL) return;
 
+	int newscale=child->getchildScale()*0.9;
+	child->setchildScale(newscale);
+}
+
+void MainWindow::OnZoomIn()
+{	
+	MdiChild *child=activeMdiChild();
+	if(child==NULL) return;
+
+	int newscale=child->getchildScale()*1.1;
+	child->setchildScale(newscale);
+}
+
+void MainWindow::OnSelectModeChanged()
+{
+	MdiChild* child = activeMdiChild();
+	if(!child)	return;
+	bool isSelectedmode=arrowCursor->isChecked();
+	child->setDragMode(isSelectedmode?QGraphicsView::RubberBandDrag: QGraphicsView::ScrollHandDrag);
+	child->setInteractive(arrowCursor->isChecked());
+
+	addStationAction->setEnabled(isSelectedmode);
+	addNoteAction->setEnabled(isSelectedmode);
+
+	foreach(QAbstractButton *button, buttonModeGroup->buttons())
+		button->setEnabled(isSelectedmode);
+}
 void MainWindow::OnZoomDialog()
 {
 	MdiChild* child = activeMdiChild();
@@ -982,13 +1033,12 @@ void MainWindow::OnZoomDialog()
 	{
 		int scale=scaledialog.GetScale();
 		QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));	
-		currentScale->setText(scaletxt);
-		//OnScaleChanged(scaletxt);
-		child->setchildScale(scaletxt);
+		currentScale->setText(scaletxt);	
+		child->setchildScale(scale);
 	}
 }
 
-void MainWindow::OnwheelscaleChanged(int scale)
+void MainWindow::OnscaleChanged(int scale)
 {
 	QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));		
 	this->currentScale->setText(scaletxt);

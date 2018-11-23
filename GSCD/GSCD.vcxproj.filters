@@ -170,6 +170,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_areasetting.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="diagramnoteitem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_diagramnoteitem.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_diagramnoteitem.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="mainwindow.h">
@@ -249,6 +258,9 @@
     </CustomBuild>
     <CustomBuild Include="areasetting.ui">
       <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="diagramnoteitem.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

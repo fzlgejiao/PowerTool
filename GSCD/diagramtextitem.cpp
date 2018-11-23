@@ -3,6 +3,7 @@
 
 #include "diagramtextitem.h"
 #include "diagramscene.h"
+#include "arrow.h"
 
 //! [0]
 DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
@@ -12,7 +13,7 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
-
+		
 	defPos = QPointF(10,10);
 }
 //! [0]
@@ -31,7 +32,7 @@ QVariant DiagramTextItem::itemChange(GraphicsItemChange change,
         if (value == true)
         {
             // do stuff if selected
-			//setBrush(QPen(Qt::blue,1));
+			//setBrush(QPen(Qt::blue,1));	
         }
         else
         {

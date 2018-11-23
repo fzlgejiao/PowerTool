@@ -323,8 +323,10 @@ void iDoc::GetDataModel(T_DATA datatype)
 							{
 								iTRANSFORMER* transformer = new iTRANSFORMER(datarows,frombus->Uid(),tobus->Uid(),this);	//row index is the transformer id
 								// transformer  add into linkdatas
-								/*frombus->addLink(transformer);
-								tobus->addLink(transformer);*/
+								transformer->frombus=frombus;
+								transformer->tobus=tobus;
+								frombus->addLink(transformer);
+								tobus->addLink(transformer);
 								addTRANSFORMER(transformer);											//add transformer into transformer list
 							}
 
@@ -497,4 +499,32 @@ void iDoc::setAreaSize(const QSize &size)
 {
 	m_AreaSize=size; 
 	emit areaSizeChanged(m_AreaSize);
+}
+
+int	iDoc::Note_getId()
+{
+	int id = 1;
+	if(listNotes.isEmpty())
+		return id;
+	foreach(iNote* note, listNotes)
+	{
+		if(note->Id() > id)
+			id = note->Id();
+	}
+	return id+1;
+}
+
+void iDoc::Note_delete(int id)
+{
+	iNote* note = Note_get(id);
+	if(note)
+		delete note;
+	listNotes.remove(id);
+}
+
+iNote*	iDoc::Note_new(const QString& text)
+{
+	iNote* note = new iNote(Note_getId(),text,this);	
+	listNotes.insert(note->Id(),note);
+	return note;
 }

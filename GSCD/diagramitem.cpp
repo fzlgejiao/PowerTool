@@ -76,7 +76,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
         }
     }
    if (change == QGraphicsItem::ItemSelectedHasChanged)
-    {
+    {		
         if (value == true)
         {
             // do stuff if selected
