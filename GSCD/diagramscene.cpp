@@ -565,8 +565,8 @@ void DiagramScene::addStation(const QPointF& pos)
 	valueItem->setFont(myFont);	
 	valueItem->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype));
 	valueItem->setDefaultTextColor(Qt::red);
-	valueItem->setPos(QPointF(10,-10));
-	valueItem->setDefaultPos(QPointF(10,-10));
+	valueItem->setPos(QPointF(10,-20));
+	valueItem->setDefaultPos(QPointF(10,-20));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);
 	//valueItem->setVisible(false);

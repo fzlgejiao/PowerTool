@@ -44,16 +44,20 @@ MdiChild::~MdiChild()
 	if(m_doc)
 		delete m_doc;
 }
-void MdiChild::newFile()
+void MdiChild::newFile(const QString& datafile)
 {
     static int sequenceNumber = 1;
 
     isUntitled = true;
-    curFile = tr("document%1.txt").arg(sequenceNumber++);
+    curFile = tr("GWD%1").arg(sequenceNumber++);
     setWindowTitle(curFile + "[*]");
 
-	//test code
-	m_doc->test();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    	
+	//todo: open map file and data file
+	m_doc->openDataFile(datafile);
+
+    QApplication::restoreOverrideCursor();
 
     connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
             this, SLOT(documentWasModified()));

@@ -14,7 +14,7 @@ public:
 	MdiChild(QGraphicsScene * scene,iDoc* doc);
 	~MdiChild();
 
-    void newFile();
+    void newFile(const QString& datafile);
     bool loadFile(const QString &fileName);
     bool save();
     bool saveAs();

@@ -314,7 +314,7 @@ public:
 	QString name(bool withId = false)
 	{
 		if(withId)
-			return QString("%1\n%2").arg(Id()).arg(m_Name);
+			return QString("%1-%2").arg(Id()).arg(m_Name);
 		else
 			return m_Name;
 	}
