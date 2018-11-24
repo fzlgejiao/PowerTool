@@ -129,7 +129,18 @@ void BranchEditDialog::addlink2Rows(QTableWidget *tablewidget, iLinkData *link)
 		tablewidget->setItem(row, Node2, enditem);
 		tablewidget->setItem(row, ParallelCode, codeitem);
 		tablewidget->setItem(row, R_JX, rxitem);
-	}	
+	}else if(link->type()==T_TRANSFORMER)	
+	{
+		iTRANSFORMER *transformer=(iTRANSFORMER *)link;
+		QTableWidgetItem *fromitem = new QTableWidgetItem();		
+		QTableWidgetItem *enditem = new QTableWidgetItem();
+
+		fromitem->setText(transformer->getFromBus()->name());
+		enditem->setText(transformer->getToBus()->name());
+
+		tablewidget->setItem(row, Node1, fromitem);
+		tablewidget->setItem(row, Node2, enditem);
+	}
 }
 void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * > linkgroup)
 {
@@ -145,6 +156,10 @@ void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * 
 		{
 			iBRANCH *branch=(iBRANCH *)linkgroup[i];
 			items.append(new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4 (%5)").arg(branch->getFromBus()->name()).arg(branch->getFromBus()->GetRefVoltage()).arg(branch->getToBus()->name()).arg(branch->getToBus()->GetRefVoltage()).arg(branch->getParallelCode()))));
+		}else if(linkgroup[i]->type()==T_TRANSFORMER)
+		{
+			iTRANSFORMER *transformer=(iTRANSFORMER *)linkgroup[i];
+			items.append(new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4").arg(transformer->getFromBus()->name()).arg(transformer->getFromBus()->GetRefVoltage()).arg(transformer->getToBus()->name()).arg(transformer->getToBus()->GetRefVoltage()))));
 		}
 	}
 

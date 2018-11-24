@@ -114,6 +114,12 @@ private:
 
 	QAction *escAct;
 
+	QAction *arrowCursor;
+	QAction *handCursor;
+	QActionGroup * modeActionGroup;
+
+	QAction *fitwidthAction;
+
 	QButtonGroup *buttonModeGroup;
 	QActionGroup *actionModeGroup;
 	//QComboBox *sceneScaleCombo;
@@ -182,11 +188,12 @@ private slots:
 
 	//toolbar events
 	void OnScaleReset();
-	void OnwheelscaleChanged(int scale);
-	//void OnZoomOut();
-	//void OnZoomIn();
+	void OnscaleChanged(int scale);
+	void OnZoomOut();
+	void OnZoomIn();
 
-	
+	void OnSelectModeChanged();	
+	//void OnFitViewAction();
 
     void updateMenus();
 	void OnModeActionGroupClicked(QAction* action);

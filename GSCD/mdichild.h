@@ -24,7 +24,7 @@ public:
 	DiagramScene* scene(){return m_scene;}
 	iDoc *doc(){return m_doc;}
 	int getchildScale(){return m_scale;}
-	void setchildScale(const QString &scale);
+	void setchildScale(int scale);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -36,7 +36,7 @@ public slots:
 	void OnAreaSizeChanged(QSize & size);
 
 signals:
-	void wheelscaleChanged(int scale);
+	void scaleChanged(int scale);
 
 private:
     bool maybeSave();

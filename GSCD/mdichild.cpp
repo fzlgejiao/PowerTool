@@ -25,6 +25,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	m_scene->setSceneRect(0, 0, width, height);												
 	setScene(m_scene);
 	setCacheMode(CacheBackground);
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     scale(qreal(m_scale/100.0), qreal(m_scale/100.0));
 	
 	setDragMode(QGraphicsView::RubberBandDrag);
@@ -195,14 +196,17 @@ QString MdiChild::strippedName(const QString &fullFileName)
 //    this->scale(newScale, newScale);
 //}
 
-void MdiChild::setchildScale(const QString &scale)
+void MdiChild::setchildScale(int scale)    
 {
-	double newScale = scale.left(scale.indexOf(tr("%"))).toDouble() / 100.0;
-	m_scale=scale.left(scale.indexOf(tr("%"))).toInt();
+	if((scale<scale_min) || (scale>scale_max)) return ;
+	qreal newScale = scale / 100.0;
+	m_scale=scale;
     QMatrix oldMatrix = this->matrix();
     this->resetMatrix();
     this->translate(oldMatrix.dx(), oldMatrix.dy());
     this->scale(newScale, newScale);
+
+	emit scaleChanged(m_scale);
 }
 
 void MdiChild::wheelEvent(QWheelEvent * wheelEvent)
@@ -210,17 +214,17 @@ void MdiChild::wheelEvent(QWheelEvent * wheelEvent)
 	int delta=wheelEvent->delta();
 	if (wheelEvent->modifiers() == Qt::ControlModifier){		//scale function: Ctrl+ wheel,up is zoom in ,down is zoom out		
 		//qreal ss= pow((double)2, delta / 240.0);
-		qreal ss=0;
-		if(delta>0) ss=1.1;else ss=0.9;
+		qreal ss=0;		
+		if(delta>0) 
+			ss=1.1;else ss=0.9;		
 	
 		qreal factor = transform().scale(ss, ss).mapRect(QRectF(0, 0, 1, 1)).width();
-		m_scale=factor*100;												//this  scale is in percent mode
-		emit wheelscaleChanged(m_scale);
+		m_scale=factor*100;											//this  scale is in percent mode		
 		if((m_scale<scale_min)||(m_scale>scale_max)) return;	
-				
+		emit scaleChanged(m_scale);
 		scale(ss,ss);
 		wheelEvent->accept();
-	}else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)	//Shift + wheel . horizontal scrollbar
+	}else if(wheelEvent->modifiers()  == Qt::ShiftModifier)	//Shift + wheel . horizontal scrollbar
 	{		
 		if(this->horizontalScrollBar()->isVisible())
 		{

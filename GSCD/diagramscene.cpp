@@ -11,6 +11,7 @@
 #include "stationnamedialog.h"
 #include "stationvaluedialog.h"
 #include "brancheditdialog.h"
+#include "diagramnoteitem.h"
 //! [0]
 DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
     : QGraphicsScene(parent)
@@ -84,7 +85,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_STAT_NAME,statNameMenu);
 	addMenu(MENU_STAT_VALUE,statValueMenu);
 	addMenu(MENU_STAT_LINK,statLinkMenu);
-	
+	addMenu(MENU_NOTE,noteMenu);
 	
 }
 //! [0]
@@ -182,12 +183,8 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 			break;
 
 		case M_AddNote:
-			{
-				TextDialog textdlg(NULL);
-				if(textdlg.exec()==QDialog::Accepted)
-				{
-					addNote(mouseEvent->scenePos());
-				}
+			{				
+				addNote(mouseEvent->scenePos());				
 				emit modeDone();
 			}
 			break;
@@ -342,6 +339,16 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 			}
 			break;
 		case T_NOTE:
+			{
+				iNote *note=(iNote *)data;
+				QMenu* menu = getMenu(MENU_NOTE);
+				if(!menu)	return;
+				QAction* action = menu->exec(event->screenPos());
+				if(action==propertyAction)
+					viewNote(note);
+				else if(action==deleteAction)
+					deleteNote(note);
+			}
 			break;
 		}
 	}
@@ -388,7 +395,10 @@ void DiagramScene::deleteItems()
 		 {
 			 DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
              deleteStation(statItem,(iSTAT *)data);
-         }
+		 }else if(data->type()==T_NOTE)
+		 {
+			 deleteNote((iNote*)data);
+		 }
      }
 }
 void DiagramScene::procItem(ACT_TYPE act,QGraphicsItem* item)
@@ -431,6 +441,10 @@ void DiagramScene::procItem(ACT_TYPE act,QGraphicsItem* item)
 		}
 		break;
 	case T_NOTE:
+		{
+			if(item->type() == DiagramNoteItem::Type)														//arrow item		
+				viewNote((iNote *)data);
+		}
 		break;
 	}
 }
@@ -696,14 +710,41 @@ void DiagramScene::editSLink(iSLINK* slink)
 }
 void DiagramScene::addNote(const QPointF& pos)
 {
-	/*DiagramTextItem* TextItem = new DiagramTextItem(NULL,this);	
-	TextItem->setPos(pos);	
-	TextItem->setPlainText("Add Text demo");
-	addItem(TextItem);*/
-}
-void DiagramScene::viewNote()
-{
+	TextDialog dlg(NULL,pMain);
+	if(dlg.exec()!=QDialog::Accepted) return ;
+	
+	if(dlg.GetText().isEmpty()) return ;
 
+	iNote* note= myDoc->Note_new(dlg.GetText());
+	if(!note) return ;
+
+	note->setTextFont(dlg.GetFont());
+	note->setTextColor(dlg.GetTextcolor());
+	note->setAlignmode(dlg.GetAlignmode());
+	note->setborder(dlg.HasBorder());
+	
+	DiagramNoteItem* noteitem = new DiagramNoteItem(note,NULL,this);
+	noteitem->setPos(pos);		
+	addItem(noteitem);
+
+	note->setnoteitem(noteitem);
+}
+void DiagramScene::viewNote(iNote *note)
+{
+	TextDialog dlg(note,pMain);
+	if(dlg.exec()!=QDialog::Accepted) return ;
+
+	note->noteitem()->setBorder(dlg.HasBorder());
+	note->noteitem()->setTextColor(dlg.GetTextcolor());
+	note->noteitem()->setTextFont(dlg.GetFont());
+	note->noteitem()->setAlignMode(dlg.GetAlignmode());
+	note->noteitem()->setPlainText(dlg.GetText());
+}
+
+void DiagramScene::deleteNote(iNote *note)
+{
+	this->removeItem(note->noteitem());
+	myDoc->Note_delete(note->Id());
 }
 
 void DiagramScene::drawBackground ( QPainter * painter, const QRectF & rect )
@@ -711,7 +752,7 @@ void DiagramScene::drawBackground ( QPainter * painter, const QRectF & rect )
 	Q_UNUSED(rect);
      
     QRectF sceneRect = this->sceneRect();
-	painter->setPen(QPen(Qt::darkBlue, 1, Qt::SolidLine));
+	painter->setPen(QPen(Qt::darkBlue, 4, Qt::SolidLine));
 	painter->setBrush(Qt::NoBrush);
     painter->drawRect(sceneRect);
 }
