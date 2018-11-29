@@ -15,8 +15,8 @@ iDoc::iDoc(QObject *parent)
 	m_controlpanel.isShowStationName=true;
 	m_controlpanel.isShowStationValue=true;
 	m_controlpanel.isShowBranchLine=true;
-	m_controlpanel.isShowBranchValue=false;
-	m_controlpanel.isShowReactivePowerValue=false;
+	m_controlpanel.isShowBranchValue=true;
+	m_controlpanel.isShowReactivePowerValue=true;
 	m_controlpanel.isShowAdmittance=false;
 	m_controlpanel.isShowVoltageAngle=false;
 	m_controlpanel.isShowAllNodeVoltage=false;

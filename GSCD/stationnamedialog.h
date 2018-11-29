@@ -18,6 +18,9 @@ public:
 	QFont GetFont() {return m_font;}
 	bool IsApplyAll(){return m_IsApplyAll;}
 
+signals:
+	void apply2all(QFont & font);
+
 private slots:
 		void OnclearshownNodes();
 		void OnFontchanged();

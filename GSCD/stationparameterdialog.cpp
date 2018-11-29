@@ -39,12 +39,7 @@ void StationParameterDialog::OnShowVoltage()
 		{
 			m_station->itemName()->setPlainText(m_station->allNodeVoltage(m_panel.isShowVoltageAngle,m_panel.unittype) + m_station->name());
 		}else
-		m_station->itemName()->setPlainText(m_station->nodeVoltage(m_panel.isShowVoltageAngle,m_panel.unittype) + m_station->name());
-
-		if(dlg.IsApplyAll())
-		{
-			//To do : apply the font to all station 
-		}
+		m_station->itemName()->setPlainText(m_station->nodeVoltage(m_panel.isShowVoltageAngle,m_panel.unittype) + m_station->name());				
 	}
 }
 void StationParameterDialog::OnPowerFlow()
@@ -52,7 +47,7 @@ void StationParameterDialog::OnPowerFlow()
 	StationValueDialog dlg(m_station,this);
 	if(dlg.exec()==QDialog::Accepted)
 	{			
-		m_station->itemValue()->setPlainText(m_station->value(m_Sbase,m_panel.unittype));
+		m_station->itemValue()->setPlainText(m_station->value(m_Sbase,m_panel.unittype,m_panel.isShowReactivePowerValue));
 	}
 }
 void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)

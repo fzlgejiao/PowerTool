@@ -120,14 +120,12 @@ private:
     QColor		myTextColor;
     QColor		myItemColor;
     QColor		myLineColor;
-
 	
-
 public slots:
 	
-
 signals:
 	void modeDone();
+	void applyNameFont2all(QFont &font);
 };
 //! [0]
 

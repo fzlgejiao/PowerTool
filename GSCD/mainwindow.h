@@ -186,7 +186,7 @@ private slots:
 	void esc();
 
 	//toolbar events
-	void OnScaleReset();
+	void OnfitInView();
 	void OnscaleChanged(int scale);
 	void OnZoomOut();
 	void OnZoomIn();

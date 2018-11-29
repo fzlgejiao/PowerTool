@@ -292,12 +292,12 @@ void MainWindow::createActions()
 	fitwidthAction = new QAction(QIcon(":/images/fitwidth.png"),
 		tr("&Fit In View"), this);	
 	fitwidthAction->setStatusTip(tr("Fit In View"));
-	connect(fitwidthAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
+	connect(fitwidthAction, SIGNAL(triggered()),this, SLOT(OnfitInView()));
 
 	zoomResetAction = new QAction(QIcon(":/images/reset.png"),
 		tr("Fit to &View"), this);	
 	zoomResetAction->setStatusTip(tr("Fit Size to This View"));
-	connect(zoomResetAction, SIGNAL(triggered()),this, SLOT(OnScaleReset()));
+	connect(zoomResetAction, SIGNAL(triggered()),this, SLOT(OnfitInView()));
 
 	toolbarAct = new QAction(tr("Show &Toolbar"), this);
 	toolbarAct->setStatusTip(tr("Show or hide Toolbar"));
@@ -971,25 +971,18 @@ void MainWindow::esc()
 //	emit scaleChanged(scale);
 //}
 
-void MainWindow::OnScaleReset()
+void MainWindow::OnfitInView()
 {	
 	MdiChild* child = activeMdiChild();
 	if(!child)	return;
+		
+	QRectF sceneRect=child->sceneRect();		
+	child->fitInView(sceneRect,Qt::KeepAspectRatio);
+	
+	qreal current=child->mapToScene(QRect(0,0,1,1)).boundingRect().width();
+	qreal scale=1/current;
 
-	int width=child->width();
-	int height=child->height();
-	
-	QRectF FrameRect=child->frameGeometry();
-	QRectF sceneRect=child->sceneRect();
-	
-	qreal xratio=FrameRect.width()/sceneRect.width();
-	qreal yratio=FrameRect.height()/sceneRect.height();
-	
-	int scale=qMin(xratio,yratio)*80;							//fit to 80% of the Screen Area
-	QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));	
-	
-	currentScale->setText(scaletxt);		
-	child->setchildScale(scale);
+	child->setScale((int)(scale*100));
 }
 
 void MainWindow::OnZoomOut()
@@ -998,7 +991,7 @@ void MainWindow::OnZoomOut()
 	if(child==NULL) return;
 
 	int newscale=child->getchildScale()*0.9;
-	child->setchildScale(newscale);
+	child->updatechildScale(newscale);
 }
 
 void MainWindow::OnZoomIn()
@@ -1007,7 +1000,7 @@ void MainWindow::OnZoomIn()
 	if(child==NULL) return;
 
 	int newscale=child->getchildScale()*1.1;
-	child->setchildScale(newscale);
+	child->updatechildScale(newscale);
 }
 
 void MainWindow::OnSelectModeChanged()
@@ -1034,7 +1027,7 @@ void MainWindow::OnZoomDialog()
 		int scale=scaledialog.GetScale();
 		QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));	
 		currentScale->setText(scaletxt);	
-		child->setchildScale(scale);
+		child->updatechildScale(scale);
 	}
 }
 

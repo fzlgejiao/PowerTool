@@ -26,6 +26,7 @@ BranchEditDialog::BranchEditDialog(iSLINK *link,BranchAction action,QWidget *par
 	//Set Tree 
 	ui.treeWidget->setHeaderHidden(true);
 	ui.treeWidget->setColumnCount(1);
+	ui.treeWidget->setIconSize(QSize(24,24));
 
 	for(int i=0;i<m_link->groupCount();i++)
 	{
@@ -155,11 +156,15 @@ void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * 
 		if(linkgroup[i]->type()==T_BRANCH)
 		{
 			iBRANCH *branch=(iBRANCH *)linkgroup[i];
-			items.append(new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4 (%5)").arg(branch->getFromBus()->name()).arg(branch->getFromBus()->GetRefVoltage()).arg(branch->getToBus()->name()).arg(branch->getToBus()->GetRefVoltage()).arg(branch->getParallelCode()))));
+			QTreeWidgetItem * branchitem=new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4 (%5)").arg(branch->getFromBus()->name()).arg(branch->getFromBus()->GetRefVoltage()).arg(branch->getToBus()->name()).arg(branch->getToBus()->GetRefVoltage()).arg(branch->getParallelCode())));
+			branchitem->setIcon(0,QIcon(":/images/link.png"));
+			items.append(branchitem);
 		}else if(linkgroup[i]->type()==T_TRANSFORMER)
 		{
 			iTRANSFORMER *transformer=(iTRANSFORMER *)linkgroup[i];
-			items.append(new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4").arg(transformer->getFromBus()->name()).arg(transformer->getFromBus()->GetRefVoltage()).arg(transformer->getToBus()->name()).arg(transformer->getToBus()->GetRefVoltage()))));
+			QTreeWidgetItem *transformeritem=new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4").arg(transformer->getFromBus()->name()).arg(transformer->getFromBus()->GetRefVoltage()).arg(transformer->getToBus()->name()).arg(transformer->getToBus()->GetRefVoltage())));
+			transformeritem->setIcon(0,QIcon(":/images/transformer.png"));
+			items.append(transformeritem);
 		}
 	}
 

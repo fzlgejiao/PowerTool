@@ -523,6 +523,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			startItem->addArrow(arrow);
 			endItem->addArrow(arrow);
 			arrow->setZValue(-1000.0);
+			arrow->setVisible(myDoc->getControlPanel().isShowBranchLine);
 			addItem(arrow);
 
 			//arrow text item
@@ -533,6 +534,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			//nameItem->setPos(QPointF(10,10));
 			//nameItem->setDefaultPos(QPointF(10,10));
 			nameItem->setData(ITEM_DATA,(uint)slink);
+			nameItem->setVisible(myDoc->getControlPanel().isShowBranchValue);
 			//nameItem->setZValue(-1000.0);
 			addItem(nameItem);	
 			arrow->setTextItem(nameItem);
@@ -550,6 +552,9 @@ void DiagramScene::addStation(const QPointF& pos)
 		return ;
 	//add new station data object			
 	iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
+
+	connect(this,SIGNAL(applyNameFont2all(QFont &)),stat,SLOT(OnapplyNameFont2all(QFont &)));
+
 	if(!stat)
 		return;
 	QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
@@ -570,20 +575,21 @@ void DiagramScene::addStation(const QPointF& pos)
 	nameItem->setDefaultTextColor(Qt::red);
 	nameItem->setPos(QPointF(10,10));
 	nameItem->setDefaultPos(QPointF(10,10));
-	nameItem->setData(ITEM_DATA,(uint)stat);
+	nameItem->setData(ITEM_DATA,(uint)stat);	
 	addItem(nameItem);
+	nameItem->setVisible(myDoc->getControlPanel().isShowStationName);
 	stat->setItemName(nameItem);
 
 	//create station value text item
 	DiagramTextItem* valueItem = new DiagramTextItem(item,this);
 	valueItem->setFont(myFont);	
-	valueItem->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype));
+	valueItem->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
 	valueItem->setDefaultTextColor(Qt::red);
 	valueItem->setPos(QPointF(10,-10));
 	valueItem->setDefaultPos(QPointF(10,-10));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);
-	//valueItem->setVisible(false);
+	valueItem->setVisible(myDoc->getControlPanel().isShowStationValue);
 	stat->setItemValue(valueItem);
 
 	//QGraphicsRectItem* itemRect = new QGraphicsRectItem(0,0,180,20,0,this);
@@ -676,11 +682,6 @@ void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 			stat->itemName()->setPlainText(stat->allNodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 		}else
 		stat->itemName()->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
-
-		if(dlg.IsApplyAll())
-		{
-			//To do : apply the font to all station 
-		}
 	}
 }
 void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
@@ -689,7 +690,7 @@ void DiagramScene::viewStationValue(DiagramTextItem *item,iSTAT* stat)
 	StationValueDialog dlg(stat,pMain);
 	if(dlg.exec()==QDialog::Accepted)
 	{	
-		stat->itemValue()->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype));
+		stat->itemValue()->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
 	}
 }
 void DiagramScene::viewSLink(iSLINK* slink)

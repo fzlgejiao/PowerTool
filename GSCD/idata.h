@@ -221,7 +221,7 @@ public:
 	QString name(){return m_Name;}
 	void	setName(const QString& name){m_Name=name;}
 	QString value(){return m_Value;}
-	QString value(double sbase,UNIT_TYPE type);
+	QString value(double sbase,UNIT_TYPE type,bool showReactivePower);
 	void	setValue(const QString& value){m_Value = value;}
 	QString nodeVoltage(bool withangle,UNIT_TYPE unit) const;
 	QString allNodeVoltage(bool withangle,UNIT_TYPE unit) const;
@@ -245,7 +245,7 @@ public:
 
 	void	addSlink(iSLINK* slink);
 	void	removeSlinks();
-	void	removeSlink(iSLINK* slink);
+	void	removeSlink(iSLINK* slink);	
 
 	STATION_VALUE_SHOW_TYPE powerShowtype(){return m_power_showtype;}
 	void setPowerType(STATION_VALUE_SHOW_TYPE type){m_power_showtype=type;}
@@ -260,6 +260,7 @@ public:
 	void setcompensationshown(bool value){is_compensationshown=value;}
 public slots:
 		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
+		void OnapplyNameFont2all(QFont &font);
 
 private:
 	friend class iDoc;

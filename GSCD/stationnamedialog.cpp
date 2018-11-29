@@ -4,6 +4,8 @@
 #include <QFontDialog>
 #include <QFont>
 #include <QStringListModel>
+#include "diagramitem.h"
+#include "diagramscene.h"
 
 StationNameDialog::StationNameDialog(iSTAT *stat,QWidget *parent)
 	: QDialog(parent)
@@ -46,6 +48,8 @@ StationNameDialog::StationNameDialog(iSTAT *stat,QWidget *parent)
 	connect(ui.lineEdit_name,SIGNAL(textChanged ( const QString & )),ui.lineEdit_namepreview,SLOT(setText(const QString &)));
 	//connect(ui.listView_shownnodes,SIGNAL(clicked(const QModelIndex&)),this,SLOT(OnshowNodeChanged(const QModelIndex&)));
 	
+	connect(this,SIGNAL(apply2all(QFont &)),m_stat->myItem()->scene(),SIGNAL(applyNameFont2all(QFont &)));
+
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(OnOk()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
 }
@@ -89,5 +93,7 @@ void StationNameDialog::OnOk()
 		if(node)
 			node->setShowVoltage(item->isSelected());
 	}
+	if(m_IsApplyAll)
+		emit apply2all(m_font);
 	accept();
 }

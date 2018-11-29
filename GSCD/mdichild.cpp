@@ -9,7 +9,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	,dpi(100)
 	,scale_min(10)
 	,scale_max(500)
-	,m_scale(80)
+	,m_scale(100)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     isUntitled = true;
@@ -192,7 +192,7 @@ QString MdiChild::strippedName(const QString &fullFileName)
 //    this->scale(newScale, newScale);
 //}
 
-void MdiChild::setchildScale(int scale)    
+void MdiChild::updatechildScale(int scale)    
 {
 	if((scale<scale_min) || (scale>scale_max)) return ;
 	qreal newScale = scale / 100.0;
@@ -202,6 +202,12 @@ void MdiChild::setchildScale(int scale)
     this->translate(oldMatrix.dx(), oldMatrix.dy());
     this->scale(newScale, newScale);
 
+	emit scaleChanged(m_scale);
+}
+void MdiChild::setScale(int scale)
+{
+	if((scale<scale_min) || (scale>scale_max)) return ;
+	m_scale=scale; 
 	emit scaleChanged(m_scale);
 }
 

@@ -24,7 +24,8 @@ public:
 	DiagramScene* scene(){return m_scene;}
 	iDoc *doc(){return m_doc;}
 	int getchildScale(){return m_scale;}
-	void setchildScale(int scale);
+	void updatechildScale(int scale);
+	void setScale(int scale);
 
 protected:
     void closeEvent(QCloseEvent *event);

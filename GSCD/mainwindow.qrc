@@ -25,5 +25,7 @@
         <file alias="addcomment.png">Resources/images/addcomment.png</file>
         <file alias="addnet.png">Resources/images/addnet.png</file>
         <file alias="delete.png">Resources/images/delete.png</file>
+        <file alias="link.png">Resources/images/link.png</file>
+        <file alias="transformer.png">Resources/images/transformer.png</file>
     </qresource>
 </RCC>
