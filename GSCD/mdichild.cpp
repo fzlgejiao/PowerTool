@@ -55,8 +55,8 @@ void MdiChild::newFile(const QString& datafile)
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     	
-	//todo: open map file and data file
-	m_doc->openDataFile(datafile);
+	//todo: open data file
+	m_doc->readDataFile(datafile);
 
     QApplication::restoreOverrideCursor();
 
@@ -78,9 +78,8 @@ bool MdiChild::loadFile(const QString &fileName)
     //QTextStream in(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
     	
-	//todo: open map file and data file
-	m_doc->openDataFile(fileName);
-	m_doc->openMapFile(fileName);
+	//todo: open map file
+	m_doc->readMapFile(fileName);
 
     QApplication::restoreOverrideCursor();
 

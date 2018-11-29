@@ -801,14 +801,14 @@ void MainWindow::newFile()
 
 	MdiChild *child = createMdiChild();																//create child when new a file
 	child->newFile(dlg.FileName());
-		//statusBar()->showMessage(tr("File loaded"), 2000);
+	statusBar()->showMessage(tr("File loaded"), 2000);
 	child->show();
 	barDataFile->setText(dlg.FileName());
 }
 
 void MainWindow::open()
 {
-	QString fileName = QFileDialog::getOpenFileName(this,tr("Open Raw file"),".",tr("Raw File (*.raw)"));
+	QString fileName = QFileDialog::getOpenFileName(this,tr("Open map file"),".",tr("Map File (*.xml)"));
 	if (!fileName.isEmpty()) {
 		QMdiSubWindow *existing = findMdiChild(fileName);
 		if (existing) {
@@ -835,8 +835,8 @@ void MainWindow::save()
 
 void MainWindow::saveAs()
 {
-	//if (activeMdiChild() && activeMdiChild()->saveAs())
-	statusBar()->showMessage(tr("File saved"), 2000);
+	if (activeMdiChild() && activeMdiChild()->saveAs())
+		statusBar()->showMessage(tr("File saved"), 2000);
 }
 void MainWindow::print()
 {

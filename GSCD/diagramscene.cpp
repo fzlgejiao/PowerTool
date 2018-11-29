@@ -175,7 +175,21 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 				if(Nodelist.count())
 				{
-					addStation(mouseEvent->scenePos());
+					AddDialog dlg(myDoc,NULL,pMain);
+					if(dlg.exec()!=QDialog::Accepted)
+						return;
+
+					if(!dlg.IsAddSite()) 
+						return ;
+					//add new station data object			
+					iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
+					if(!stat)
+						return;
+					QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
+					stat->setNodes(addednodes);
+					stat->setsType(dlg.getstationtype());
+
+					addStation(stat,dlg.GetFont(),mouseEvent->scenePos());
 				}
 
 				emit modeDone();
@@ -540,21 +554,8 @@ void DiagramScene::updateArrows(iSTAT* stat)
 		}
 	}
 }
-void DiagramScene::addStation(const QPointF& pos)
+void DiagramScene::addStation(iSTAT* stat,const QFont& font,const QPointF& pos)
 {
-	AddDialog dlg(myDoc,NULL,pMain);
-	if(dlg.exec()!=QDialog::Accepted)
-		return;
-
-	if(!dlg.IsAddSite()) 
-		return ;
-	//add new station data object			
-	iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
-	if(!stat)
-		return;
-	QList<iNodeData *> addednodes=dlg.GetAddedNodes();		;
-	stat->setNodes(addednodes);
-	stat->setsType(dlg.getstationtype());
 
 	//create station diagram item
 	DiagramItem *item = new DiagramItem(stat, 0,this);												//create diagram item for station
@@ -565,7 +566,7 @@ void DiagramScene::addStation(const QPointF& pos)
 	
 	//create station name text item
 	DiagramTextItem* nameItem = new DiagramTextItem(item,this);
-	nameItem->setFont(dlg.GetFont());
+	nameItem->setFont(font);
 	nameItem->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 	nameItem->setDefaultTextColor(Qt::red);
 	nameItem->setPos(QPointF(10,10));

@@ -74,7 +74,7 @@ protected:
 	void procItem(ACT_TYPE act,QGraphicsItem* item);
 
 	//actions for station
-	void addStation(const QPointF& pos);
+	void addStation(iSTAT* stat,const QFont& font,const QPointF& pos);
 	void editStation(DiagramItem *item,iSTAT* stat);
 	void viewStation(DiagramItem *item,iSTAT* stat);
 	void deleteStation(DiagramItem *item,iSTAT* stat);
