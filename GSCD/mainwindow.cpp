@@ -12,6 +12,7 @@
 #include "areasetting.h"
 #include "diagramitem.h"
 #include "arrow.h"
+#include "newdialog.h"
 
 const int InsertTextButton = 10;
 
@@ -28,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	mdiArea = new QMdiArea;
 	mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	mdiArea->setViewMode(QMdiArea::TabbedView);
+	mdiArea->setTabsClosable(true);
+	//mdiArea->setTabPosition(QTabWidget::West);
+
 	//setCentralWidget(mdiArea);
 	connect(mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
 		this, SLOT(updateMenus()));
@@ -445,7 +450,9 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-	tBar = addToolBar(tr("File"));
+	QList<QToolBar *> toolbars = findChildren<QToolBar *>();
+	tBar = toolbars[0];//addToolBar(tr("File"));
+	tBar->setWindowTitle(tr("File"));
 
 	//tBar->addAction(cutAct);
 	//tBar->addAction(copyAct);
@@ -516,7 +523,7 @@ void MainWindow::createToolBars()
 	tBar->addAction(aboutAct);
 
 
-	QList<QToolBar *> toolbars = findChildren<QToolBar *>("");
+	
 
 }
 
@@ -524,12 +531,21 @@ void MainWindow::createStatusBar()
 {
 	statusBar()->showMessage(tr("Ready"));
 
-	stsVersion = new QLabel(this);
-	stsVersion->setMinimumSize(120,22); 
-    stsVersion->setAlignment(Qt::AlignHCenter); 
-	stsVersion->setText(qApp->applicationVersion());
+	barDataFile = new QLabel(this);
+	barDataFile->setMinimumSize(350,20); 
+    barDataFile->setAlignment(Qt::AlignLeft|Qt::AlignVCenter); 
+    barDataFile->setFrameShape(QFrame::Panel);
+    barDataFile->setFrameShadow(QFrame::Sunken);
+	barDataFile->setText("");
+	statusBar()->insertPermanentWidget(0,barDataFile);
 
-	statusBar()->insertPermanentWidget(0,stsVersion);
+	barVersion = new QLabel(this);
+	barVersion->setMinimumSize(80,20); 
+	barVersion->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter); 
+    barVersion->setFrameShape(QFrame::Panel);
+    barVersion->setFrameShadow(QFrame::Sunken);
+	barVersion->setText(qApp->applicationVersion());
+	statusBar()->insertPermanentWidget(1,barVersion);
 }
 //
 //void MainWindow::createToolBox()
@@ -779,14 +795,20 @@ void MainWindow::OnSelectionChanged()
 
 void MainWindow::newFile()
 {
+	NewDialog dlg(this);
+	if(dlg.exec() == QDialog::Rejected)
+		return;
+
 	MdiChild *child = createMdiChild();																//create child when new a file
-	child->newFile();
+	child->newFile(dlg.FileName());
+	statusBar()->showMessage(tr("File loaded"), 2000);
 	child->show();
+	barDataFile->setText(dlg.FileName());
 }
 
 void MainWindow::open()
 {
-	QString fileName = QFileDialog::getOpenFileName(this,tr("Open Raw file"),".",tr("Raw File (*.raw)"));
+	QString fileName = QFileDialog::getOpenFileName(this,tr("Open map file"),".",tr("Map File (*.xml)"));
 	if (!fileName.isEmpty()) {
 		QMdiSubWindow *existing = findMdiChild(fileName);
 		if (existing) {
@@ -813,8 +835,8 @@ void MainWindow::save()
 
 void MainWindow::saveAs()
 {
-	//if (activeMdiChild() && activeMdiChild()->saveAs())
-	statusBar()->showMessage(tr("File saved"), 2000);
+	if (activeMdiChild() && activeMdiChild()->saveAs())
+		statusBar()->showMessage(tr("File saved"), 2000);
 }
 void MainWindow::print()
 {

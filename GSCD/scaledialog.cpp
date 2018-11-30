@@ -14,7 +14,7 @@ ScaleDialog::ScaleDialog(int scale,QWidget *parent)
 	
 	ui.label_min->setText(QString("%1%").arg(scalemin));
 	ui.label_max->setText(QString("%1%").arg(scalemax));
-	ui.lineEdit_scale->setText(QString("%1%").arg(m_scale));
+	ui.lineEdit_scale->setText(QString("%1").arg(m_scale));
 
 	connect(ui.ScaleSlider,SIGNAL(valueChanged(int)),this,SLOT(OnScaleSliderChanged(int)));
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
@@ -29,5 +29,5 @@ ScaleDialog::~ScaleDialog()
 void ScaleDialog::OnScaleSliderChanged(int value)
 {	
 	m_scale=value;
-	ui.lineEdit_scale->setText(QString("%1%").arg(value));
+	ui.lineEdit_scale->setText(QString("%1").arg(value));
 }

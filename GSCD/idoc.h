@@ -6,6 +6,7 @@
 #include <QFile>
 #include "idata.h"
 #include <QSize>
+#include <QXmlStreamReader>
 
 class iDoc : public QObject
 {
@@ -14,10 +15,10 @@ class iDoc : public QObject
 public:
 	iDoc(QObject *parent);
 	~iDoc();
-
-	bool	openDataFile(const QString& file);
-	bool	openMapFile(const QString& file);
 	void	close();
+
+	bool	readDataFile(const QString& fileName);
+	bool	readMapFile(const QString& fileName);
 
 	int		STAT_getId();																			//get available station id for a new station
 	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
@@ -83,24 +84,34 @@ private:
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id
 	QMap<int,iAREA *>			listAREA;
-
 	QMap<int,iNote *>			listNotes;
+
+
+	//for data file
 	void GetBUSData(const QString& dataname="BUS");
 	void GetBRANCHData(const QString& dataname="BRANCH");
 	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");
-	void GetBaseParameter();
-	void GetDataModel(T_DATA datatype);
+	void GetBaseParameter(QFile& file);
+	void GetDataModel(QFile& file,T_DATA datatype);
 
-	bool OpenDataFile(const QString& file );
-	void CloseDataFile();
+	//for data and map files
+	void readMapElement();
+	void readDataFileElement();
+	void readStations();
+	void readStatElement();
+	void readStatNameElement();
+	void readStatValueElement();
+	void readNodes();
+	void readNodeElement();
+	void skipUnknownElement();
+	QXmlStreamReader xmlReader;
 
-	QFile *m_file;
-	QSize m_AreaSize;
-	QString Prefix_keyword;
-	QString Suffix_keyword;
-	QString	ColumnName_keyword;
+	QSize			m_AreaSize;
+	QString			Prefix_keyword;
+	QString			Suffix_keyword;
+	QString			ColumnName_keyword;
 	ControlPanel	m_controlpanel;
-	double SBase;
+	double			SBase;
 signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);

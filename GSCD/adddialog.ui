@@ -59,9 +59,9 @@
    <property name="geometry">
     <rect>
      <x>680</x>
-     <y>71</y>
+     <y>68</y>
      <width>31</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -80,7 +80,7 @@
      <x>260</x>
      <y>68</y>
      <width>31</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -124,7 +124,7 @@
      <x>300</x>
      <y>80</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -143,7 +143,7 @@
      <x>300</x>
      <y>105</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <item>
@@ -161,7 +161,7 @@
      <x>300</x>
      <y>150</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -174,7 +174,7 @@
      <x>300</x>
      <y>190</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -187,7 +187,7 @@
      <x>300</x>
      <y>270</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -203,7 +203,7 @@
      <x>300</x>
      <y>230</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -292,7 +292,7 @@
      <x>130</x>
      <y>20</y>
      <width>154</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -305,7 +305,7 @@
      <x>300</x>
      <y>20</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -337,7 +337,7 @@
      <x>300</x>
      <y>400</y>
      <width>118</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -363,7 +363,7 @@
      <x>514</x>
      <y>454</y>
      <width>195</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <item>

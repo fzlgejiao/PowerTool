@@ -159,7 +159,7 @@ QString iSTAT::value(double sbase,UNIT_TYPE type,bool showReactivePower)
 			valueStr+=loadlistStr;
 	}
 	if((is_compensationshown)&&((totalGL+totalBL)!=0))
-	{
+	{		
 		if(showReactivePower)
 			valueStr+=QString("S:%1+j%2 \n").arg(totalGL,0,'f',3,QLatin1Char('0')).arg(totalBL,0,'f',3,QLatin1Char('0'));
 		else 

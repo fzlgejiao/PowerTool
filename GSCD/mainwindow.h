@@ -130,7 +130,8 @@ private:
 	QButtonGroup *backgroundButtonGroup;
 
 	//for status bar
-	QLabel*	stsVersion;
+	QLabel*	barVersion;
+	QLabel* barDataFile;
 
     enum { MaxRecentFiles = 5 };
     QAction *recentFileActs[MaxRecentFiles];

@@ -67,11 +67,11 @@ void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 	//set column width	
 	tablewidget->setColumnWidth(NAME,100);
 	tablewidget->setColumnWidth(Ref_Volatge,80);
-	tablewidget->setColumnWidth(Voltage,80);
+	tablewidget->setColumnWidth(Voltage,65);
 	tablewidget->setColumnWidth(Angle,50);
-	tablewidget->setColumnWidth(Energy,120);
-	tablewidget->setColumnWidth(Load,120);
-	tablewidget->setColumnWidth(Compensation,120);
+	tablewidget->setColumnWidth(Energy,105);
+	tablewidget->setColumnWidth(Load,105);
+	tablewidget->setColumnWidth(Compensation,105);
 	
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>716</width>
-    <height>209</height>
+    <width>453</width>
+    <height>144</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,19 +18,19 @@
     <rect>
      <x>19</x>
      <y>10</y>
-     <width>681</width>
-     <height>131</height>
+     <width>411</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="title">
-    <string>Scale</string>
+    <string>Display Scale</string>
    </property>
    <widget class="QSlider" name="ScaleSlider">
     <property name="geometry">
      <rect>
       <x>13</x>
-      <y>70</y>
-      <width>661</width>
+      <y>50</y>
+      <width>391</width>
       <height>27</height>
      </rect>
     </property>
@@ -57,10 +57,10 @@
    <widget class="QLineEdit" name="lineEdit_scale">
     <property name="geometry">
      <rect>
-      <x>281</x>
+      <x>182</x>
       <y>30</y>
-      <width>63</width>
-      <height>22</height>
+      <width>41</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -70,7 +70,7 @@
    <widget class="QLabel" name="label_max">
     <property name="geometry">
      <rect>
-      <x>633</x>
+      <x>380</x>
       <y>30</y>
       <width>41</width>
       <height>20</height>
@@ -80,13 +80,26 @@
      <string>max</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>33</y>
+      <width>46</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>%</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>160</y>
-     <width>301</width>
+     <x>270</x>
+     <y>110</y>
+     <width>161</width>
      <height>28</height>
     </rect>
    </property>

@@ -65,7 +65,7 @@
      <x>300</x>
      <y>169</y>
      <width>111</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -107,7 +107,7 @@
      <x>15</x>
      <y>59</y>
      <width>93</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -159,6 +159,9 @@
      <weight>50</weight>
      <bold>false</bold>
     </font>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
    </property>
    <property name="text">
     <string>Name:</string>

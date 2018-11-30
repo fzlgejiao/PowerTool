@@ -2,6 +2,8 @@
 #include <QTextStream>
 #include <QStringList>
 #include <QDebug>
+#include <QXmlStreamWriter>
+#include <iostream>
 
 
 iDoc::iDoc(QObject *parent)
@@ -96,32 +98,6 @@ void iDoc::test()
 
 }
 
-bool iDoc::openDataFile(const QString& file)
-{
-	//todo:: process data file
-	if(OpenDataFile(file))
-	{
-		GetBaseParameter();
-		GetDataModel(T_BUS);	
-		GetDataModel(T_LOAD);	
-		GetDataModel(T_COMPENSATION);
-		GetDataModel(T_GENERATOR);
-		GetDataModel(T_BRANCH);
-		GetDataModel(T_TRANSFORMER);
-		GetDataModel(T_AREA);
-		CloseDataFile();
-		return true;
-	}
-	return false;
-}
-
-
-bool	iDoc::openMapFile(const QString& file)
-{
-	//todo:: process map file
-
-	return true;
-}
 void	iDoc::close()
 {
 	qDeleteAll(listSTAT);
@@ -132,34 +108,41 @@ void	iDoc::close()
 	listBRANCH.clear();
 	qDeleteAll(listTRANSFORMER);
 	listTRANSFORMER.clear();
-	CloseDataFile();
 }
 
-
-bool iDoc::OpenDataFile(const QString& file )
+bool iDoc::readDataFile(const QString& fileName)
 {
-	m_file=new QFile(file);
-	if(m_file->open(QIODevice::ReadOnly | QIODevice::Text)) 
-	{
-		return true;
-	}else
-	{
-		return false;
-	}
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        std::cerr << "Error: Cannot read file " << qPrintable(fileName)
+                  << ": " << qPrintable(file.errorString())
+                  << std::endl;
+        return false;
+    }
 
+	//deal with data file
+	GetBaseParameter(file);
+	GetDataModel(file,T_BUS);	
+	GetDataModel(file,T_LOAD);	
+	GetDataModel(file,T_COMPENSATION);
+	GetDataModel(file,T_GENERATOR);
+	GetDataModel(file,T_BRANCH);
+	GetDataModel(file,T_TRANSFORMER);
+	GetDataModel(file,T_AREA);
+
+	file.close();
+	if (file.error() != QFile::NoError) {
+        std::cerr << "Error: Cannot read file " << qPrintable(fileName)
+                  << ": " << qPrintable(file.errorString())
+                  << std::endl;
+        return false;
+    }
+    return true;
 }
 
-void iDoc::CloseDataFile()
+void iDoc::GetBaseParameter(QFile& file)
 {
-	if(m_file->isOpen())
-	{		
-		m_file->close();
-	}
-}
-
-void iDoc::GetBaseParameter()
-{
-	QTextStream stream(m_file);
+	QTextStream stream(&file);
 	stream.seek(0);
 	while(!stream.atEnd())
 	{
@@ -173,7 +156,7 @@ void iDoc::GetBaseParameter()
 		}
 	}
 }
-void iDoc::GetDataModel(T_DATA datatype)
+void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 {
 	int datarows=0;		
 	int TranformerDummylines=0;
@@ -193,7 +176,7 @@ void iDoc::GetDataModel(T_DATA datatype)
 	else if(datatype==T_AREA)
 		dataname="AREA";
 	else return;
-	QTextStream stream(m_file);
+	QTextStream stream(&file);
 	stream.seek(0);
 	while(!stream.atEnd())
 	{
@@ -527,4 +510,219 @@ iNote*	iDoc::Note_new(const QString& text)
 	iNote* note = new iNote(Note_getId(),text,this);	
 	listNotes.insert(note->Id(),note);
 	return note;
+}
+
+bool iDoc::readMapFile(const QString& fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        std::cerr << "Error: Cannot read file " << qPrintable(fileName)
+                  << ": " << qPrintable(file.errorString())
+                  << std::endl;
+        return false;
+    }
+    xmlReader.setDevice(&file);
+
+    xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        if (xmlReader.isStartElement()) {
+            if (xmlReader.name() == "map") {
+				readMapElement();
+            } else {
+                xmlReader.raiseError(QObject::tr("Not a map file"));
+            }
+        } else {
+            xmlReader.readNext();
+        }
+    }
+
+	file.close();
+    if (xmlReader.hasError()) {
+        std::cerr << "Error: Failed to parse file "
+                  << qPrintable(fileName) << ": "
+                  << qPrintable(xmlReader.errorString()) << std::endl;
+        return false;
+    } else if (file.error() != QFile::NoError) {
+        std::cerr << "Error: Cannot read file " << qPrintable(fileName)
+                  << ": " << qPrintable(file.errorString())
+                  << std::endl;
+        return false;
+    }
+    return true;
+
+
+}
+void iDoc::readMapElement()
+{
+    xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        if (xmlReader.isEndElement()) {
+
+            xmlReader.readNext();
+            break;
+        }
+
+        if (xmlReader.isStartElement()) {
+            if (xmlReader.name() == "datafile") 
+			{
+				readDataFileElement();
+            }
+			else if(xmlReader.name() == "stats")  
+			{
+				readStations();
+			}
+			//else if(xmlReader.name() == "notes")  
+			//{
+			//	//readNotes();
+			//}
+			//else if(xmlReader.name() == "legends")  
+			//{
+			//	//readLegends();
+			//}
+			else 
+			{
+                skipUnknownElement();
+            }
+        } else {
+            xmlReader.readNext();
+        }
+    }
+}
+
+void iDoc::readDataFileElement()
+{
+    QString filename = xmlReader.readElementText();
+	readDataFile(filename);
+    if (xmlReader.isEndElement())
+        xmlReader.readNext();
+}
+void iDoc::readStations()
+{
+   xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        if (xmlReader.isEndElement()) {
+            xmlReader.readNext();
+            break;
+        }
+
+        if (xmlReader.isStartElement()) {
+            if (xmlReader.name() == "stat") {
+                readStatElement();
+            }
+			else 
+			{
+                skipUnknownElement();
+            }
+        } else {
+            xmlReader.readNext();
+        }
+    }
+
+}
+void iDoc::readStatElement()
+{
+	int stat_id = xmlReader.attributes().value("id").toString().toInt();
+	QString stat_name = xmlReader.attributes().value("name").toString();
+	int stat_type = xmlReader.attributes().value("type").toString().toInt();
+	QString pos = xmlReader.attributes().value("pos").toString();
+
+    xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        if (xmlReader.isEndElement()) {
+            xmlReader.readNext();
+            break;
+        }
+
+        if (xmlReader.isStartElement()) 
+		{
+            if (xmlReader.name() == "name_item") 
+			{
+                readStatNameElement();
+            } 
+			else if (xmlReader.name() == "value_item") 
+			{
+                readStatValueElement();
+            } 
+			else if (xmlReader.name() == "nodes") 
+			{
+                readNodes();
+            }
+			else 
+			{
+                skipUnknownElement();
+            }
+        } else {
+            xmlReader.readNext();
+        }
+    }
+}
+
+void iDoc::readStatNameElement()
+{
+	QString pos = xmlReader.attributes().value("pos").toString();
+	QString font = xmlReader.attributes().value("font").toString();    
+	QString name = xmlReader.readElementText();
+    if (xmlReader.isEndElement())
+        xmlReader.readNext();
+}
+
+void iDoc::readStatValueElement()
+{
+	QString pos = xmlReader.attributes().value("pos").toString();
+	QString gen_view = xmlReader.attributes().value("gen_view").toString();
+	QString load_view = xmlReader.attributes().value("load_view").toString();
+	QString comp_view = xmlReader.attributes().value("comp_view").toString();
+    QString name = xmlReader.readElementText();
+    if (xmlReader.isEndElement())
+        xmlReader.readNext();
+}
+
+void iDoc::readNodes()
+{
+   xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        if (xmlReader.isEndElement()) {
+            xmlReader.readNext();
+            break;
+        }
+
+        if (xmlReader.isStartElement()) {
+            if (xmlReader.name() == "node") {
+                readNodeElement();
+            }
+			else 
+			{
+                skipUnknownElement();
+            }
+        } else {
+            xmlReader.readNext();
+        }
+    }
+}
+
+void iDoc::readNodeElement()
+{
+	int id = xmlReader.attributes().value("id").toString().toInt();
+	QString v_show = xmlReader.attributes().value("v_show").toString();
+    QString name = xmlReader.readElementText();
+
+    if (xmlReader.isEndElement())
+        xmlReader.readNext();
+}
+
+void iDoc::skipUnknownElement()
+{
+    xmlReader.readNext();
+    while (!xmlReader.atEnd()) {
+        if (xmlReader.isEndElement()) {
+            xmlReader.readNext();
+            break;
+        }
+
+        if (xmlReader.isStartElement()) {
+            skipUnknownElement();
+        } else {
+            xmlReader.readNext();
+        }
+    }
 }

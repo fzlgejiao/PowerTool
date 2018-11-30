@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>314</height>
+    <width>631</width>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,21 +16,24 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>553</x>
-     <y>10</y>
-     <width>121</width>
+     <x>483</x>
+     <y>6</y>
+     <width>131</width>
      <height>22</height>
     </rect>
    </property>
    <property name="text">
-    <string>Unit:Per Unit</string>
+    <string>Unit : Per Unit</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
   <widget class="Line" name="line">
    <property name="geometry">
     <rect>
-     <x>550</x>
-     <y>30</y>
+     <x>480</x>
+     <y>20</y>
      <width>141</width>
      <height>20</height>
     </rect>
@@ -43,8 +46,8 @@
    <property name="geometry">
     <rect>
      <x>11</x>
-     <y>52</y>
-     <width>681</width>
+     <y>42</y>
+     <width>611</width>
      <height>201</height>
     </rect>
    </property>
@@ -70,7 +73,7 @@
    </column>
    <column>
     <property name="text">
-     <string>Energy</string>
+     <string>Generation</string>
     </property>
    </column>
    <column>
@@ -87,10 +90,10 @@
   <widget class="QPushButton" name="pushButton_OK">
    <property name="geometry">
     <rect>
-     <x>591</x>
-     <y>270</y>
+     <x>520</x>
+     <y>260</y>
      <width>100</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -101,9 +104,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>14</y>
+     <y>10</y>
      <width>101</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -116,7 +119,7 @@
      <x>120</x>
      <y>10</y>
      <width>137</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -124,9 +127,9 @@
    <property name="geometry">
     <rect>
      <x>148</x>
-     <y>270</y>
+     <y>260</y>
      <width>100</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
@@ -137,9 +140,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
+     <y>260</y>
      <width>100</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
