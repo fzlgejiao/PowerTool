@@ -153,6 +153,7 @@ private slots:
 	void printPreview();
 	void Onpaintrequested(QPrinter *printer);
 	void openRecentFile();
+	void OnSubWindowActivated(QMdiSubWindow*);
 
 	//edit menu
 	//void addStation();

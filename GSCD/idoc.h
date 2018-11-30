@@ -19,11 +19,13 @@ public:
 
 	bool	readDataFile(const QString& fileName);
 	bool	readMapFile(const QString& fileName);
+	QString& dataFile(){return m_szDataFile;}
+	QString& mapFile(){return m_szMapFile;}
 
 	int		STAT_getId();																			//get available station id for a new station
 	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
 	void	STAT_delete(int id);
-	iSTAT*	STAT_new(const QString& name);
+	iSTAT*	STAT_new(int id,const QString& name);
 
 	int		SLINK_getId();																			//get available station link id for a new station link
 	iSLINK*	SLINK_get(int id){return listSLINK.value(id,NULL);}
@@ -36,7 +38,7 @@ public:
 	void	Note_delete(int id);
 	iNote*	Note_new(const QString& name);
 
-	iNodeData* getNode(int uid);
+	iNodeData* getNode(int uid);																	//get node by uid
 	iNodeData* getNode(int type,int id);
 
 	iBUS*	getBUS(int id){return listBUS.value(id,NULL);}
@@ -96,13 +98,10 @@ private:
 
 	//for data and map files
 	void readMapElement();
-	void readDataFileElement();
 	void readStations();
 	void readStatElement();
-	void readStatNameElement();
-	void readStatValueElement();
-	void readNodes();
-	void readNodeElement();
+
+	void readNodes(QList<iNodeData *> &listNodes);
 	void skipUnknownElement();
 	QXmlStreamReader xmlReader;
 
@@ -112,9 +111,12 @@ private:
 	QString			ColumnName_keyword;
 	ControlPanel	m_controlpanel;
 	double			SBase;
+	QString			m_szDataFile;
+	QString			m_szMapFile;
 signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);
+	void statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&);
 
 };
 

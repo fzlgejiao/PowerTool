@@ -84,7 +84,7 @@ typedef struct{
 typedef enum{	
 	VALUE_ADDUP			=0,
 	VALUE_LIST
-}STATION_VALUE_SHOW_TYPE;
+}PF_VTYPE;																							//power flow data view type
 
 //typedef enum 
 //{
@@ -227,37 +227,37 @@ public:
 	QString allNodeVoltage(bool withangle,UNIT_TYPE unit) const;
 
 	STAT_TYPE	sType(){return m_sType;}
-	void	setsType(STAT_TYPE type){m_sType = type;}
+	void		setsType(STAT_TYPE type){m_sType = type;}
 
-	void	setNodes(const QList<iNodeData *>& listNodes);
-	//void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
-	//void    removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
-	//void    removeNodes(const QList<iNodeData *>& listNodes);
+	void		setNodes(const QList<iNodeData *>& listNodes);
+	//void		addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
+	//void		removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
+	//void		removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
-	void	setItem(DiagramItem* item){m_itemStat = item;}
+	void		setItem(DiagramItem* item){m_itemStat = item;}
 	DiagramItem* myItem(){return m_itemStat;}
 
-	void	setItemName(DiagramTextItem* item){m_itemName = item;}
+	void		setItemName(DiagramTextItem* item){m_itemName = item;}
 	DiagramTextItem* itemName(){return m_itemName;}
-	void	setItemValue(DiagramTextItem* item){m_itemValue = item;}
+	void		setItemValue(DiagramTextItem* item){m_itemValue = item;}
 	DiagramTextItem* itemValue(){return m_itemValue;}
 
-	void	addSlink(iSLINK* slink);
-	void	removeSlinks();
-	void	removeSlink(iSLINK* slink);
+	void		addSlink(iSLINK* slink);
+	void		removeSlinks();
+	void		removeSlink(iSLINK* slink);
 
-	STATION_VALUE_SHOW_TYPE powerShowtype(){return m_power_showtype;}
-	void setPowerType(STATION_VALUE_SHOW_TYPE type){m_power_showtype=type;}
+	PF_VTYPE	powerShowtype(){return m_power_showtype;}
+	void		setPowerType(PF_VTYPE type){m_power_showtype=type;}
 
-	STATION_VALUE_SHOW_TYPE loadShowtype(){return m_load_showtype;}
-	void setLoadType(STATION_VALUE_SHOW_TYPE type){m_load_showtype=type;}
+	PF_VTYPE	loadShowtype(){return m_load_showtype;}
+	void		setLoadType(PF_VTYPE type){m_load_showtype=type;}
 
-	bool isshowload(){return is_loadshown;}
-	void setloadshown(bool value){is_loadshown=value;}
+	bool		isshowload(){return is_loadshown;}
+	void		setloadshown(bool value){is_loadshown=value;}
 
-	bool isshowcompensation(){return is_compensationshown;}
-	void setcompensationshown(bool value){is_compensationshown=value;}
+	bool		isshowcompensation(){return is_compensationshown;}
+	void		setcompensationshown(bool value){is_compensationshown=value;}
 public slots:
 		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
 
@@ -267,8 +267,8 @@ private:
 	QString			m_Value;																		//nodes voltage value(can be more than one node,e.g "v1:v2")
 	STAT_TYPE		m_sType;																		//station type
 
-	STATION_VALUE_SHOW_TYPE m_power_showtype;
-	STATION_VALUE_SHOW_TYPE m_load_showtype;
+	PF_VTYPE m_power_showtype;
+	PF_VTYPE m_load_showtype;
 
 	DiagramItem*	 m_itemStat;																	//pointer to station diagram item
 	DiagramTextItem* m_itemName;																	//pointer to station name text item

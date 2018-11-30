@@ -34,11 +34,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	//mdiArea->setTabPosition(QTabWidget::West);
 
 	//setCentralWidget(mdiArea);
-	connect(mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
-		this, SLOT(updateMenus()));
+	connect(mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),this, SLOT(OnSubWindowActivated(QMdiSubWindow*)));
 	windowMapper = new QSignalMapper(this);
-	connect(windowMapper, SIGNAL(mapped(QWidget*)),
-		this, SLOT(setActiveSubWindow(QWidget*)));
+	connect(windowMapper, SIGNAL(mapped(QWidget*)),	this, SLOT(setActiveSubWindow(QWidget*)));
 
 	createActions();
 	createMenus();
@@ -693,7 +691,16 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &fileName)
 	}
 	return 0;
 }
-
+void MainWindow::OnSubWindowActivated(QMdiSubWindow* window)
+{
+	if(window)
+	{
+		updateMenus();
+		MdiChild *child = (MdiChild *)window->widget();
+		if(child)
+			barDataFile->setText(child->doc()->dataFile());
+	}
+}
 QList<QGraphicsItem *> MainWindow::selectedItems()
 {
 	QList<QGraphicsItem *> items;
@@ -821,6 +828,7 @@ void MainWindow::open()
 		if (child->loadFile(fileName)) {
 			statusBar()->showMessage(tr("File loaded"), 2000);
 			child->show();
+			barDataFile->setText(child->doc()->dataFile());
 		} else {
 			child->close();
 		}
