@@ -80,6 +80,7 @@ bool MdiChild::loadFile(const QString &fileName)
     	
 	//todo: open map file
 	m_doc->readMapFile(fileName);
+	m_scene->clearSelection();
 
     QApplication::restoreOverrideCursor();
 

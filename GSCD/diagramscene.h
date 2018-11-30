@@ -74,7 +74,6 @@ protected:
 	void procItem(ACT_TYPE act,QGraphicsItem* item);
 
 	//actions for station
-	void addStation(iSTAT* stat,const QFont& font,const QPointF& pos);
 	void editStation(DiagramItem *item,iSTAT* stat);
 	void viewStation(DiagramItem *item,iSTAT* stat);
 	void deleteStation(DiagramItem *item,iSTAT* stat);
@@ -122,7 +121,8 @@ private:
     QColor		myLineColor;
 	
 public slots:
-	
+	void addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName = QPointF(10,10),QPointF& posValue = QPointF(10,-20));
+
 signals:
 	void modeDone();
 	void applyNameFont2all(QFont &font);

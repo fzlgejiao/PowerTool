@@ -86,6 +86,8 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_STAT_VALUE,statValueMenu);
 	addMenu(MENU_STAT_LINK,statLinkMenu);
 	addMenu(MENU_NOTE,noteMenu);
+
+	connect(doc, SIGNAL(statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)),	this, SLOT(addStation(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)));
 	
 }
 //! [0]
@@ -182,7 +184,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 					if(!dlg.IsAddSite()) 
 						return ;
 					//add new station data object			
-					iSTAT* stat= myDoc->STAT_new(dlg.NewStationName());												//create a new station object
+					iSTAT* stat= myDoc->STAT_new(myDoc->STAT_getId(),dlg.NewStationName());												//create a new station object
 					if(!stat)
 						return;
 					connect(this,SIGNAL(applyNameFont2all(QFont &)),stat,SLOT(OnapplyNameFont2all(QFont &)));
@@ -190,7 +192,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 					stat->setNodes(addednodes);
 					stat->setsType(dlg.getstationtype());
 
-					addStation(stat,dlg.GetFont(),mouseEvent->scenePos());
+					addStation(stat,mouseEvent->scenePos(),dlg.GetFont());
 				}
 
 				emit modeDone();
@@ -557,21 +559,21 @@ void DiagramScene::updateArrows(iSTAT* stat)
 		}
 	}
 }
-void DiagramScene::addStation(iSTAT* stat,const QFont& font,const QPointF& pos)
+void DiagramScene::addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName,QPointF& posValue)
 {	
 	//create station diagram item
 	DiagramItem *item = new DiagramItem(stat, 0,this);												//create diagram item for station
 	item->setBrush(myItemColor);
 	addItem(item);
-	item->setPos(pos);
+	item->setPos(posStat);
 	stat->setItem(item);																			//set item to station
 	
 	//create station name text item
 	DiagramTextItem* nameItem = new DiagramTextItem(item,this);
-	nameItem->setFont(font);
+	nameItem->setFont(fontName);
 	nameItem->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 	nameItem->setDefaultTextColor(Qt::red);
-	nameItem->setPos(QPointF(10,10));
+	nameItem->setPos(posName);
 	nameItem->setDefaultPos(QPointF(10,10));
 	nameItem->setData(ITEM_DATA,(uint)stat);	
 	addItem(nameItem);
@@ -583,7 +585,7 @@ void DiagramScene::addStation(iSTAT* stat,const QFont& font,const QPointF& pos)
 	valueItem->setFont(myFont);	
 	valueItem->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
 	valueItem->setDefaultTextColor(Qt::red);
-	valueItem->setPos(QPointF(10,-20));
+	valueItem->setPos(posValue);
 	valueItem->setDefaultPos(QPointF(10,-20));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);

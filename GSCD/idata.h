@@ -84,7 +84,7 @@ typedef struct{
 typedef enum{	
 	VALUE_ADDUP			=0,
 	VALUE_LIST
-}STATION_VALUE_SHOW_TYPE;
+}PF_VTYPE;																							//power flow data view type
 
 //typedef enum 
 //{
@@ -247,11 +247,11 @@ public:
 	void	removeSlinks();
 	void	removeSlink(iSLINK* slink);	
 
-	STATION_VALUE_SHOW_TYPE powerShowtype(){return m_power_showtype;}
-	void setPowerType(STATION_VALUE_SHOW_TYPE type){m_power_showtype=type;}
+	PF_VTYPE	powerShowtype(){return m_power_showtype;}
+	void		setPowerType(PF_VTYPE type){m_power_showtype=type;}
 
-	STATION_VALUE_SHOW_TYPE loadShowtype(){return m_load_showtype;}
-	void setLoadType(STATION_VALUE_SHOW_TYPE type){m_load_showtype=type;}
+	PF_VTYPE	loadShowtype(){return m_load_showtype;}
+	void		setLoadType(PF_VTYPE type){m_load_showtype=type;}
 
 	bool isshowload(){return is_loadshown;}
 	void setloadshown(bool value){is_loadshown=value;}
@@ -268,8 +268,8 @@ private:
 	QString			m_Value;																		//nodes voltage value(can be more than one node,e.g "v1:v2")
 	STAT_TYPE		m_sType;																		//station type
 
-	STATION_VALUE_SHOW_TYPE m_power_showtype;
-	STATION_VALUE_SHOW_TYPE m_load_showtype;
+	PF_VTYPE m_power_showtype;
+	PF_VTYPE m_load_showtype;
 
 	DiagramItem*	 m_itemStat;																	//pointer to station diagram item
 	DiagramTextItem* m_itemName;																	//pointer to station name text item

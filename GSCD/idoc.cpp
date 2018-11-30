@@ -392,9 +392,9 @@ int	iDoc::STAT_getId()
 	}
 	return id+1;
 }
-iSTAT* iDoc::STAT_new(const QString& name)
+iSTAT* iDoc::STAT_new(int id,const QString& name)
 {
-	iSTAT* stat = new iSTAT(STAT_getId(),name,this);
+	iSTAT* stat = new iSTAT(id,name,this);
 	connect(this,SIGNAL(controlpanelChanged(ControlPanel &,uint)),stat,SLOT(OncontrolpanelChanged(ControlPanel &,uint)));
 	listSTAT.insert(stat->Id(),stat);
 	return stat;
@@ -565,7 +565,11 @@ void iDoc::readMapElement()
         if (xmlReader.isStartElement()) {
             if (xmlReader.name() == "datafile") 
 			{
-				readDataFileElement();
+				//read data file element
+				m_szDataFile = xmlReader.readElementText();
+				readDataFile(m_szDataFile);
+				if (xmlReader.isEndElement())
+					xmlReader.readNext();
             }
 			else if(xmlReader.name() == "stats")  
 			{
@@ -589,42 +593,51 @@ void iDoc::readMapElement()
     }
 }
 
-void iDoc::readDataFileElement()
-{
-    QString filename = xmlReader.readElementText();
-	readDataFile(filename);
-    if (xmlReader.isEndElement())
-        xmlReader.readNext();
-}
+
 void iDoc::readStations()
 {
-   xmlReader.readNext();
-    while (!xmlReader.atEnd()) {
-        if (xmlReader.isEndElement()) {
-            xmlReader.readNext();
-            break;
-        }
+	xmlReader.readNext();
+	while (!xmlReader.atEnd()) {
+		if (xmlReader.isEndElement()) {
+			xmlReader.readNext();
+			break;
+		}
 
-        if (xmlReader.isStartElement()) {
-            if (xmlReader.name() == "stat") {
-                readStatElement();
-            }
+		if (xmlReader.isStartElement()) {
+			if (xmlReader.name() == "stat") {
+				readStatElement();																	//read one station element
+			}
 			else 
 			{
-                skipUnknownElement();
-            }
-        } else {
-            xmlReader.readNext();
-        }
-    }
+				skipUnknownElement();
+			}
+		} else {
+			xmlReader.readNext();
+		}
+	}
 
 }
 void iDoc::readStatElement()
 {
-	int stat_id = xmlReader.attributes().value("id").toString().toInt();
+	int		stat_id = xmlReader.attributes().value("id").toString().toInt();
 	QString stat_name = xmlReader.attributes().value("name").toString();
-	int stat_type = xmlReader.attributes().value("type").toString().toInt();
-	QString pos = xmlReader.attributes().value("pos").toString();
+	int		stat_type = xmlReader.attributes().value("type").toString().toInt();
+	QString stat_pos = xmlReader.attributes().value("pos").toString();
+
+	QPointF posStat;
+	QStringList list = stat_pos.split(",");
+	if(list.count()>=2)
+		posStat = QPointF(list.at(0).toFloat(),list.at(1).toFloat());
+
+	QPointF posName(10,10);
+	QFont   fontName;
+	QPointF posValue(10,-20);
+
+	iSTAT* stat= STAT_new(stat_id,stat_name);
+	if(stat)
+	{
+		stat->setsType((STAT_TYPE)stat_type);
+	}
 
     xmlReader.readNext();
     while (!xmlReader.atEnd()) {
@@ -637,15 +650,46 @@ void iDoc::readStatElement()
 		{
             if (xmlReader.name() == "name_item") 
 			{
-                readStatNameElement();
+				//read station name element
+				QString name_pos = xmlReader.attributes().value("pos").toString();
+				QStringList list = name_pos.split(",");
+				if(list.count()>=2)
+					posName = QPointF(list.at(0).toFloat(),list.at(1).toFloat());
+
+				fontName.fromString(xmlReader.attributes().value("font").toString());    
+				QString name_text = xmlReader.readElementText();
+
+
+				if (xmlReader.isEndElement())
+					xmlReader.readNext();
             } 
 			else if (xmlReader.name() == "value_item") 
 			{
-                readStatValueElement();
+				//read station value element
+				QString value_pos = xmlReader.attributes().value("pos").toString();
+				QStringList list = value_pos.split(",");
+				if(list.count()>=2)
+					posValue = QPointF(list.at(0).toFloat(),list.at(1).toFloat());
+
+				PF_VTYPE vGen	= (PF_VTYPE)xmlReader.attributes().value("gen_view").toString().toInt();
+				PF_VTYPE vLoad	=(PF_VTYPE)xmlReader.attributes().value("load_view").toString().toInt();
+				bool bLoad		= QVariant(xmlReader.attributes().value("load_show").toString()).toBool();
+				bool bComp		= QVariant(xmlReader.attributes().value("comp_show").toString()).toBool();
+				QString value_text = xmlReader.readElementText();
+				stat->setPowerType(vGen);
+				stat->setloadshown(bLoad);
+				stat->setLoadType(vLoad);
+				stat->setcompensationshown(bComp);
+
+
+				if (xmlReader.isEndElement())
+					xmlReader.readNext();
             } 
 			else if (xmlReader.name() == "nodes") 
 			{
-                readNodes();
+				QList<iNodeData *> listNodes;
+                readNodes(listNodes);
+				stat->setNodes(listNodes);
             }
 			else 
 			{
@@ -655,29 +699,10 @@ void iDoc::readStatElement()
             xmlReader.readNext();
         }
     }
+	emit statAdded(stat,posStat,fontName,posName,posValue);
 }
 
-void iDoc::readStatNameElement()
-{
-	QString pos = xmlReader.attributes().value("pos").toString();
-	QString font = xmlReader.attributes().value("font").toString();    
-	QString name = xmlReader.readElementText();
-    if (xmlReader.isEndElement())
-        xmlReader.readNext();
-}
-
-void iDoc::readStatValueElement()
-{
-	QString pos = xmlReader.attributes().value("pos").toString();
-	QString gen_view = xmlReader.attributes().value("gen_view").toString();
-	QString load_view = xmlReader.attributes().value("load_view").toString();
-	QString comp_view = xmlReader.attributes().value("comp_view").toString();
-    QString name = xmlReader.readElementText();
-    if (xmlReader.isEndElement())
-        xmlReader.readNext();
-}
-
-void iDoc::readNodes()
+void iDoc::readNodes(QList<iNodeData *> &listNodes)
 {
    xmlReader.readNext();
     while (!xmlReader.atEnd()) {
@@ -687,8 +712,21 @@ void iDoc::readNodes()
         }
 
         if (xmlReader.isStartElement()) {
-            if (xmlReader.name() == "node") {
-                readNodeElement();
+            if (xmlReader.name() == "node") 
+			{
+				//read node element
+				int id = xmlReader.attributes().value("id").toString().toInt();
+				QString v_show = xmlReader.attributes().value("v_show").toString();
+				QString name = xmlReader.readElementText();
+				iNodeData* node = getNode(T_BUS,id);
+				if(node)
+				{
+					node->setShowVoltage(QVariant(v_show).toBool());
+					listNodes.append(node);
+				}
+
+				if (xmlReader.isEndElement())
+					xmlReader.readNext();            
             }
 			else 
 			{
@@ -698,16 +736,6 @@ void iDoc::readNodes()
             xmlReader.readNext();
         }
     }
-}
-
-void iDoc::readNodeElement()
-{
-	int id = xmlReader.attributes().value("id").toString().toInt();
-	QString v_show = xmlReader.attributes().value("v_show").toString();
-    QString name = xmlReader.readElementText();
-
-    if (xmlReader.isEndElement())
-        xmlReader.readNext();
 }
 
 void iDoc::skipUnknownElement()
