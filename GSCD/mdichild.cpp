@@ -60,8 +60,7 @@ void MdiChild::newFile(const QString& datafile)
 
     QApplication::restoreOverrideCursor();
 
-    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
-            this, SLOT(documentWasModified()));
+    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)), this, SLOT(documentWasModified()));
 }
 
 bool MdiChild::loadFile(const QString &fileName)
@@ -86,8 +85,7 @@ bool MdiChild::loadFile(const QString &fileName)
 
     setCurrentFile(fileName);
 
-    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
-            this, SLOT(documentWasModified()));
+    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)), this, SLOT(documentWasModified()));
 
     return true;
 }
@@ -179,7 +177,7 @@ void MdiChild::setCurrentFile(const QString &fileName)
     //document()->setModified(false);
 
     setWindowModified(false);
-    setWindowTitle(userFriendlyCurrentFile() + "[*]");
+    setWindowTitle(userFriendlyCurrentFile());
 }
 
 QString MdiChild::strippedName(const QString &fullFileName)
