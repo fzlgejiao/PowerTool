@@ -119,15 +119,13 @@ private:
     QColor		myTextColor;
     QColor		myItemColor;
     QColor		myLineColor;
-
 	
-
 public slots:
 	void addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName = QPointF(10,10),QPointF& posValue = QPointF(10,-20));
 
-
 signals:
 	void modeDone();
+	void applyNameFont2all(QFont &font);
 };
 //! [0]
 

@@ -58,7 +58,7 @@ iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 	m_power_showtype=VALUE_ADDUP;
 	m_load_showtype=VALUE_ADDUP;
 	is_loadshown=false;
-	is_compensationshown=false;
+	is_compensationshown=false;	
 }
 iSTAT::~iSTAT()
 {
@@ -78,7 +78,7 @@ void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 	m_nodeDatas = listNodes;
 }
 
-QString iSTAT::value(double sbase,UNIT_TYPE type)
+QString iSTAT::value(double sbase,UNIT_TYPE type,bool showReactivePower)
 {
 	QString valueStr="";
 	QString loadlistStr="";
@@ -111,7 +111,12 @@ QString iSTAT::value(double sbase,UNIT_TYPE type)
 				totalPG+=nodePG;
 				totalQG+=nodeQG;
 			}else
-				valueStr+=QString("G:%1+j%2 \n").arg(nodePG,0,'f',3,QLatin1Char('0')).arg(nodeQG,0,'f',3,QLatin1Char('0'));
+			{
+				if(showReactivePower)
+					valueStr+=QString("G:%1+j%2 \n").arg(nodePG,0,'f',3,QLatin1Char('0')).arg(nodeQG,0,'f',3,QLatin1Char('0'));
+				else 
+					valueStr+=QString("G:%1 \n").arg(nodePG,0,'f',3,QLatin1Char('0'));
+			}
 		}
 
 		if((nodePL!=0)||(nodeQL!=0)){
@@ -120,7 +125,12 @@ QString iSTAT::value(double sbase,UNIT_TYPE type)
 				totalPL+=nodePL;
 				totalQL+=nodeQL;
 			}else
-				loadlistStr+=QString("L:%1+j%2 \n").arg(nodePL,0,'f',3,QLatin1Char('0')).arg(nodeQL,0,'f',3,QLatin1Char('0'));
+			{
+				if(showReactivePower)
+					loadlistStr+=QString("L:%1+j%2 \n").arg(nodePL,0,'f',3,QLatin1Char('0')).arg(nodeQL,0,'f',3,QLatin1Char('0'));
+				else
+					loadlistStr+=QString("L:%1 \n").arg(nodePL,0,'f',3,QLatin1Char('0'));
+			}
 		}
 
 		if((nodeGL!=0)||(nodeBL!=0)){
@@ -130,18 +140,32 @@ QString iSTAT::value(double sbase,UNIT_TYPE type)
 		}
 	}
 	if((valueStr=="")&&((totalPG+totalQG)!=0))
-		valueStr+=QString("G:%1+j%2 \n").arg(totalPG,0,'f',3,QLatin1Char('0')).arg(totalQG,0,'f',3,QLatin1Char('0'));
+	{
+		if(showReactivePower)
+			valueStr+=QString("G:%1+j%2 \n").arg(totalPG,0,'f',3,QLatin1Char('0')).arg(totalQG,0,'f',3,QLatin1Char('0'));
+		else 
+			valueStr+=QString("G:%1 \n").arg(totalPG,0,'f',3,QLatin1Char('0'));
+	}
 	if(is_loadshown)
 	{
 		if((loadlistStr=="")&&((totalPL+totalQL)!=0))
-			valueStr+=QString("L:%1+j%2 \n").arg(totalPL,0,'f',3,QLatin1Char('0')).arg(totalQL,0,'f',3,QLatin1Char('0'));
+		{
+			if(showReactivePower)
+				valueStr+=QString("L:%1+j%2 \n").arg(totalPL,0,'f',3,QLatin1Char('0')).arg(totalQL,0,'f',3,QLatin1Char('0'));
+			else
+				valueStr+=QString("L:%1 \n").arg(totalPL,0,'f',3,QLatin1Char('0'));
+		}
 		else 
 			valueStr+=loadlistStr;
 	}
 	if((is_compensationshown)&&((totalGL+totalBL)!=0))
-		valueStr+=QString("S:%1+j%2").arg(totalGL,0,'f',3,QLatin1Char('0')).arg(totalBL,0,'f',3,QLatin1Char('0'));
-
-	return valueStr;
+	{		
+		if(showReactivePower)
+			valueStr+=QString("S:%1+j%2 \n").arg(totalGL,0,'f',3,QLatin1Char('0')).arg(totalBL,0,'f',3,QLatin1Char('0'));
+		else 
+			valueStr+=QString("S:%1 \n").arg(totalGL,0,'f',3,QLatin1Char('0'));
+	}
+	return valueStr.trimmed();	
 }
 //void iSTAT::removeNodes(const QList<iNodeData *>& listNodes)
 //{
@@ -225,6 +249,11 @@ QString iSTAT::allNodeVoltage(bool withangle,UNIT_TYPE unit) const
 	}
 	return value;
 }
+
+void iSTAT::OnapplyNameFont2all(QFont &font)
+{
+	this->itemName()->setFont(font);
+}
 void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 {
 	if(changes & CHG_CONTROLPANEL_SHOWTYPE)
@@ -258,9 +287,21 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWBRNACHVALUE)
 	{	
+		foreach(Arrow *arrow,this->myItem()->getArows())
+		{
+			 QList<QGraphicsItem *> valueitems=arrow->childItems();
+			 if(valueitems.length()==1)
+			 {
+				 DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(valueitems.first());
+				 if(txtItem)
+					 txtItem->setVisible(settings.isShowBranchValue);
+			 }
+		}
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWREACTIVEVALUE)
 	{	
+		double base=this->nodeDatas().first()->getSBase();
+		this->itemValue()->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWADMITTANCE)
 	{	
@@ -273,7 +314,7 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 			//Change the station value to current unit type
 		{
 			double base=this->nodeDatas().first()->getSBase();
-			this->itemValue()->setPlainText(this->value(base,settings.unittype));
+			this->itemValue()->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
 		}
 		if(settings.isShowAllNodeVoltage)
 		{

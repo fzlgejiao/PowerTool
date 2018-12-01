@@ -18,6 +18,9 @@ AreaSetting::AreaSetting(QSize &size,QWidget *parent)
 	ui.spinBox_width->setValue(m_size.width());
 	ui.spinBox_height->setValue(m_size.height());
 
+	ui.spinBox_height->setToolTip(QString(tr("Min=%1  Max=%2")).arg(ui.spinBox_height->minimum()).arg(ui.spinBox_height->maximum()));
+	ui.spinBox_width->setToolTip(QString(tr("Min=%1  Max=%2")).arg(ui.spinBox_width->minimum()).arg(ui.spinBox_width->maximum()));
+
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
 }

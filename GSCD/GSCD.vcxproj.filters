@@ -170,15 +170,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_areasetting.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="newdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_newdialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_newdialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="diagramnoteitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -187,6 +178,15 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_diagramnoteitem.cpp">
       <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="newdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_newdialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_newdialog.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,13 +268,13 @@
     <CustomBuild Include="areasetting.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="newdialog.h">
+    <CustomBuild Include="diagramnoteitem.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="newdialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="diagramnoteitem.h">
+    <CustomBuild Include="newdialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

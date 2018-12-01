@@ -221,31 +221,31 @@ public:
 	QString name(){return m_Name;}
 	void	setName(const QString& name){m_Name=name;}
 	QString value(){return m_Value;}
-	QString value(double sbase,UNIT_TYPE type);
+	QString value(double sbase,UNIT_TYPE type,bool showReactivePower);
 	void	setValue(const QString& value){m_Value = value;}
 	QString nodeVoltage(bool withangle,UNIT_TYPE unit) const;
 	QString allNodeVoltage(bool withangle,UNIT_TYPE unit) const;
 
 	STAT_TYPE	sType(){return m_sType;}
-	void		setsType(STAT_TYPE type){m_sType = type;}
+	void	setsType(STAT_TYPE type){m_sType = type;}
 
-	void		setNodes(const QList<iNodeData *>& listNodes);
-	//void		addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
-	//void		removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
-	//void		removeNodes(const QList<iNodeData *>& listNodes);
+	void	setNodes(const QList<iNodeData *>& listNodes);
+	//void	addNode(iNodeData * node){node->statAdded(Id()),m_nodeDatas.append(node);}
+	//void    removeNode(iNodeData *node){node->statRemoved(),m_nodeDatas.removeOne(node); }
+	//void    removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
-	void		setItem(DiagramItem* item){m_itemStat = item;}
+	void	setItem(DiagramItem* item){m_itemStat = item;}
 	DiagramItem* myItem(){return m_itemStat;}
 
-	void		setItemName(DiagramTextItem* item){m_itemName = item;}
+	void	setItemName(DiagramTextItem* item){m_itemName = item;}
 	DiagramTextItem* itemName(){return m_itemName;}
-	void		setItemValue(DiagramTextItem* item){m_itemValue = item;}
+	void	setItemValue(DiagramTextItem* item){m_itemValue = item;}
 	DiagramTextItem* itemValue(){return m_itemValue;}
 
-	void		addSlink(iSLINK* slink);
-	void		removeSlinks();
-	void		removeSlink(iSLINK* slink);
+	void	addSlink(iSLINK* slink);
+	void	removeSlinks();
+	void	removeSlink(iSLINK* slink);	
 
 	PF_VTYPE	powerShowtype(){return m_power_showtype;}
 	void		setPowerType(PF_VTYPE type){m_power_showtype=type;}
@@ -253,13 +253,14 @@ public:
 	PF_VTYPE	loadShowtype(){return m_load_showtype;}
 	void		setLoadType(PF_VTYPE type){m_load_showtype=type;}
 
-	bool		isshowload(){return is_loadshown;}
-	void		setloadshown(bool value){is_loadshown=value;}
+	bool isshowload(){return is_loadshown;}
+	void setloadshown(bool value){is_loadshown=value;}
 
-	bool		isshowcompensation(){return is_compensationshown;}
-	void		setcompensationshown(bool value){is_compensationshown=value;}
+	bool isshowcompensation(){return is_compensationshown;}
+	void setcompensationshown(bool value){is_compensationshown=value;}
 public slots:
 		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
+		void OnapplyNameFont2all(QFont &font);
 
 private:
 	friend class iDoc;
