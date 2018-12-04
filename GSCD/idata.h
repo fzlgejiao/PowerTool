@@ -253,11 +253,11 @@ public:
 	PF_VTYPE	loadShowtype(){return m_load_showtype;}
 	void		setLoadType(PF_VTYPE type){m_load_showtype=type;}
 
-	bool isshowload(){return is_loadshown;}
-	void setloadshown(bool value){is_loadshown=value;}
+	bool	isshowload(){return is_loadshown;}
+	void	setloadshown(bool value){is_loadshown=value;}
 
-	bool isshowcompensation(){return is_compensationshown;}
-	void setcompensationshown(bool value){is_compensationshown=value;}
+	bool	isshowcompensation(){return is_compensationshown;}
+	void	setcompensationshown(bool value){is_compensationshown=value;}
 public slots:
 		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
 		void OnapplyNameFont2all(QFont &font);
@@ -268,8 +268,8 @@ private:
 	QString			m_Value;																		//nodes voltage value(can be more than one node,e.g "v1:v2")
 	STAT_TYPE		m_sType;																		//station type
 
-	PF_VTYPE m_power_showtype;
-	PF_VTYPE m_load_showtype;
+	PF_VTYPE		m_power_showtype;
+	PF_VTYPE		m_load_showtype;
 
 	DiagramItem*	 m_itemStat;																	//pointer to station diagram item
 	DiagramTextItem* m_itemName;																	//pointer to station name text item

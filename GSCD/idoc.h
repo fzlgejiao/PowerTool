@@ -16,11 +16,18 @@ public:
 	iDoc(QObject *parent);
 	~iDoc();
 	void	close();
+	bool	isModified(){return m_bModified;}
+	void	setModified(bool m){m_bModified = m;}
 
 	bool	readDataFile(const QString& fileName);
 	bool	readMapFile(const QString& fileName);
 	QString& dataFile(){return m_szDataFile;}
 	QString& mapFile(){return m_szMapFile;}
+	void	setDataFile(const QString& dataFile){m_szDataFile = dataFile;}
+	bool	writeMapFile(const QString& mapFile);
+	void	writeStats(QXmlStreamWriter *xmlWriter);
+	void	writeNotes(QXmlStreamWriter *xmlWriter);
+	void	writeLegends(QXmlStreamWriter *xmlWriter);
 
 	int		STAT_getId();																			//get available station id for a new station
 	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
@@ -50,15 +57,15 @@ public:
 	QMap<int,iSTAT *>&   getStatlist(){return listSTAT;}
 
 	ControlPanel getControlPanel(){return m_controlpanel;}
-	void setControlPanel(ControlPanel &value,uint changes);
+	void	setControlPanel(ControlPanel &value,uint changes);
 
 	iAREA*	getAREA(const QString& name);
 
-	QSize getAreaSize(){return m_AreaSize; }
-	void  setAreaSize(const QSize &size);
+	QSize	getAreaSize(){return m_AreaSize; }
+	void	setAreaSize(const QSize &size);
 
 	iData*	Uid2Data(int uid);
-	double sBase(){return SBase;}
+	double	sBase(){return SBase;}
 
 	//test func
 	void	test();
@@ -113,6 +120,7 @@ private:
 	double			SBase;
 	QString			m_szDataFile;
 	QString			m_szMapFile;
+	bool			m_bModified;
 signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);

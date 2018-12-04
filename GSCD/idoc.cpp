@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QXmlStreamWriter>
 #include <iostream>
+#include "diagramitem.h"
+#include "diagramtextitem.h"
 
 
 iDoc::iDoc(QObject *parent)
@@ -524,17 +526,28 @@ bool iDoc::readMapFile(const QString& fileName)
     xmlReader.setDevice(&file);
 
     xmlReader.readNext();
-    while (!xmlReader.atEnd()) {
-        if (xmlReader.isStartElement()) {
-            if (xmlReader.name() == "map") {
-				readMapElement();
-            } else {
-                xmlReader.raiseError(QObject::tr("Not a map file"));
-            }
-        } else {
-            xmlReader.readNext();
-        }
-    }
+    while (!xmlReader.atEnd()) 
+	{
+		if (xmlReader.isStartElement()) 
+		{
+			if (xmlReader.name() == "map") 
+			{
+				//get data file name
+				m_szDataFile = xmlReader.attributes().value("data").toString();
+				QString version = xmlReader.attributes().value("version").toString();
+
+				readMapElement();																	//read map element from map file
+			}
+			else 
+			{
+				xmlReader.raiseError(QObject::tr("Not a map file"));
+			}
+		} 
+		else 
+		{
+			xmlReader.readNext();
+		}
+	}
 
 	file.close();
     if (xmlReader.hasError()) {
@@ -563,15 +576,7 @@ void iDoc::readMapElement()
         }
 
         if (xmlReader.isStartElement()) {
-            if (xmlReader.name() == "datafile") 
-			{
-				//read data file element
-				m_szDataFile = xmlReader.readElementText();
-				readDataFile(m_szDataFile);
-				if (xmlReader.isEndElement())
-					xmlReader.readNext();
-            }
-			else if(xmlReader.name() == "stats")  
+			if(xmlReader.name() == "stats")  
 			{
 				readStations();
 			}
@@ -753,4 +758,86 @@ void iDoc::skipUnknownElement()
             xmlReader.readNext();
         }
     }
+}
+bool iDoc::writeMapFile(const QString& mapFile)
+{
+    QFile file(mapFile);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        std::cerr << "Error: Cannot write file "
+                  << qPrintable(mapFile) << ": "
+                  << qPrintable(file.errorString()) << std::endl;
+        return false;
+    }
+
+    QXmlStreamWriter xmlWriter(&file);
+    xmlWriter.setAutoFormatting(true);
+    xmlWriter.writeStartDocument();
+    xmlWriter.writeStartElement("map");
+	xmlWriter.writeAttribute("data", this->m_szDataFile);
+	xmlWriter.writeAttribute("version", "1.0");
+    writeStats(&xmlWriter);
+    xmlWriter.writeEndDocument();
+    file.close();
+    if (file.error()) {
+        std::cerr << "Error: Cannot write file "
+                  << qPrintable(mapFile) << ": "
+                  << qPrintable(file.errorString()) << std::endl;
+        return false;
+    }
+    return true;
+}
+void iDoc::writeStats(QXmlStreamWriter *xmlWriter)
+{
+    xmlWriter->writeStartElement("stats");
+	foreach (iSTAT* stat, listSTAT)
+	{
+		//<stat>
+		xmlWriter->writeStartElement("stat");
+		xmlWriter->writeAttribute("id", QString::number(stat->Id()));
+		xmlWriter->writeAttribute("name", stat->name());
+		DiagramItem* item = stat->myItem();
+		xmlWriter->writeAttribute("pos", QString("%1,%2").arg(item->pos().x()).arg(item->pos().y()));
+
+		//<name_item>
+		xmlWriter->writeStartElement("name_item");
+		DiagramTextItem* item_N = stat->itemName();
+		xmlWriter->writeAttribute("pos", QString("%1,%2").arg(item_N->pos().x()).arg(item_N->pos().y()));
+		xmlWriter->writeAttribute("font",item_N->font().toString());
+		xmlWriter->writeEndElement();
+
+		//<value_item>
+		xmlWriter->writeStartElement("value_item");
+		DiagramTextItem* item_V = stat->itemValue();
+		xmlWriter->writeAttribute("pos", QString("%1,%2").arg(item_V->pos().x()).arg(item_V->pos().y()));
+		xmlWriter->writeAttribute("gen_view",QString::number(stat->powerShowtype()));
+		xmlWriter->writeAttribute("load_view",QString::number(stat->loadShowtype()));
+		xmlWriter->writeAttribute("load_show",stat->isshowload()?"true":"false");
+		xmlWriter->writeAttribute("comp_show",stat->isshowcompensation()?"true":"false");
+		xmlWriter->writeEndElement();
+
+		//<nodes>
+		xmlWriter->writeStartElement("nodes");
+		foreach(iNodeData* node,stat->nodeDatas())
+		{
+			xmlWriter->writeStartElement("node");
+			xmlWriter->writeAttribute("id", QString::number(node->Id()));
+			xmlWriter->writeAttribute("load_show",node->isShowVoltge()?"true":"false");
+			QString name;
+			if(node->type() == T_BUS)
+				name = ((iBUS*)node)->name();
+			xmlWriter->writeCharacters(name);
+			xmlWriter->writeEndElement();
+		}
+		xmlWriter->writeEndElement();
+
+		xmlWriter->writeEndElement();
+	}
+    xmlWriter->writeEndElement();
+
+}
+void iDoc::writeNotes(QXmlStreamWriter *xmlWriter)
+{
+}
+void iDoc::writeLegends(QXmlStreamWriter *xmlWriter)
+{
 }
