@@ -13,6 +13,7 @@
 #include "diagramitem.h"
 #include "arrow.h"
 #include "newdialog.h"
+#include <iostream>
 
 const int InsertTextButton = 10;
 
@@ -161,8 +162,9 @@ MdiChild *MainWindow::createMdiChild()
 	connect(scene, SIGNAL(selectionChanged()),this, SLOT(OnSelectionChanged()));
 	connect(scene, SIGNAL(modeDone()),this, SLOT(OnModeDone()));
 
-	connect(doc,SIGNAL(areaSizeChanged(QSize &)),child,SLOT(OnAreaSizeChanged(QSize &)));
-	connect(child,SIGNAL(scaleChanged(int)),this,SLOT(OnscaleChanged(int)));
+	connect(doc,   SIGNAL(areaSizeChanged(QSize &)),child,SLOT(OnAreaSizeChanged(QSize &)));
+	connect(child, SIGNAL(scaleChanged(int)),this,SLOT(OnscaleChanged(int)));
+
 	return child;
 }
 
@@ -545,110 +547,6 @@ void MainWindow::createStatusBar()
 	barVersion->setText(qApp->applicationVersion());
 	statusBar()->insertPermanentWidget(1,barVersion);
 }
-//
-//void MainWindow::createToolBox()
-//{
-//	buttonGroup = new QButtonGroup(this);
-//	buttonGroup->setExclusive(false);
-//	connect(buttonGroup, SIGNAL(buttonClicked(int)),
-//		this, SLOT(buttonGroupClicked(int)));
-//	QGridLayout *layout = new QGridLayout;
-//	layout->addWidget(createCellWidget(tr("Station"),											//Conditional
-//		DiagramItem::Conditional), 0, 0);
-//	layout->addWidget(createCellWidget(tr("Generator"),										//Process
-//		DiagramItem::Step), 0, 1);
-//	layout->addWidget(createCellWidget(tr("Transformer"),										//IO
-//		DiagramItem::Io), 1, 0);
-//	//! [21]
-//
-//	QToolButton *textButton = new QToolButton;
-//	textButton->setCheckable(true);
-//	buttonGroup->addButton(textButton, InsertTextButton);
-//	textButton->setIcon(QIcon(QPixmap(":/images/textpointer.png")
-//		.scaled(30, 30)));
-//	textButton->setIconSize(QSize(50, 50));
-//	QGridLayout *textLayout = new QGridLayout;
-//	textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
-//	textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);
-//	QWidget *textWidget = new QWidget;
-//	textWidget->setLayout(textLayout);
-//	layout->addWidget(textWidget, 1, 1);
-//
-//	layout->setRowStretch(3, 10);
-//	layout->setColumnStretch(2, 10);
-//
-//	QWidget *itemWidget = new QWidget;
-//	itemWidget->setLayout(layout);
-//
-//	backgroundButtonGroup = new QButtonGroup(this);
-//	connect(backgroundButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-//		this, SLOT(backgroundButtonGroupClicked(QAbstractButton*)));
-//
-//	QGridLayout *backgroundLayout = new QGridLayout;
-//	backgroundLayout->addWidget(createBackgroundCellWidget(tr("Blue Grid"),
-//		":/images/background1.png"), 0, 0);
-//	backgroundLayout->addWidget(createBackgroundCellWidget(tr("White Grid"),
-//		":/images/background2.png"), 0, 1);
-//	backgroundLayout->addWidget(createBackgroundCellWidget(tr("Gray Grid"),
-//		":/images/background3.png"), 1, 0);
-//	backgroundLayout->addWidget(createBackgroundCellWidget(tr("No Grid"),
-//		":/images/background4.png"), 1, 1);
-//
-//	backgroundLayout->setRowStretch(2, 10);
-//	backgroundLayout->setColumnStretch(2, 10);
-//
-//	QWidget *backgroundWidget = new QWidget;
-//	backgroundWidget->setLayout(backgroundLayout);
-//
-//
-//	//! [22]
-//	toolBox = new QToolBox;
-//	toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
-//	toolBox->setMinimumWidth(itemWidget->sizeHint().width());
-//	toolBox->addItem(itemWidget, tr("Basic Shapes"));
-//	toolBox->addItem(backgroundWidget, tr("Backgrounds"));
-//}
-//
-//QWidget *MainWindow::createCellWidget(const QString &text,
-//	DiagramItem::DiagramType type)
-//{
-//	DiagramItem item(type); 
-//	QIcon icon(item.image());
-//
-//	QToolButton *button = new QToolButton;
-//	button->setIcon(icon);
-//	button->setIconSize(QSize(50, 50));
-//	button->setCheckable(true);
-//	buttonGroup->addButton(button, int(type));
-//
-//	QGridLayout *layout = new QGridLayout;
-//	layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-//	layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
-//
-//	QWidget *widget = new QWidget;
-//	widget->setLayout(layout);
-//
-//	return widget;
-//}
-//QWidget *MainWindow::createBackgroundCellWidget(const QString &text,
-//	const QString &image)
-//{
-//	QToolButton *button = new QToolButton;
-//	button->setText(text);
-//	button->setIcon(QIcon(image));
-//	button->setIconSize(QSize(50, 50));
-//	button->setCheckable(true);
-//	backgroundButtonGroup->addButton(button);
-//
-//	QGridLayout *layout = new QGridLayout;
-//	layout->addWidget(button, 0, 0, Qt::AlignHCenter);
-//	layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
-//
-//	QWidget *widget = new QWidget;
-//	widget->setLayout(layout);
-//
-//	return widget;
-//}
 
 void MainWindow::readSettings()
 {
@@ -807,7 +705,7 @@ void MainWindow::newFile()
 		return;
 
 	MdiChild *child = createMdiChild();																//create child when new a file
-	child->newFile(dlg.FileName());
+	child->newFile(dlg.FileName());																	//new a map with a data file(not saved to a map file)
 	statusBar()->showMessage(tr("File loaded"), 2000);
 	child->show();
 	barDataFile->setText(dlg.FileName());
@@ -815,21 +713,32 @@ void MainWindow::newFile()
 
 void MainWindow::open()
 {
-	QString fileName = QFileDialog::getOpenFileName(this,tr("Open map file"),".",tr("Map File (*.xml)"));
-	if (!fileName.isEmpty()) {
-		QMdiSubWindow *existing = findMdiChild(fileName);
+	QString mapFile = QFileDialog::getOpenFileName(this,tr("Open map file"),".",tr("Map File (*.xml)"));
+	if (!mapFile.isEmpty()) 
+	{
+		QMdiSubWindow *existing = findMdiChild(mapFile);
 		if (existing) {
 			mdiArea->setActiveSubWindow(existing);
 			return;
 		}
+		QString dataFile = getDataFile(mapFile);													//get data file name when open a new map file
+		if(dataFile == "")
+			return;
 
 		MdiChild *child = createMdiChild();															//create child when open a file
 
-		if (child->loadFile(fileName)) {
+		if (child->loadFile(mapFile,dataFile))														//load data(maybe with new data file) and map from map file
+		{
 			statusBar()->showMessage(tr("File loaded"), 2000);
 			child->show();
 			barDataFile->setText(child->doc()->dataFile());
-		} else {
+
+			child->doc()->setModified(false);
+
+			connect(child->scene(), SIGNAL(changed ( const QList<QRectF> &)), child, SLOT(documentWasModified()));
+		} 
+		else 
+		{
 			child->close();
 		}
 	}
@@ -885,12 +794,12 @@ void MainWindow::printPreview()
 	QPrintPreviewDialog preview(&printer,this);	
 	preview.setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint);		
 
-	connect(&preview, SIGNAL(paintRequested(QPrinter*)), SLOT(Onpaintrequested(QPrinter*)));
+	connect(&preview, SIGNAL(paintRequested(QPrinter*)), SLOT(OnPaintRequested(QPrinter*)));
 	preview.showMaximized();
 	preview.exec();	
 }
 
-void MainWindow::Onpaintrequested(QPrinter *printer)
+void MainWindow::OnPaintRequested(QPrinter *printer)
 {		
 	printer->setPageMargins(0.7,0.75,0.7,0.75,QPrinter::Inch);				//Default Margins
 	
@@ -903,8 +812,13 @@ void MainWindow::openRecentFile()
 	QAction *action = qobject_cast<QAction *>(sender());
 	if (action)
 	{
+		QString mapFile = action->data().toString();
+		QString dataFile = getDataFile(mapFile);													//get data file name when open recent map file
+		if(dataFile == "")
+			return;
+
 		MdiChild *child = createMdiChild();															//create child when open a recent file
-		if (child->loadFile(action->data().toString())) {
+		if (child->loadFile(mapFile,dataFile)) {
 			statusBar()->showMessage(tr("File loaded"), 2000);
 			child->show();
 		} else {
@@ -1086,4 +1000,57 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 	{
         QMainWindow::keyPressEvent(event);
     }
+}
+QString MainWindow::getDataFile(const QString& mapFile)
+{
+	QString dataFile;
+	QXmlStreamReader xmlReader;
+    QFile file(mapFile);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        std::cerr << "Error: Cannot read file " << qPrintable(mapFile)
+                  << ": " << qPrintable(file.errorString())
+                  << std::endl;
+        return "";
+    }
+    xmlReader.setDevice(&file);
+
+    xmlReader.readNext();
+    while (!xmlReader.atEnd()) 
+	{
+		if (xmlReader.isStartElement()) 
+		{
+			if (xmlReader.name() == "map") 
+			{
+				//deal with data file from map file
+				dataFile = xmlReader.attributes().value("data").toString();
+				break;
+			}
+			else 
+			{
+				xmlReader.raiseError(QObject::tr("Not a map file"));
+			}
+		} 
+		else 
+		{
+			xmlReader.readNext();
+		}
+	}
+
+	file.close();
+    if (xmlReader.hasError()) {
+        std::cerr << "Error: Failed to parse file "
+                  << qPrintable(mapFile) << ": "
+                  << qPrintable(xmlReader.errorString()) << std::endl;
+        return "";
+    } else if (file.error() != QFile::NoError) {
+        std::cerr << "Error: Cannot read file " << qPrintable(mapFile)
+                  << ": " << qPrintable(file.errorString())
+                  << std::endl;
+        return "";
+    }
+	//prompt to user for change data file
+	NewDialog dlg(this,dataFile);
+	if(dlg.exec() == QDialog::Rejected)
+		return "";
+	return dlg.FileName();
 }

@@ -14,34 +14,34 @@ public:
 	MdiChild(QGraphicsScene * scene,iDoc* doc);
 	~MdiChild();
 
-    void newFile(const QString& datafile);
-    bool loadFile(const QString &fileName);
-    bool save();
-    bool saveAs();
-    bool saveFile(const QString &fileName);
+    void	newFile(const QString& datafile);
+    bool	loadFile(const QString &mapFile,const QString& dataFile);
+    bool	save();
+    bool	saveAs();
+    bool	saveFile(const QString &fileName);
     QString userFriendlyCurrentFile();
     QString currentFile() { return curFile; }
 	DiagramScene* scene(){return m_scene;}
-	iDoc *doc(){return m_doc;}
-	int getchildScale(){return m_scale;}
-	void updatechildScale(int scale);
-	void setScale(int scale);
+	iDoc *	doc(){return m_doc;}
+	int		getchildScale(){return m_scale;}
+	void	updatechildScale(int scale);
+	void	setScale(int scale);
 
 protected:
-    void closeEvent(QCloseEvent *event);
-	void wheelEvent(QWheelEvent * wheelEvent);
+    void	closeEvent(QCloseEvent *event);
+	void	wheelEvent(QWheelEvent * wheelEvent);
 
 public slots:
-    void documentWasModified();
-	//void OnScaleChanged(const QString &);
-	void OnAreaSizeChanged(QSize & size);
+    void	documentWasModified();
+	//void	OnScaleChanged(const QString &);
+	void	OnAreaSizeChanged(QSize & size);
 
 signals:
 	void scaleChanged(int scale);
 
 private:
-    bool maybeSave();
-    void setCurrentFile(const QString &fileName);
+    bool	maybeSave();
+    void	setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 	
     DiagramScene *m_scene;

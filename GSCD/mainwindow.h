@@ -44,14 +44,11 @@ private:
     void readSettings();
     void writeSettings();
 
-    MdiChild *createMdiChild();
-    void setActiveSubWindow(QWidget *window);
-    MdiChild *activeMdiChild();
+    MdiChild *	createMdiChild();
+    void		setActiveSubWindow(QWidget *window);
+    MdiChild *	activeMdiChild();
     QMdiSubWindow *findMdiChild(const QString &fileName);
-	//QWidget *createCellWidget(const QString &text,
-	//	DiagramItem::DiagramType type);
-	//QWidget *createBackgroundCellWidget(const QString &text,
-	//	const QString &image);
+	QString		getDataFile(const QString& mapFile);
 
 	Ui::MainWindowClass ui;
     QMdiArea *mdiArea;
@@ -151,7 +148,7 @@ private slots:
     void saveAs();
 	void print();
 	void printPreview();
-	void Onpaintrequested(QPrinter *printer);
+	void OnPaintRequested(QPrinter *printer);
 	void openRecentFile();
 	void OnSubWindowActivated(QMdiSubWindow*);
 

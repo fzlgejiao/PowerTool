@@ -60,17 +60,16 @@ void MdiChild::newFile(const QString& datafile)
 
     QApplication::restoreOverrideCursor();
 
-    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
-            this, SLOT(documentWasModified()));
+    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)), this, SLOT(documentWasModified()));
 }
 
-bool MdiChild::loadFile(const QString &fileName)
+bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
 {
-    QFile file(fileName);
+    QFile file(mapFile);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("GWD"),
                              tr("Cannot read file %1:\n%2.")
-                             .arg(fileName)
+                             .arg(mapFile)
                              .arg(file.errorString()));
         return false;
     }
@@ -78,18 +77,22 @@ bool MdiChild::loadFile(const QString &fileName)
     //QTextStream in(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
     	
-	//todo: open map file
-	m_doc->readMapFile(fileName);
+	//read data and map file
+	bool bRet1 = m_doc->readDataFile(dataFile);														//read data from data file
+	bool bRet2 = m_doc->readMapFile(mapFile);														//read map from map file
+	if(dataFile != m_doc->dataFile())																//data file name changed
+	{
+		m_doc->setDataFile(dataFile);
+		setWindowModified(true);
+	}
+
 	m_scene->clearSelection();
 
     QApplication::restoreOverrideCursor();
 
-    setCurrentFile(fileName);
+    setCurrentFile(mapFile);
 
-    connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)),
-            this, SLOT(documentWasModified()));
-
-    return true;
+    return (bRet1 && bRet2);
 }
 
 bool MdiChild::save()
@@ -113,24 +116,23 @@ bool MdiChild::saveAs()
 
 bool MdiChild::saveFile(const QString &fileName)
 {
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("GWD"),
-                             tr("Cannot write file %1:\n%2.")
-                             .arg(fileName)
-                             .arg(file.errorString()));
-        return false;
-    }
+    //QFile file(fileName);
+    //if (!file.open(QFile::WriteOnly | QFile::Text)) {
+    //    QMessageBox::warning(this, tr("GWD"),
+    //                         tr("Cannot write file %1:\n%2.")
+    //                         .arg(fileName)
+    //                         .arg(file.errorString()));
+    //    return false;
+    //}
 
-    //QTextStream out(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    
 	//todo: save map file
-
+	bool bRet = m_doc->writeMapFile(fileName);
     QApplication::restoreOverrideCursor();
 
-    setCurrentFile(fileName);
-    return true;
+	if(bRet)
+		setCurrentFile(fileName);
+    return bRet;
 }
 
 QString MdiChild::userFriendlyCurrentFile()
@@ -149,14 +151,15 @@ void MdiChild::closeEvent(QCloseEvent *event)
 
 void MdiChild::documentWasModified()
 {
+	m_doc->setModified(true);
 	setWindowModified(true);
 }
 
 bool MdiChild::maybeSave()
 {
-    //if (document()->isModified()) 
+	if (this->isWindowModified()) 
 	{
-	QMessageBox::StandardButton ret;
+		QMessageBox::StandardButton ret;
         ret = QMessageBox::warning(this, tr("GWD"),
                      tr("'%1' has been modified.\n"
                         "Do you want to save your changes?")
@@ -179,7 +182,7 @@ void MdiChild::setCurrentFile(const QString &fileName)
     //document()->setModified(false);
 
     setWindowModified(false);
-    setWindowTitle(userFriendlyCurrentFile() + "[*]");
+    setWindowTitle(userFriendlyCurrentFile());
 }
 
 QString MdiChild::strippedName(const QString &fullFileName)

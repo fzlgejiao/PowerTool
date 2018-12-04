@@ -9,7 +9,7 @@ class NewDialog : public QDialog
 	Q_OBJECT
 
 public:
-	NewDialog(QWidget *parent = 0);
+	NewDialog(QWidget *parent = 0,const QString& dataFile="");
 	~NewDialog();
 	QString FileName(){return m_szFile;}
 
