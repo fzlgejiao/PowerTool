@@ -187,7 +187,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 					iSTAT* stat= myDoc->STAT_new(myDoc->STAT_getId(),dlg.NewStationName());												//create a new station object
 					if(!stat)
 						return;
-					connect(this,SIGNAL(applyNameFont2all(QFont &)),stat,SLOT(OnapplyNameFont2all(QFont &)));
+					
 					QList<iNodeData *> addednodes=dlg.GetAddedNodes();
 					stat->setNodes(addednodes);
 					stat->setsType(dlg.getstationtype());
@@ -561,6 +561,8 @@ void DiagramScene::updateArrows(iSTAT* stat)
 }
 void DiagramScene::addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName,QPointF& posValue)
 {	
+	connect(this,SIGNAL(applyNameFont2all(QFont &)),stat,SLOT(OnapplyNameFont2all(QFont &)));
+
 	//create station diagram item
 	DiagramItem *item = new DiagramItem(stat, 0,this);												//create diagram item for station
 	item->setBrush(myItemColor);

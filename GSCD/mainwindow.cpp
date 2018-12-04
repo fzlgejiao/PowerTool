@@ -788,23 +788,21 @@ void MainWindow::printPreview()
 	MdiChild* child = activeMdiChild(); 
 	if(!child) return;
 
-	//child->scene()->clearSelection();
-	QPrinter printer(QPrinter::ScreenResolution);
+	child->scene()->clearSelection();
+	QPrinter printer(QPrinter::HighResolution);
 	printer.setOrientation(QPrinter::Landscape);						//Default to landscape
 	QPrintPreviewDialog preview(&printer,this);	
 	preview.setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint);		
-
+	printer.setPageMargins(0.3,0.3,0.3,0.3,QPrinter::Inch);				//Default Margins
 	connect(&preview, SIGNAL(paintRequested(QPrinter*)), SLOT(OnPaintRequested(QPrinter*)));
 	preview.showMaximized();
 	preview.exec();	
 }
 
 void MainWindow::OnPaintRequested(QPrinter *printer)
-{		
-	printer->setPageMargins(0.7,0.75,0.7,0.75,QPrinter::Inch);				//Default Margins
-	
+{	
 	QPainter painter(printer);	
-	activeMdiChild()->scene()->render(&painter,QRectF(),QRectF(),Qt::IgnoreAspectRatio);
+	activeMdiChild()->scene()->render(&painter,QRectF(),QRectF(),Qt::KeepAspectRatio);
 }
 
 void MainWindow::openRecentFile()
