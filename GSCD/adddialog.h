@@ -18,11 +18,21 @@ class QFont;
 
 enum Columns
 {
-	Type=0,
+	/*Type=0,
 	ID,
+	Name,*/
 	Name,
+	VB,
+	BelongedAreaName,
 	StationColumnCnt
 };
+
+typedef enum
+{
+	NoIcon   =0,
+	BranchIcon,
+	TransformerIcon
+}IconType;
 
 class AddDialog : public QDialog
 {
@@ -67,8 +77,8 @@ private:
 	iDoc *m_doc;
 	iSTAT *m_editstation;
 	bool is_edit;
-	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node);	
-	iNodeData * GetNodefromID(int nodeid,QList<iNodeData *> nodelist);
+	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon= NoIcon);	
+	//iNodeData * GetNodefromItem(QString name,double refvlotage,QString areaname,QList<iNodeData *> nodelist);
 	void SetTableStyle(QTableWidget *tablewidget);	
 	void ClearTableContext(QTableWidget *tablewidget);
 	//void addGeneratorRows(iGENERATOR *generator);

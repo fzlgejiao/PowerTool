@@ -98,9 +98,9 @@ void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setSelectionBehavior(QAbstractItemView::SelectRows);	//select all row
 	tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);	//can bot be edit
 	//set column width	
-	tablewidget->setColumnWidth(Type,80);
-	tablewidget->setColumnWidth(ID,80);
-	tablewidget->setColumnWidth(Name,100);
+	tablewidget->setColumnWidth(Name,80);
+	tablewidget->setColumnWidth(VB,80);
+	tablewidget->setColumnWidth(BelongedAreaName,100);
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
@@ -149,15 +149,25 @@ void AddDialog::OnComboAreaChanged(int index)
 	//Update counter
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 }
-iNodeData * AddDialog::GetNodefromID(int nodeid,QList<iNodeData *> nodelist)
-{
-	foreach(iNodeData *node,nodelist)
-	{
-		if(node->Id()==nodeid)
-			return node;
-	}
-	return NULL;
-}
+//iNodeData * AddDialog::GetNodefromItem(QString name,double refvlotage,QString areaname,QList<iNodeData *> nodelist)
+//{
+//	foreach(iNodeData *node,nodelist)
+//	{
+//		double voltage=node->GetRefVoltage();
+//		
+//		if(node->type()==T_BUS)
+//		{
+//			iBUS *bus=(iBUS *)node;
+//			iAREA *area=m_doc->getAREA(bus->belongedArea());
+//			if( (bus->name()==name)        &&
+//			    (voltage==refvlotage)      &&
+//			    (area->name()==areaname)	)
+//				return node;
+//		}
+//			
+//	}
+//	return NULL;
+//}
 bool AddDialog::IsAddSite()
 {
 	if(addednodelist.count()>0) return true;
@@ -211,8 +221,10 @@ void AddDialog::OnHiddenTableActived(int row,int column)
 	ClearTableContext(ui.tableWidget_branch);	
 	QList<QTableWidgetItem*> items=ui.tableWidget_hidden->selectedItems();
 	if(items.count()==0) return;
-	QTableWidgetItem *Iditem=items.at(ID);
-	iNodeData *selectnode= GetNodefromID(Iditem->text().toInt(),hiddennodelist);
+
+	QTableWidgetItem *Nameitem=items.at(Name);	
+	iNodeData *selectnode=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();
+	if(!selectnode) return;
 	if(selectnode->type()==T_BUS)
 	{
 		QString connection=QString(tr("connection with %1")).arg(((iBUS *)selectnode)->name());
@@ -223,13 +235,29 @@ void AddDialog::OnHiddenTableActived(int row,int column)
 			iNodeData* fromnode = m_doc->getNode(link->fromUid());
 			iNodeData* tonode = m_doc->getNode(link->toUid());	
 			if(!fromnode || !tonode) continue;					
-			if(selectnode!=fromnode)
+			if((!Branchnodelist.contains(fromnode)) && (selectnode!=fromnode) )
+			{
 				Branchnodelist.append(fromnode);
-			if(selectnode!=tonode)
+				if(link->type()==T_BRANCH)
+				{
+					addNode2Rows(ui.tableWidget_branch,fromnode,BranchIcon);
+				}else if(link->type()==T_TRANSFORMER)
+				{
+					addNode2Rows(ui.tableWidget_branch,fromnode,TransformerIcon);
+				}
+			}
+			if((!Branchnodelist.contains(tonode)) && (selectnode!=tonode) )
+			{
 				Branchnodelist.append(tonode);
-		}
-		foreach(iNodeData *node,Branchnodelist)
-			addNode2Rows(ui.tableWidget_branch,node);
+				if(link->type()==T_BRANCH)
+				{
+					addNode2Rows(ui.tableWidget_branch,tonode,BranchIcon);
+				}else if(link->type()==T_TRANSFORMER)
+				{
+					addNode2Rows(ui.tableWidget_branch,tonode,TransformerIcon);
+				}
+			}
+		}		
 	}
 }
 void AddDialog::OnAddedTableActived(int row,int column)
@@ -239,8 +267,10 @@ void AddDialog::OnAddedTableActived(int row,int column)
 	ClearTableContext(ui.tableWidget_branch);	
 	QList<QTableWidgetItem*> items=ui.tableWidget_added->selectedItems();
 	if(items.count()==0) return;
-	QTableWidgetItem *Iditem=items.at(ID);
-	iNodeData *selectnode= GetNodefromID(Iditem->text().toInt(),addednodelist);
+
+	QTableWidgetItem *Nameitem=items.at(Name);	
+	iNodeData *selectnode=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();
+	if(!selectnode)  return ;
 	if(selectnode->type()==T_BUS)
 	{
 		QString connection=QString(tr("connection with %1")).arg(((iBUS *)selectnode)->name());
@@ -250,14 +280,30 @@ void AddDialog::OnAddedTableActived(int row,int column)
 		{			
 			iNodeData* fromnode = m_doc->getNode(link->fromUid());
 			iNodeData* tonode = m_doc->getNode(link->toUid());	
-			if(!fromnode || !tonode) continue;					
-			if(selectnode!=fromnode)
+			if(!fromnode || !tonode) continue;				
+			if((!Branchnodelist.contains(fromnode)) && (selectnode!=fromnode) )
+			{
 				Branchnodelist.append(fromnode);
-			if(selectnode!=tonode)
+				if(link->type()==T_BRANCH)
+				{
+					addNode2Rows(ui.tableWidget_branch,fromnode,BranchIcon);
+				}else if(link->type()==T_TRANSFORMER)
+				{
+					addNode2Rows(ui.tableWidget_branch,fromnode,TransformerIcon);
+				}
+			}
+			if((!Branchnodelist.contains(tonode)) && (selectnode!=tonode) )
+			{
 				Branchnodelist.append(tonode);
-		}
-		foreach(iNodeData *node,Branchnodelist)
-			addNode2Rows(ui.tableWidget_branch,node);
+				if(link->type()==T_BRANCH)
+				{
+					addNode2Rows(ui.tableWidget_branch,tonode,BranchIcon);
+				}else if(link->type()==T_TRANSFORMER)
+				{
+					addNode2Rows(ui.tableWidget_branch,tonode,TransformerIcon);
+				}
+			}
+		}		
 	}
 }
 void AddDialog::OnBranchNodeAdd()
@@ -276,8 +322,8 @@ void AddDialog::OnAdd()
 	
 	for(int row=0;row<rowscnt;row++)
 	{
-		QTableWidgetItem *item=items.at(columncnt*row+ID);							//get the bus ID cell				
-		iNodeData *node= GetNodefromID(item->text().toInt(),hiddennodelist);
+		QTableWidgetItem *Nameitem=items.at(Name);	
+		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();		
 		if(node==NULL) return;
 		addednodelist.append(node);
 		
@@ -307,8 +353,9 @@ void AddDialog::OnAddAll()
 	{
 		ui.tableWidget_hidden->selectRow(firstrow);	
 		QList<QTableWidgetItem*> items=ui.tableWidget_hidden->selectedItems();
-		QTableWidgetItem* iditem=items.at(ID);
-		iNodeData *node= GetNodefromID(iditem->text().toInt(),hiddennodelist);
+
+		QTableWidgetItem *Nameitem=items.at(Name);	 
+		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();	
 		if(node==NULL) return;
 		addednodelist.append(node);
 		
@@ -338,8 +385,8 @@ void AddDialog::OnRevoke()
 		
 	for(int row=0;row<rowscnt;row++)
 	{
-		QTableWidgetItem *item=items.at(columncnt*row+ID);		//get the bus ID cell
-		iNodeData *node= GetNodefromID(item->text().toInt(),addednodelist);
+		QTableWidgetItem *Nameitem=items.at(Name);	
+		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();		
 		if(node==NULL) return;
 		hiddennodelist.append(node);
 		
@@ -375,9 +422,12 @@ void AddDialog::OnRevokeAll()
 	{
 		ui.tableWidget_added->selectRow(firstrow);	
 		QList<QTableWidgetItem*> items=ui.tableWidget_added->selectedItems();
-		QTableWidgetItem* iditem=items.at(ID);
-		iNodeData *node= GetNodefromID(iditem->text().toInt(),addednodelist);
+
+		QTableWidgetItem *Nameitem=items.at(Name); 
+		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();
+
 		if(node==NULL) return;
+
 		hiddennodelist.append(node);
 		
 		addNode2Rows(ui.tableWidget_hidden,node);
@@ -394,42 +444,38 @@ void AddDialog::OnRevokeAll()
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 	m_changes|=CHG_STAT_DATA;
 }
-void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node)
+void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon)
 {
 	int row = tablewidget->rowCount();
 	tablewidget->insertRow(row);
 	if(node->type()==T_BUS)
 	{
-	QTableWidgetItem *item0 = new QTableWidgetItem("BUS");	
-	
-	QTableWidgetItem *item1 = new QTableWidgetItem();
-	QTableWidgetItem *item2 = new QTableWidgetItem();
-				
-	item1->setText(QString::number(((iBUS *)node)->Id()));
-	item2->setText(((iBUS *)node)->name());
-	
-	tablewidget->setItem(row, Type, item0);
-	tablewidget->setItem(row, ID, item1);
-	tablewidget->setItem(row, Name, item2);
+		QTableWidgetItem *item0 = new QTableWidgetItem();	
+		QTableWidgetItem *item1 = new QTableWidgetItem();
+		QTableWidgetItem *item2 = new QTableWidgetItem();
+		//binding data object to name item(itme0)
+		item0->setData(Qt::UserRole,(uint)node);
+		switch(icon)
+		{	
+		case BranchIcon:
+			{
+			item0->setIcon(QIcon(":/images/link.png"));			
+			break;
+			}
+		case TransformerIcon:
+			item0->setIcon(QIcon(":/images/transformer.png"));
+			break;
+		}
+
+		item0->setText(((iBUS *)node)->name());			
+		item1->setText(QString::number(node->GetRefVoltage()));
+		item2->setText(m_doc->getAREA(((iBUS *)node)->belongedArea())->name());
+
+		tablewidget->setItem(row, Name, item0);
+		tablewidget->setItem(row, VB, item1);
+		tablewidget->setItem(row, BelongedAreaName, item2);
 	}	
 }
-//void AddDialog::addGeneratorRows(iGENERATOR *generator);
-//{
-//	int row = ui.tableWidget_hidden->rowCount();
-//	ui.tableWidget_hidden->insertRow(row);
-//	
-//
-//	QTableWidgetItem *item0 = new QTableWidgetItem("GENERATOR");
-//	QTableWidgetItem *item1 = new QTableWidgetItem();
-//	QTableWidgetItem *item2 = new QTableWidgetItem();
-//	
-//	item1->setText(QString::number(generator->Id()));
-//	item2->setText(generator->name());
-//
-//	ui.tableWidget_hidden->setItem(row, Type, item0);
-//	ui.tableWidget_hidden->setItem(row, ID, item1);
-//	ui.tableWidget_hidden->setItem(row, Name, item2);
-//}
 void AddDialog::OnOk()
 {
 	if(m_editstation)
