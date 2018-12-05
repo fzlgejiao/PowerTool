@@ -60,6 +60,7 @@ public:
 	void	setControlPanel(ControlPanel &value,uint changes);
 
 	iAREA*	getAREA(const QString& name);
+	iAREA*	getAREA(int id){return listAREA.value(id,NULL);}
 
 	QSize	getAreaSize(){return m_AreaSize; }
 	void	setAreaSize(const QSize &size);

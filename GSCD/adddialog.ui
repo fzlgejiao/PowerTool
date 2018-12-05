@@ -104,17 +104,17 @@
    </property>
    <column>
     <property name="text">
-     <string>Type</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>ID</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
      <string>Name</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>VB</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Area</string>
     </property>
    </column>
   </widget>
@@ -221,17 +221,17 @@
    </property>
    <column>
     <property name="text">
-     <string>Type</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>ID</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
      <string>Name</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>VB</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Area</string>
     </property>
    </column>
   </widget>
@@ -259,17 +259,17 @@
    </property>
    <column>
     <property name="text">
-     <string>Type</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>ID</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
      <string>Name</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>VB</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Area</string>
     </property>
    </column>
   </widget>
