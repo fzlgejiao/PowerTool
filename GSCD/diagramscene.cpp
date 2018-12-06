@@ -179,7 +179,10 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 				{
 					AddDialog dlg(myDoc,NULL,pMain);
 					if(dlg.exec()!=QDialog::Accepted)
+					{
+						emit modeDone();
 						return;
+					}
 
 					if(!dlg.IsAddSite()) 
 						return ;

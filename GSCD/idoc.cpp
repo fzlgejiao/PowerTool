@@ -798,6 +798,7 @@ void iDoc::writeStats(QXmlStreamWriter *xmlWriter)
 		xmlWriter->writeStartElement("stat");
 		xmlWriter->writeAttribute("id", QString::number(stat->Id()));
 		xmlWriter->writeAttribute("name", stat->name());
+		xmlWriter->writeAttribute("type", QString::number(stat->sType()));
 		DiagramItem* item = stat->myItem();
 		xmlWriter->writeAttribute("pos", QString("%1,%2").arg(item->pos().x()).arg(item->pos().y()));
 
