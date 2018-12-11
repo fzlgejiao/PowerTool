@@ -27,5 +27,9 @@
         <file alias="delete.png">Resources/images/delete.png</file>
         <file alias="link.png">Resources/images/link.png</file>
         <file alias="transformer.png">Resources/images/transformer.png</file>
+        <file alias="linkyes.png">Resources/images/linkyes.png</file>
+        <file alias="transformeryes.png">Resources/images/transformeryes.png</file>
+        <file alias="transformergray.png">Resources/images/transformergray.png</file>
+        <file alias="linkgray.png">Resources/images/linkgray.png</file>
     </qresource>
 </RCC>
