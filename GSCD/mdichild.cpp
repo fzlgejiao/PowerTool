@@ -82,7 +82,7 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
 	bool bRet2 = m_doc->readMapFile(mapFile);														//read map from map file
 	if(dataFile != m_doc->dataFile())																//data file name changed
 	{
-		m_doc->setDataFile(dataFile);
+		m_doc->setDataFile(dataFile);																//set current opened data file
 		setWindowModified(true);
 	}
 

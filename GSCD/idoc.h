@@ -21,8 +21,8 @@ public:
 
 	bool	readDataFile(const QString& fileName);
 	bool	readMapFile(const QString& fileName);
-	QString& dataFile(){return m_szDataFile;}
-	QString& mapFile(){return m_szMapFile;}
+	QString dataFile(){return m_szDataFile;}
+	QString mapFile(){return m_szMapFile;}
 	void	setDataFile(const QString& dataFile){m_szDataFile = dataFile;}
 	bool	writeMapFile(const QString& mapFile);
 	void	writeStats(QXmlStreamWriter *xmlWriter);

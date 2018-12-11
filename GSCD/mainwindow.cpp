@@ -800,7 +800,7 @@ void MainWindow::printPreview()
 }
 
 void MainWindow::OnPaintRequested(QPrinter *printer)
-{	
+{		
 	QPainter painter(printer);	
 	activeMdiChild()->scene()->render(&painter,QRectF(),QRectF(),Qt::KeepAspectRatio);
 }

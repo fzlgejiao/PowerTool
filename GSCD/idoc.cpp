@@ -139,6 +139,8 @@ bool iDoc::readDataFile(const QString& fileName)
                   << std::endl;
         return false;
     }
+
+	setDataFile(fileName);																			//set current opened data file
     return true;
 }
 
@@ -533,8 +535,9 @@ bool iDoc::readMapFile(const QString& fileName)
 			if (xmlReader.name() == "map") 
 			{
 				//get data file name
-				m_szDataFile = xmlReader.attributes().value("data").toString();
 				QString version = xmlReader.attributes().value("version").toString();
+				QString dataFile = xmlReader.attributes().value("data").toString();
+				setDataFile(dataFile);
 
 				readMapElement();																	//read map element from map file
 			}
@@ -773,8 +776,8 @@ bool iDoc::writeMapFile(const QString& mapFile)
     xmlWriter.setAutoFormatting(true);
     xmlWriter.writeStartDocument();
     xmlWriter.writeStartElement("map");
-	xmlWriter.writeAttribute("data", this->m_szDataFile);
 	xmlWriter.writeAttribute("version", "1.0");
+	xmlWriter.writeAttribute("data", dataFile());
     writeStats(&xmlWriter);
     xmlWriter.writeEndDocument();
     file.close();
@@ -795,6 +798,7 @@ void iDoc::writeStats(QXmlStreamWriter *xmlWriter)
 		xmlWriter->writeStartElement("stat");
 		xmlWriter->writeAttribute("id", QString::number(stat->Id()));
 		xmlWriter->writeAttribute("name", stat->name());
+		xmlWriter->writeAttribute("type", QString::number(stat->sType()));
 		DiagramItem* item = stat->myItem();
 		xmlWriter->writeAttribute("pos", QString("%1,%2").arg(item->pos().x()).arg(item->pos().y()));
 
