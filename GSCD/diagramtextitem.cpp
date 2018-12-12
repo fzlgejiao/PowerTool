@@ -27,18 +27,7 @@ QVariant DiagramTextItem::itemChange(GraphicsItemChange change,
 {
     if (change == QGraphicsItem::ItemSelectedHasChanged)
         emit selectedChange(this);
-	if (change == QGraphicsItem::ItemSelectedChange)
-    {
-        if (value == true)
-        {
-            // do stuff if selected
-			//setBrush(QPen(Qt::blue,1));	
-        }
-        else
-        {
-            // do stuff if not selected
-        }
-    }
+
     return value;
 }
 //! [1]
@@ -69,7 +58,13 @@ void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 		op.state = QStyle::State_None;
 	}
 	else
-		setDefaultTextColor(Qt::darkCyan);
+	{
+		DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(parentItem());
+		if(statItem && statItem->isSelected())
+			setDefaultTextColor(Qt::green);
+		else
+			setDefaultTextColor(Qt::darkCyan);
+	}
 	// call default func to draw
 	QGraphicsTextItem::paint(painter, &op, widget);
 }

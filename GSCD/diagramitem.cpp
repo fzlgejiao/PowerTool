@@ -75,26 +75,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             arrow->updatePosition();
         }
     }
-   if (change == QGraphicsItem::ItemSelectedHasChanged)
-    {		
-        if (value == true)
-        {
-            // do stuff if selected
-			foreach(QGraphicsItem *item,childItems())
-			{
-				DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
-				if(txtItem)
-				{
-					//txtItem->setPen(QPen(Qt::green,1));
-					txtItem->setDefaultTextColor(Qt::green);
-				}				
-			}
-        }
-        else
-        {
-            // do stuff if not selected
-        }
-    }
+
     return value;
 }
 //! [6]
@@ -132,7 +113,17 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	}
 	else
 	{
-		setPen(QPen(Qt::darkCyan,1));
+		bool bChildSelected = false;
+		foreach(QGraphicsItem *item,childItems())
+		{
+			DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
+			if(txtItem && txtItem->isSelected())
+				bChildSelected = true;
+		}
+		if(bChildSelected)
+			setPen(QPen(Qt::green,1));
+		else
+			setPen(QPen(Qt::darkCyan,1));
 	}
 
 	// call default func to draw
