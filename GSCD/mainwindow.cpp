@@ -788,7 +788,7 @@ void MainWindow::printPreview()
 	MdiChild* child = activeMdiChild(); 
 	if(!child) return;
 
-	child->scene()->clearSelection();
+	//child->scene()->clearSelection();
 	QPrinter printer(QPrinter::HighResolution);
 	printer.setOrientation(QPrinter::Landscape);						//Default to landscape
 	QPrintPreviewDialog preview(&printer,this);	

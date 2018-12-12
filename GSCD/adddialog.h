@@ -18,12 +18,10 @@ class QFont;
 
 enum Columns
 {
-	/*Type=0,
-	ID,
-	Name,*/
+	//Type=0,
+	ID		=0,
 	Name,
-	VB,
-	BelongedAreaName,
+	VB,	
 	StationColumnCnt
 };
 
@@ -33,6 +31,15 @@ typedef enum
 	BranchIcon,
 	TransformerIcon
 }IconType;
+
+typedef enum  
+{		
+	UnSelectable   =100,
+	LinkSelected,
+	LinkUnSelected,
+	TransformerSelected,
+	TransformerUnSelected
+}IconItemType;
 
 class AddDialog : public QDialog
 {
@@ -55,6 +62,7 @@ public:
 private slots:
 		void OnHiddenTableActived(int row,int column);
 		void OnAddedTableActived(int row,int column);
+		void OnBranchnodeActived(int row,int column);
 		void OnAdd();
 		void OnAddAll();
 		void OnRevoke();
@@ -65,6 +73,7 @@ private slots:
 		void OnBranchNodeAdd();
 		void OnnameChanged(const QString &name);
 		void OnOk();
+		void acceptVScrollValueChanged(int);
 		
 private:
 	Ui::AddDialog ui;
@@ -77,10 +86,13 @@ private:
 	iDoc *m_doc;
 	iSTAT *m_editstation;
 	bool is_edit;
-	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon= NoIcon);	
+	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon= NoIcon,bool isselectable=true);		
 	//iNodeData * GetNodefromItem(QString name,double refvlotage,QString areaname,QList<iNodeData *> nodelist);
+	int finditemrow(iNodeData *node);
+	void showConnectionNode(QTableWidget *tablewidget);
 	void SetTableStyle(QTableWidget *tablewidget);	
 	void ClearTableContext(QTableWidget *tablewidget);
+	bool checknodecanbeselected(iNodeData *node);
 	//void addGeneratorRows(iGENERATOR *generator);
 	
 	QFont		m_font;

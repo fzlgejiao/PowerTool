@@ -58,9 +58,9 @@
   <widget class="QLineEdit" name="lineEdit_addedCnt">
    <property name="geometry">
     <rect>
-     <x>680</x>
+     <x>670</x>
      <y>68</y>
-     <width>31</width>
+     <width>41</width>
      <height>23</height>
     </rect>
    </property>
@@ -77,9 +77,9 @@
   <widget class="QLineEdit" name="lineEdit_hiddenCnt">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>250</x>
      <y>68</y>
-     <width>31</width>
+     <width>41</width>
      <height>23</height>
     </rect>
    </property>
@@ -104,17 +104,17 @@
    </property>
    <column>
     <property name="text">
+     <string>ID</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
      <string>Name</string>
     </property>
    </column>
    <column>
     <property name="text">
      <string>VB</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Area</string>
     </property>
    </column>
   </widget>
@@ -221,17 +221,17 @@
    </property>
    <column>
     <property name="text">
+     <string>ID</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
      <string>Name</string>
     </property>
    </column>
    <column>
     <property name="text">
      <string>VB</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Area</string>
     </property>
    </column>
   </widget>
@@ -259,17 +259,17 @@
    </property>
    <column>
     <property name="text">
+     <string>ID</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
      <string>Name</string>
     </property>
    </column>
    <column>
     <property name="text">
      <string>VB</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Area</string>
     </property>
    </column>
   </widget>
@@ -330,7 +330,7 @@
   </widget>
   <widget class="QPushButton" name="pushButton_branchnodeadd">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>

@@ -4,6 +4,7 @@
 #include "diagramtextitem.h"
 #include <QTableWidget>
 #include <QFontDialog>
+#include <QScrollBar>
 
 AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	: QDialog(parent)
@@ -54,6 +55,7 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 
 	connect(ui.tableWidget_hidden,SIGNAL(cellClicked (int,int)),this,SLOT(OnHiddenTableActived(int,int)));
 	connect(ui.tableWidget_added,SIGNAL(cellClicked (int,int)),this,SLOT(OnAddedTableActived(int,int)));
+	connect(ui.tableWidget_branch,SIGNAL(cellClicked (int,int)),this,SLOT(OnBranchnodeActived(int,int)));
 	connect(ui.tableWidget_hidden,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(OnAdd()));
 	connect(ui.tableWidget_added,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(OnRevoke()));
 	connect(ui.pushButton_add,SIGNAL(clicked()),this,SLOT(OnAdd()));
@@ -66,13 +68,18 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	connect(ui.comboBox_StatType,SIGNAL(currentIndexChanged(int)),this,SLOT(OnStatTypeChanged(int)));
 	connect(ui.lineEdit_name,SIGNAL(textChanged(const QString &)),this,SLOT(OnnameChanged(const QString &)));
 
+
 	connect(ui.buttonBox,SIGNAL(accepted()),this,SLOT(OnOk()));
 	connect(ui.buttonBox,SIGNAL(rejected()),this,SLOT(reject()));	
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 
-	
+	connect(ui.tableWidget_hidden->verticalScrollBar(),SIGNAL(valueChanged(int)),this,SLOT(acceptVScrollValueChanged(int)));
+}
+void AddDialog::acceptVScrollValueChanged(int value)
+{
+
 }
 AddDialog::~AddDialog()
 {
@@ -98,9 +105,9 @@ void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setSelectionBehavior(QAbstractItemView::SelectRows);	//select all row
 	tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);	//can bot be edit
 	//set column width	
-	tablewidget->setColumnWidth(Name,80);
+	tablewidget->setColumnWidth(ID,80);
+	tablewidget->setColumnWidth(Name,100);
 	tablewidget->setColumnWidth(VB,80);
-	tablewidget->setColumnWidth(BelongedAreaName,100);
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
@@ -213,17 +220,15 @@ void AddDialog::OnFontdialog()
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	}
 }
-void AddDialog::OnHiddenTableActived(int row,int column)
+void AddDialog::showConnectionNode(QTableWidget *tablewidget)
 {
-	ui.pushButton_add->setEnabled(true);
-
 	Branchnodelist.clear();
 	ClearTableContext(ui.tableWidget_branch);	
-	QList<QTableWidgetItem*> items=ui.tableWidget_hidden->selectedItems();
+	QList<QTableWidgetItem*> items=tablewidget->selectedItems();
 	if(items.count()==0) return;
 
-	QTableWidgetItem *Nameitem=items.at(Name);	
-	iNodeData *selectnode=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();
+	QTableWidgetItem *IDitem=items.at(ID);	
+	iNodeData *selectnode=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();
 	if(!selectnode) return;
 	if(selectnode->type()==T_BUS)
 	{
@@ -237,13 +242,13 @@ void AddDialog::OnHiddenTableActived(int row,int column)
 			if(!fromnode || !tonode) continue;					
 			if((!Branchnodelist.contains(fromnode)) && (selectnode!=fromnode) )
 			{
-				Branchnodelist.append(fromnode);
+				Branchnodelist.append(fromnode);			
 				if(link->type()==T_BRANCH)
 				{
-					addNode2Rows(ui.tableWidget_branch,fromnode,BranchIcon);
+					addNode2Rows(ui.tableWidget_branch,fromnode,BranchIcon,checknodecanbeselected(fromnode));
 				}else if(link->type()==T_TRANSFORMER)
 				{
-					addNode2Rows(ui.tableWidget_branch,fromnode,TransformerIcon);
+					addNode2Rows(ui.tableWidget_branch,fromnode,TransformerIcon,checknodecanbeselected(fromnode));
 				}
 			}
 			if((!Branchnodelist.contains(tonode)) && (selectnode!=tonode) )
@@ -251,65 +256,71 @@ void AddDialog::OnHiddenTableActived(int row,int column)
 				Branchnodelist.append(tonode);
 				if(link->type()==T_BRANCH)
 				{
-					addNode2Rows(ui.tableWidget_branch,tonode,BranchIcon);
+					addNode2Rows(ui.tableWidget_branch,tonode,BranchIcon,checknodecanbeselected(tonode));
 				}else if(link->type()==T_TRANSFORMER)
 				{
-					addNode2Rows(ui.tableWidget_branch,tonode,TransformerIcon);
+					addNode2Rows(ui.tableWidget_branch,tonode,TransformerIcon,checknodecanbeselected(tonode));
 				}
 			}
 		}		
 	}
 }
-void AddDialog::OnAddedTableActived(int row,int column)
+void AddDialog::OnHiddenTableActived(int row,int column)
 {
+	ui.pushButton_add->setEnabled(true);
+
+	showConnectionNode(ui.tableWidget_hidden);
+}
+void AddDialog::OnAddedTableActived(int row,int column)
+{	
 	ui.pushButton_remove->setEnabled(true);
-	Branchnodelist.clear();
-	ClearTableContext(ui.tableWidget_branch);	
-	QList<QTableWidgetItem*> items=ui.tableWidget_added->selectedItems();
-	if(items.count()==0) return;
 
-	QTableWidgetItem *Nameitem=items.at(Name);	
-	iNodeData *selectnode=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();
-	if(!selectnode)  return ;
-	if(selectnode->type()==T_BUS)
+	showConnectionNode(ui.tableWidget_added);
+}
+int AddDialog::finditemrow(iNodeData *node)
+{
+	for(int row=0;row<ui.tableWidget_hidden->rowCount();row++)
 	{
-		QString connection=QString(tr("connection with %1")).arg(((iBUS *)selectnode)->name());
-		ui.label_branch->setText(connection);
-
-		foreach(iLinkData *link,selectnode->linkDatas())
-		{			
-			iNodeData* fromnode = m_doc->getNode(link->fromUid());
-			iNodeData* tonode = m_doc->getNode(link->toUid());	
-			if(!fromnode || !tonode) continue;				
-			if((!Branchnodelist.contains(fromnode)) && (selectnode!=fromnode) )
-			{
-				Branchnodelist.append(fromnode);
-				if(link->type()==T_BRANCH)
-				{
-					addNode2Rows(ui.tableWidget_branch,fromnode,BranchIcon);
-				}else if(link->type()==T_TRANSFORMER)
-				{
-					addNode2Rows(ui.tableWidget_branch,fromnode,TransformerIcon);
-				}
-			}
-			if((!Branchnodelist.contains(tonode)) && (selectnode!=tonode) )
-			{
-				Branchnodelist.append(tonode);
-				if(link->type()==T_BRANCH)
-				{
-					addNode2Rows(ui.tableWidget_branch,tonode,BranchIcon);
-				}else if(link->type()==T_TRANSFORMER)
-				{
-					addNode2Rows(ui.tableWidget_branch,tonode,TransformerIcon);
-				}
-			}
-		}		
+		QTableWidgetItem *IDitem=ui.tableWidget_hidden->item(row,0);
+		iNodeData *idnode=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();
+		if(idnode==node) return row;
 	}
+	return -1;
 }
 void AddDialog::OnBranchNodeAdd()
 {
 	if(Branchnodelist.count()==0) return;
+	int rows=ui.tableWidget_branch->rowCount();
+	int activerows=0;
 
+	for(int row=0;row<rows;row++)
+	{
+		QTableWidgetItem *item=	ui.tableWidget_branch->item(row,0);
+		iNodeData *node=(iNodeData *)item->data(Qt::UserRole).toUInt();
+		int type=item->type();
+		if(type==LinkSelected || type==TransformerSelected) 
+		{						
+			int index= finditemrow(node);			
+			//QList<QTableWidgetItem *> list=ui.tableWidget_hidden->findItems(txt,Qt::MatchExactly);
+			if(index>=0) 
+			{
+				hiddennodelist.removeOne(node);
+				ui.tableWidget_hidden->removeRow(index);
+				addNode2Rows(ui.tableWidget_added,node);
+				addednodelist.append(node);
+				activerows++;
+			}
+			//update counter
+			ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
+			ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));			
+		}
+	}
+	if(activerows>0)
+	{
+		ClearTableContext(ui.tableWidget_branch);
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+		m_changes|=CHG_STAT_DATA;
+	}
 }
 void AddDialog::OnAdd()
 {	
@@ -322,8 +333,8 @@ void AddDialog::OnAdd()
 	
 	for(int row=0;row<rowscnt;row++)
 	{
-		QTableWidgetItem *Nameitem=items.at(Name);	
-		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();		
+		QTableWidgetItem *IDitem=items.at(ID);	
+		iNodeData *node=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();		
 		if(node==NULL) return;
 		addednodelist.append(node);
 		
@@ -354,8 +365,8 @@ void AddDialog::OnAddAll()
 		ui.tableWidget_hidden->selectRow(firstrow);	
 		QList<QTableWidgetItem*> items=ui.tableWidget_hidden->selectedItems();
 
-		QTableWidgetItem *Nameitem=items.at(Name);	 
-		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();	
+		QTableWidgetItem *IDitem=items.at(ID);	 
+		iNodeData *node=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();	
 		if(node==NULL) return;
 		addednodelist.append(node);
 		
@@ -385,8 +396,8 @@ void AddDialog::OnRevoke()
 		
 	for(int row=0;row<rowscnt;row++)
 	{
-		QTableWidgetItem *Nameitem=items.at(Name);	
-		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();		
+		QTableWidgetItem *IDitem=items.at(ID);	
+		iNodeData *node=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();		
 		if(node==NULL) return;
 		hiddennodelist.append(node);
 		
@@ -395,7 +406,6 @@ void AddDialog::OnRevoke()
 		int selectrow=ui.tableWidget_added->row(items.at(row*columncnt));
 		ui.tableWidget_added->removeRow(selectrow);
 		addednodelist.removeOne(node);
-		
 	}
 	
 	if(ui.tableWidget_added->rowCount()==0)
@@ -423,8 +433,8 @@ void AddDialog::OnRevokeAll()
 		ui.tableWidget_added->selectRow(firstrow);	
 		QList<QTableWidgetItem*> items=ui.tableWidget_added->selectedItems();
 
-		QTableWidgetItem *Nameitem=items.at(Name); 
-		iNodeData *node=(iNodeData *)Nameitem->data(Qt::UserRole).toUInt();
+		QTableWidgetItem *IDitem=items.at(ID); 
+		iNodeData *node=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();
 
 		if(node==NULL) return;
 
@@ -444,36 +454,66 @@ void AddDialog::OnRevokeAll()
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 	m_changes|=CHG_STAT_DATA;
 }
-void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon)
+void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon,bool isselectable)
 {
 	int row = tablewidget->rowCount();
 	tablewidget->insertRow(row);
+	
 	if(node->type()==T_BUS)
 	{
-		QTableWidgetItem *item0 = new QTableWidgetItem();	
+		QTableWidgetItem *item0 ;//= new QTableWidgetItem();	
 		QTableWidgetItem *item1 = new QTableWidgetItem();
 		QTableWidgetItem *item2 = new QTableWidgetItem();
-		//binding data object to name item(itme0)
-		item0->setData(Qt::UserRole,(uint)node);
+								
 		switch(icon)
 		{	
 		case BranchIcon:
-			{
-			item0->setIcon(QIcon(":/images/link.png"));			
-			break;
+			{			
+				if(isselectable)
+				{
+					item0=new QTableWidgetItem(LinkUnSelected);	
+					item0->setIcon(QIcon(":/images/link.png"));			
+				}
+				else 
+				{
+					item0=new QTableWidgetItem(UnSelectable);	
+					item0->setIcon(QIcon(":/images/linkgray.png"));					
+				}
 			}
+			break;
 		case TransformerIcon:
-			item0->setIcon(QIcon(":/images/transformer.png"));
+			{					
+				if(isselectable)
+				{
+					item0=new QTableWidgetItem(TransformerUnSelected);
+					item0->setIcon(QIcon(":/images/transformer.png"));
+				}
+				else 
+				{
+					item0=new QTableWidgetItem(UnSelectable);	
+					item0->setIcon(QIcon(":/images/transformergray.png"));
+				}
+			}
+			break;
+		default:
+			item0 = new QTableWidgetItem();
 			break;
 		}
+		//binding data object to ID item(itme0)
+		item0->setData(Qt::UserRole,(uint)node);
+		
+		//item0->setText(QString::number(((iBUS *)node)->Id()));	
+		//item1->setText(((iBUS *)node)->name());
+		//item2->setText(QString::number(node->GetRefVoltage()));
+		item0->setData(Qt::DisplayRole,((iBUS *)node)->Id());
+		item1->setData(Qt::DisplayRole,((iBUS *)node)->name());
+		item2->setData(Qt::DisplayRole,node->GetRefVoltage());
 
-		item0->setText(((iBUS *)node)->name());			
-		item1->setText(QString::number(node->GetRefVoltage()));
-		item2->setText(m_doc->getAREA(((iBUS *)node)->belongedArea())->name());
-
-		tablewidget->setItem(row, Name, item0);
-		tablewidget->setItem(row, VB, item1);
-		tablewidget->setItem(row, BelongedAreaName, item2);
+		tablewidget->setItem(row, ID, item0);
+		int id_row=tablewidget->row(item0);
+		tablewidget->setItem(id_row, Name, item1);
+		int name_row=tablewidget->row(item1);
+		tablewidget->setItem(name_row, VB, item2);
 	}	
 }
 void AddDialog::OnOk()
@@ -486,4 +526,46 @@ void AddDialog::OnOk()
 	}
 
 	accept();
+}
+bool AddDialog::checknodecanbeselected(iNodeData *node)
+{
+	QList<iNodeData *> list;
+	m_doc->getAvailableNode(list);
+
+	return (list.contains(node) && (!addednodelist.contains(node)));
+}
+void AddDialog::OnBranchnodeActived(int row,int column)
+{
+	QList<QTableWidgetItem*> items=ui.tableWidget_branch->selectedItems();
+	if(items.count()!=3) return;
+
+	QTableWidgetItem *IDitem=items.at(ID);		
+
+	int type=IDitem->type();
+
+	if(type==UnSelectable) return;
+
+	iNodeData *node=(iNodeData *)IDitem->data(Qt::UserRole).toUInt();	
+
+	if(type==TransformerUnSelected)
+	{
+		IDitem=new QTableWidgetItem(TransformerSelected);		
+		IDitem->setIcon(QIcon(":/images/transformeryes.png"));		
+	}else if(type==TransformerSelected)
+	{
+		IDitem=new QTableWidgetItem(TransformerUnSelected);		
+		IDitem->setIcon(QIcon(":/images/transformer.png"));		
+	}else if(type==LinkUnSelected)
+	{
+		IDitem=new QTableWidgetItem(LinkSelected);			
+		IDitem->setIcon(QIcon(":/images/linkyes.png"));
+	}else if(type==LinkSelected)
+	{
+		IDitem=new QTableWidgetItem(LinkUnSelected);			
+		IDitem->setIcon(QIcon(":/images/link.png"));		
+	}
+
+	IDitem->setData(Qt::UserRole,(uint)node);
+	IDitem->setData(Qt::DisplayRole,((iBUS *)node)->Id());
+	ui.tableWidget_branch->setItem(row,ID,IDitem);
 }
