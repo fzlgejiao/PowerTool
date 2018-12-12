@@ -6,6 +6,7 @@
 #include "idoc.h"
 
 class QGraphicsScene;
+class QRubberBand;
 class MdiChild : public QGraphicsView
 {
 	Q_OBJECT
@@ -30,6 +31,9 @@ public:
 protected:
     void	closeEvent(QCloseEvent *event);
 	void	wheelEvent(QWheelEvent * wheelEvent);
+	void	mouseMoveEvent ( QMouseEvent * event );
+	void	mousePressEvent ( QMouseEvent * event );
+	void	mouseReleaseEvent ( QMouseEvent * event );
 
 public slots:
     void	documentWasModified();
@@ -47,12 +51,14 @@ private:
     DiagramScene *m_scene;
 	iDoc		 *m_doc;
 
-    QString curFile;
-    bool isUntitled;
-	int dpi;
-	int m_scale;
-	int scale_min;
-	int scale_max;
+    QString		curFile;
+    bool		isUntitled;
+	int			dpi;
+	int			m_scale;
+	int			scale_min;
+	int			scale_max;
+	QPoint		posRubberOrigin;
+	QRubberBand	*rubberBand;
 
 };
 

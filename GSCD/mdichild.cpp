@@ -1,5 +1,6 @@
 
 #include <QtGui>
+#include <QRubberBand>
 #include "mdichild.h"
 #include "arrow.h"
 #include "stationparameterdialog.h"
@@ -16,6 +17,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	m_scene = (DiagramScene *)scene;
 	m_doc	= doc;
 	
+	rubberBand = NULL;
 	QSizeF viewsize=m_doc->getAreaSize();
 	int width=viewsize.width()*dpi/25.4;
 	int height=viewsize.height()*dpi/25.4;
@@ -252,3 +254,26 @@ void MdiChild::OnAreaSizeChanged(QSize & size)
 	m_scene->setSceneRect(0, 0, width, height);			
 }
 
+void MdiChild::mousePressEvent(QMouseEvent *event)
+{
+	//posRubberOrigin  = event->pos();
+ //    if (!rubberBand)
+ //        rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+ //    rubberBand->setGeometry(QRect(posRubberOrigin, QSize()));
+ //    rubberBand->show();
+    QGraphicsView::mousePressEvent(event);
+}
+
+void MdiChild::mouseMoveEvent(QMouseEvent *event)
+{
+	//if(rubberBand)
+	//	rubberBand->setGeometry(QRect(posRubberOrigin, event->pos()).normalized());
+	QGraphicsView::mouseMoveEvent(event);
+}
+
+void MdiChild::mouseReleaseEvent(QMouseEvent *event)
+{
+	//if(rubberBand)
+	//	rubberBand->hide();
+	QGraphicsView::mouseReleaseEvent(event);
+}
