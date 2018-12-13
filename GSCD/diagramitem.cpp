@@ -102,7 +102,7 @@ QPainterPath DiagramItem::shape() const
 }
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	QStyleOptionGraphicsItem op;
+	QStyleOptionGraphicsItem op(*option);
 	//op.initFrom(widget);
 
 	// set state to State_None when selected

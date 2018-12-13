@@ -60,7 +60,9 @@ void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	else
 	{
 		DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(parentItem());
-		if(statItem && statItem->isSelected())
+		Arrow *arrow = qgraphicsitem_cast<Arrow *>(parentItem());
+		if((statItem && statItem->isSelected())
+			||(arrow && arrow->isSelected()))
 			setDefaultTextColor(Qt::green);
 		else
 			setDefaultTextColor(Qt::darkCyan);

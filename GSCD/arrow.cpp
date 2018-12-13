@@ -87,66 +87,44 @@ void Arrow::updatePosition()
 //! [3]
 
 //! [4]
-void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget *widget)
+void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget)
 {
 	if (myStartItem->collidesWithItem(myEndItem))
 		return;
 
-	//QGraphicsLineItem::paint(painter,op,widget);
-	//return;
+	QStyleOptionGraphicsItem op(*option);
+
+	// set state to State_None when selected
+	if (option->state & QStyle::State_Selected)
+	{
+		myColor = Qt::blue;
+		op.state = QStyle::State_None;
+	}
+	else
+	{
+		bool bChildSelected = false;
+		foreach(QGraphicsItem *item,childItems())
+		{
+			DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
+			if(txtItem && txtItem->isSelected())
+				bChildSelected = true;
+		}
+		if(bChildSelected)
+			myColor = Qt::green;
+		else
+			myColor = Qt::darkCyan;
+	}
 	
 	QPen myPen = pen();
 	myPen.setColor(myColor);
-	qreal arrowSize = ARROW_SIZE;
 	painter->setPen(myPen);
 	painter->setBrush(Qt::white);
-	//! [4] //! [5]
-
-	QPointF startPoint=myStartItem->scenePos();
-	QPointF endPoint=myEndItem->scenePos();	
-	QLineF centerLine(startPoint, endPoint);
-	////QPolygonF endPolygon = myEndItem->polygon();
-	//QPolygonF endPolygon = myEndItem->path().toFillPolygon();
-	//
-	//QPointF p1 = endPolygon.first() + myEndItem->pos();
-	//QPointF p2;
-	//QPointF intersectPoint;
-	//QLineF polyLine;
-	//for (int i = 1; i < endPolygon.count(); ++i) {
-	//	p2 = endPolygon.at(i) + myEndItem->pos();
-	//	polyLine = QLineF(p1, p2);
-	//	QLineF::IntersectType intersectType =
-	//		polyLine.intersect(centerLine, &intersectPoint);
-	//	if (intersectType == QLineF::BoundedIntersection)
-	//		break;
-	//	p1 = p2;
-	//}
 
 
-	//setLine(QLineF(endPoint,startPoint));
-	//! [5] //! [6]
+	QPointF startPoint	=myStartItem->scenePos();
+	QPointF endPoint	=myEndItem->scenePos();	
+	QLineF	centerLine(startPoint, endPoint);
 
-	QPointF middlepoint= QPointF((endPoint.x() + startPoint.x()) / 2.0, (startPoint.y() + endPoint.y()) / 2.0) - pos();
-
-	double angle = ::acos(line().dx() / line().length());
-	if (line().dy() >= 0)
-		angle = (M_PI * 2) - angle;
-
-	QPointF arrowP1 = middlepoint + QPointF(sin(angle + M_PI / 3) * arrowSize,cos(angle + M_PI / 3) * arrowSize);
-	QPointF arrowP2 = middlepoint + QPointF(sin(angle + M_PI - M_PI / 3) * arrowSize,cos(angle + M_PI - M_PI / 3) * arrowSize);
-
-	arrowHead.clear();
-	//arrowHead << line().p1() << arrowP1 << arrowP2;	
-	arrowHead << middlepoint << arrowP1 << arrowP2;
-	//! [6] //! [7]
-	QPen oldPen = pen();
-	if (isSelected())
-		oldPen.setColor(Qt::blue);
-	else
-		oldPen.setColor(myColor);
-	painter->setPen(oldPen);
-	QLineF line1 = line();
-	//painter->drawLine(line());
 
 	//draw lines
 	iSLINK* slink = (iSLINK *)myData();
@@ -177,17 +155,21 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *op,QWidget 
 	}
 
 	//draw arrow head
+	QPointF middlepoint= QPointF((endPoint.x() + startPoint.x()) / 2.0, (startPoint.y() + endPoint.y()) / 2.0) - pos();
+
+	double angle = ::acos(line().dx() / line().length());
+	if (line().dy() >= 0)
+		angle = (M_PI * 2) - angle;
+
+	QPointF arrowP1 = middlepoint + QPointF(sin(angle + M_PI / 3) * ARROW_SIZE,cos(angle + M_PI / 3) * ARROW_SIZE);
+	QPointF arrowP2 = middlepoint + QPointF(sin(angle + M_PI - M_PI / 3) * ARROW_SIZE,cos(angle + M_PI - M_PI / 3) * ARROW_SIZE);
+
+	arrowHead.clear();
+	arrowHead << middlepoint << arrowP1 << arrowP2;
 	painter->drawPolygon(arrowHead);
 
-	//if (isSelected()) 
-	//{
-	//	painter->setPen(QPen(myColor, 1, Qt::DashLine));
-	//	QLineF myLine = line();
-	//	myLine.translate(4, 4.0);
-	//	painter->drawLine(myLine);
-	//	myLine.translate(4,-8.0);
-	//	painter->drawLine(myLine);
-	//}
+	//QGraphicsLineItem::paint(painter, &op, widget);	
+
 }
 QVariant Arrow::itemChange(GraphicsItemChange change,
                      const QVariant &value)
