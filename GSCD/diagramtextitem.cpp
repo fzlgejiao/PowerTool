@@ -11,7 +11,7 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
-    setFlag(QGraphicsItem::ItemIsFocusable);
+    //setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 		
 	defPos = QPointF(10,10);
@@ -27,18 +27,7 @@ QVariant DiagramTextItem::itemChange(GraphicsItemChange change,
 {
     if (change == QGraphicsItem::ItemSelectedHasChanged)
         emit selectedChange(this);
-	if (change == QGraphicsItem::ItemSelectedChange)
-    {
-        if (value == true)
-        {
-            // do stuff if selected
-			//setBrush(QPen(Qt::blue,1));	
-        }
-        else
-        {
-            // do stuff if not selected
-        }
-    }
+
     return value;
 }
 //! [1]
@@ -55,7 +44,7 @@ void DiagramTextItem::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
 }
 void DiagramTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-//    QGraphicsTextItem::mouseDoubleClickEvent(event);
+    QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
 void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -69,7 +58,15 @@ void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 		op.state = QStyle::State_None;
 	}
 	else
-		setDefaultTextColor(Qt::darkCyan);
+	{
+		DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(parentItem());
+		Arrow *arrow = qgraphicsitem_cast<Arrow *>(parentItem());
+		if((statItem && statItem->isSelected())
+			||(arrow && arrow->isSelected()))
+			setDefaultTextColor(Qt::green);
+		else
+			setDefaultTextColor(Qt::darkCyan);
+	}
 	// call default func to draw
 	QGraphicsTextItem::paint(painter, &op, widget);
 }

@@ -22,6 +22,9 @@ DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *sce
 
 }
 //! [0]
+DiagramItem::~DiagramItem()
+{
+}
 iData* DiagramItem::myData()
 {
 	return (iData *)data(ITEM_DATA).toUInt();
@@ -75,26 +78,7 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             arrow->updatePosition();
         }
     }
-   if (change == QGraphicsItem::ItemSelectedHasChanged)
-    {		
-        if (value == true)
-        {
-            // do stuff if selected
-			foreach(QGraphicsItem *item,childItems())
-			{
-				DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
-				if(txtItem)
-				{
-					//txtItem->setPen(QPen(Qt::green,1));
-					txtItem->setDefaultTextColor(Qt::green);
-				}				
-			}
-        }
-        else
-        {
-            // do stuff if not selected
-        }
-    }
+
     return value;
 }
 //! [6]
@@ -121,7 +105,7 @@ QPainterPath DiagramItem::shape() const
 }
 void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	QStyleOptionGraphicsItem op;
+	QStyleOptionGraphicsItem op(*option);
 	//op.initFrom(widget);
 
 	// set state to State_None when selected
@@ -132,7 +116,17 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	}
 	else
 	{
-		setPen(QPen(Qt::darkCyan,1));
+		bool bChildSelected = false;
+		foreach(QGraphicsItem *item,childItems())
+		{
+			DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
+			if(txtItem && txtItem->isSelected())
+				bChildSelected = true;
+		}
+		if(bChildSelected)
+			setPen(QPen(Qt::green,1));
+		else
+			setPen(QPen(Qt::darkCyan,1));
 	}
 
 	// call default func to draw

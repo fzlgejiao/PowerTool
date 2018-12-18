@@ -1,5 +1,6 @@
 
 #include <QtGui>
+#include <QRubberBand>
 #include "mdichild.h"
 #include "arrow.h"
 #include "stationparameterdialog.h"
@@ -16,6 +17,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	m_scene = (DiagramScene *)scene;
 	m_doc	= doc;
 	
+	rubberBand = NULL;
 	QSizeF viewsize=m_doc->getAreaSize();
 	int width=viewsize.width()*dpi/25.4;
 	int height=viewsize.height()*dpi/25.4;
@@ -225,7 +227,9 @@ void MdiChild::wheelEvent(QWheelEvent * wheelEvent)
 		//qreal ss= pow((double)2, delta / 240.0);
 		qreal ss=0;		
 		if(delta>0) 
-			ss=1.1;else ss=0.9;		
+			ss=1.1;
+		else 
+			ss=0.9;		
 	
 		qreal factor = transform().scale(ss, ss).mapRect(QRectF(0, 0, 1, 1)).width();
 		m_scale=factor*100;											//this  scale is in percent mode		
@@ -252,3 +256,48 @@ void MdiChild::OnAreaSizeChanged(QSize & size)
 	m_scene->setSceneRect(0, 0, width, height);			
 }
 
+void MdiChild::mousePressEvent(QMouseEvent *event)
+{
+    QGraphicsView::mousePressEvent(event);
+	//if(m_scene->selectedItems().count() == 0)
+	//{
+	//	posRubberOrigin  = event->pos();
+	//	if (!rubberBand)
+	//		rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+	//	rubberBand->setGeometry(QRect(posRubberOrigin, QSize()));
+	//	rubberBand->setAttribute(Qt::WA_TranslucentBackground, true);
+	//	rubberBand->setWindowFlags(Qt::FramelessWindowHint);
+	//	rubberBand->show();
+	//}
+}
+
+void MdiChild::mouseMoveEvent(QMouseEvent *event)
+{
+	QGraphicsView::mouseMoveEvent(event);
+	//if(rubberBand)
+	//	rubberBand->setGeometry(QRect(posRubberOrigin, event->pos()).normalized());
+}
+
+void MdiChild::mouseReleaseEvent(QMouseEvent *event)
+{
+	QGraphicsView::mouseReleaseEvent(event);
+	//if(rubberBand)
+	//	rubberBand->hide();
+	//QRect rect = rubberBand->geometry();
+	//QRectF sceneRect = m_scene->sceneRect();
+
+	//QRectF rtBand = mapToScene(rect).boundingRect();
+	//
+	//QList<QGraphicsItem *> items = m_scene->items(rtBand);
+	//if(items.count())
+	//{
+	//	foreach(QGraphicsItem* item,items)
+	//	{
+	//		DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
+	//		if(statItem)																			//check to see if it is station item
+	//		{
+	//			statItem->setSelected(true);
+	//		}
+	//	}
+	//}
+}
