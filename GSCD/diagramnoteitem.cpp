@@ -8,7 +8,7 @@ DiagramNoteItem::DiagramNoteItem(iData* data,QGraphicsItem *parent, QGraphicsSce
 	,m_default_height(20)
 {
 	setData(ITEM_DATA,(uint)data);
-	this->setFlags( QGraphicsItem::ItemIsMovable| QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges );
+	this->setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
 	this->setAcceptHoverEvents(true);
 	this->setZValue(100);
 
@@ -21,11 +21,12 @@ DiagramNoteItem::DiagramNoteItem(iData* data,QGraphicsItem *parent, QGraphicsSce
 	m_font=note->getTextFont();
 	m_color=note->getTextColor();		
 	setPlainText(note->text());
+	m_center=m_rect.center();	
 }
 
 DiagramNoteItem::~DiagramNoteItem()
 {
-
+	
 }
 
 void DiagramNoteItem::setAlignMode(Qt::Alignment alignmode)
@@ -57,7 +58,7 @@ void DiagramNoteItem::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 	painter->setPen(m_color);
 	painter->drawText(m_rect,m_alignmode,this->toPlainText());
 	//Draw my  own selected style
-	if(option->state & (QStyle::State_Selected | QStyle::State_HasFocus))
+	if(option->state & QStyle::State_Selected )
 	{	
 		painter->setBrush(Qt::NoBrush);		
 		painter->setPen(QPen(Qt::black,3,Qt::SolidLine));
@@ -66,16 +67,16 @@ void DiagramNoteItem::paint(QPainter * painter, const QStyleOptionGraphicsItem *
 		painter->drawPoint(m_rect.bottomLeft());
 		painter->drawPoint(m_rect.bottomRight());
 
-		painter->drawPoint(QPointF(m_rect.left()+m_rect.width()/2,m_rect.top()));
-		painter->drawPoint(QPointF(m_rect.left()+m_rect.width()/2,m_rect.bottom()));
-		painter->drawPoint(QPointF(m_rect.left(),m_rect.top()+m_rect.height()/2));
-		painter->drawPoint(QPointF(m_rect.right(),m_rect.top()+m_rect.height()/2));		
+		painter->drawPoint(QPointF(m_rect.left()+m_rect.width()/2,m_rect.top()));		//top center
+		painter->drawPoint(QPointF(m_rect.left()+m_rect.width()/2,m_rect.bottom()));	//bottom center
+		painter->drawPoint(QPointF(m_rect.left(),m_rect.top()+m_rect.height()/2));		//left center
+		painter->drawPoint(QPointF(m_rect.right(),m_rect.top()+m_rect.height()/2));		//right center
 	}
 	if(m_hasBorder)
 	{
 		painter->setPen(QPen(Qt::black,0,Qt::SolidLine));
-		painter->drawRect(m_rect);
-	}
+		painter->drawRect(m_rect);	
+	}	
 }
 
 void DiagramNoteItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
@@ -99,6 +100,12 @@ void DiagramNoteItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
 	QRectF topleftRegion(m_rect.topLeft().x()-2,m_rect.topLeft().y()-2,4,4);	
 	QRectF bottomrightRegion(m_rect.bottomRight().x()-2,m_rect.bottomRight().y()-2,4,4);
 
+	QRectF topRegion(m_rect.left()+m_rect.width()/2-2,m_rect.top()-2,4,4);	
+	QRectF bottomRegion(m_rect.left()+m_rect.width()/2-2,m_rect.bottom()-2,4,4);
+	
+	QRectF leftRegion(m_rect.left()-2,m_rect.top()+m_rect.height()/2-2,4,4);	
+	QRectF rightRegion(m_rect.right()-2,m_rect.top()+m_rect.height()/2-2,4,4);
+
 	if ( toprightRegion.contains(pos))
 	{
 		m_resizepos=TopRight;
@@ -116,6 +123,22 @@ void DiagramNoteItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
 	{
 		m_resizepos=BottomRight;
 		this->setCursor(Qt::SizeFDiagCursor);
+	}else if(topRegion.contains(pos))
+	{
+		m_resizepos=Top;
+		this->setCursor(Qt::SizeVerCursor);
+	}else if(bottomRegion.contains(pos))
+	{
+		m_resizepos=Bottom;
+		this->setCursor(Qt::SizeVerCursor);
+	}else if(leftRegion.contains(pos))
+	{
+		m_resizepos=Left;
+		this->setCursor(Qt::SizeHorCursor);
+	}else if(rightRegion.contains(pos))
+	{
+		m_resizepos=Right;
+		this->setCursor(Qt::SizeHorCursor);
 	}
 	else 
 		this->setCursor(Qt::ArrowCursor);
@@ -136,9 +159,9 @@ void DiagramNoteItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
 	QPointF pos1 = event->pos();        
 	QPointF pos2 = event->lastPos();
-
+	this->prepareGeometryChange();
 	float delta_x = pos2.x()-pos1.x();
-	float delta_y = pos2.y()-pos1.y();
+	float delta_y = pos2.y()-pos1.y();		
 	qreal newwidth,newheight;
 
 	if( this->cursor().shape() == Qt::SizeBDiagCursor )
@@ -148,18 +171,17 @@ void DiagramNoteItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 			newwidth =m_rect.width()-delta_x*2;
 			newheight=m_rect.height()+delta_y*2;
 			if((newwidth<=m_default_width)||(newheight<=m_default_height)) return ;
-			
-			m_rect.moveTopRight(pos2);				
+			m_rect.adjust(delta_x,-delta_y,-delta_x,delta_y);		
+			m_rect.moveTopRight(pos2);			
 		}
 		else if(m_resizepos==BottomLeft)
 		{
 			newwidth =m_rect.width()+delta_x*2;
 			newheight=m_rect.height()-delta_y*2;
 			if((newwidth<=m_default_width)||(newheight<=m_default_height)) return ;
-			m_rect.moveBottomLeft(pos2);			
-		}		
-		m_rect.setWidth(newwidth);
-		m_rect.setHeight(newheight);		
+			m_rect.adjust(-delta_x,delta_y,delta_x,-delta_y);				
+			m_rect.moveBottomLeft(pos2);
+		}			
 	}else if(this->cursor().shape() == Qt::SizeFDiagCursor)
 	{
 		if(m_resizepos==TopLeft)
@@ -167,6 +189,7 @@ void DiagramNoteItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 			newwidth =m_rect.width()+delta_x*2;
 			newheight=m_rect.height()+delta_y*2;
 			if ((newwidth <=m_default_width) || (newheight<=m_default_height)) return  ;
+			m_rect.adjust(-delta_x,-delta_y,delta_x,delta_y);
 			m_rect.moveTopLeft(pos2);
 		}
 		else if(m_resizepos==BottomRight)
@@ -174,12 +197,42 @@ void DiagramNoteItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 			newwidth =m_rect.width()-delta_x*2;
 			newheight=m_rect.height()-delta_y*2;
 			if ((newwidth <= m_default_width) || (newheight<=m_default_height)) return  ;
+			m_rect.adjust(delta_x,delta_y,-delta_x,-delta_y);
 			m_rect.moveBottomRight(pos2);
 		}		
-		m_rect.setWidth(newwidth);
-		m_rect.setHeight(newheight);
+	}else if(this->cursor().shape() == Qt::SizeVerCursor)
+	{
+		if(m_resizepos==Top)
+		{					
+			newheight=m_rect.height()+delta_y*2;
+			if (newheight<=m_default_height) return  ;
+			m_rect.adjust(0,-delta_y,0,delta_y);
+			m_rect.moveTop(pos2.y());
+		}
+		else if(m_resizepos==Bottom)
+		{						
+			newheight=m_rect.height()-delta_y*2;
+			if (newheight<=m_default_height) return  ;
+			m_rect.adjust(0,delta_y,0,-delta_y);
+			m_rect.moveBottom(pos2.y());
+		}		
+	}else if(this->cursor().shape() == Qt::SizeHorCursor)
+	{
+		if(m_resizepos==Left)
+		{					
+			newwidth =m_rect.width()+delta_x*2;
+			if (newwidth<=m_default_width) return  ;
+			m_rect.adjust(-delta_x,0,delta_x,0);
+			m_rect.moveLeft(pos2.x());
+		}
+		else if(m_resizepos==Right)
+		{						
+			newwidth =m_rect.width()-delta_x*2;
+			if (newwidth <= m_default_width) return  ;
+			m_rect.adjust(delta_x,0,-delta_x,0);
+			m_rect.moveRight(pos2.x());
+		}
 	}
-
 	QGraphicsTextItem::mouseMoveEvent(event);
 }
 

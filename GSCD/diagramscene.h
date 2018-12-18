@@ -89,7 +89,7 @@ protected:
 	//actions for note
 	void addNote(const QPointF& pos);
 	void viewNote(iNote *note);
-	void deleteNote(iNote *note);
+	void deleteNote(DiagramNoteItem *itme,iNote *note);
 
 private:
     bool isItemChange(int type);

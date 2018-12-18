@@ -18,7 +18,7 @@ typedef enum{
 	T_GENERATOR,
 	T_LOAD,
 	T_COMPENSATION,
-
+	T_FACTSDEVICE,
 	T_NOTE,
 	T_SYSINFO,
 	T_LEGEND
@@ -371,13 +371,33 @@ public:
 	T_DATA type(){return T_TRANSFORMER;}
 
 	iBUS * getFromBus() {return frombus;}
-	iBUS * getToBus() {return tobus;}
+	iBUS * getToBus() {return tobus;}	
+	QString getRX(){return QString("%1+j%2").arg(transformer_R,0,'f',5).arg(transformer_X,0,'f',5);}
 
 private:
 	friend class iDoc;
 	iBUS *frombus;
 	iBUS *tobus;
+	double transformer_R;
+	double transformer_X;	
 	//properties
+};
+class iFACTSDEVICE : public iLinkData
+{
+public:
+	iFACTSDEVICE(int id,int fromUid,int toUid,QObject *parent=0);
+	~iFACTSDEVICE(){}
+	T_DATA type(){return T_FACTSDEVICE;}
+	QString name(){return devicename;}
+
+	iBUS * getFromBus() {return frombus;}
+	iBUS * getToBus() {return tobus;}	
+	
+private:
+	friend class iDoc;
+	iBUS *frombus;
+	iBUS *tobus;
+	QString devicename;
 };
 class iNote : public iData
 {

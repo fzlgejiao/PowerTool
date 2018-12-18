@@ -86,6 +86,7 @@ protected:
 	void	addBRANCH(iBRANCH* branch){listBRANCH.insert(branch->Id(),branch);}
 	void	addTRANSFORMER(iTRANSFORMER* transformer){listTRANSFORMER.insert(transformer->Id(),transformer);}
 	void	addAREA(iAREA* area){listAREA.insert(area->Id(),area);}
+	void	addFACTSDEVICE(iFACTSDEVICE* device){listFACTSDEVICE.insert(device->Id(),device);}
 
 private:
 	QMap<int,iSTAT *>			listSTAT;															//<id,iSTAT*>: id is the station id
@@ -95,6 +96,7 @@ private:
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id
 	QMap<int,iAREA *>			listAREA;
 	QMap<int,iNote *>			listNotes;
+	QMap<int,iFACTSDEVICE *>	listFACTSDEVICE;
 
 
 	//for data file

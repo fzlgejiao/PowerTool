@@ -37,6 +37,9 @@ iDoc::~iDoc()
 	qDeleteAll(listBUS);
 	qDeleteAll(listBRANCH);
 	qDeleteAll(listTRANSFORMER);
+	qDeleteAll(listAREA);
+	qDeleteAll(listNotes);
+	qDeleteAll(listFACTSDEVICE);
 }
 void iDoc::test()
 {
@@ -110,6 +113,12 @@ void	iDoc::close()
 	listBRANCH.clear();
 	qDeleteAll(listTRANSFORMER);
 	listTRANSFORMER.clear();
+	qDeleteAll(listAREA);
+	listAREA.clear();
+	qDeleteAll(listNotes);
+	listNotes.clear();
+	qDeleteAll(listFACTSDEVICE);
+	listFACTSDEVICE.clear();
 }
 
 bool iDoc::readDataFile(const QString& fileName)
@@ -131,7 +140,7 @@ bool iDoc::readDataFile(const QString& fileName)
 	GetDataModel(file,T_BRANCH);
 	GetDataModel(file,T_TRANSFORMER);
 	GetDataModel(file,T_AREA);
-
+	GetDataModel(file,T_FACTSDEVICE);
 	file.close();
 	if (file.error() != QFile::NoError) {
         std::cerr << "Error: Cannot read file " << qPrintable(fileName)
@@ -179,6 +188,8 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 		dataname="TRANSFORMER";
 	else if(datatype==T_AREA)
 		dataname="AREA";
+	else if(datatype==T_FACTSDEVICE)
+		dataname="FACTS DEVICE";
 	else return;
 	QTextStream stream(&file);
 	stream.seek(0);
@@ -315,12 +326,20 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 								frombus->addLink(transformer);
 								tobus->addLink(transformer);
 								addTRANSFORMER(transformer);											//add transformer into transformer list
-							}
 
+								//Next read the transformer data line
+								QStringList t_data=stream.readLine().split(",",QString::SkipEmptyParts);
+								if(t_data.count()==3)	//valid data
+								{
+									double t_sbase=t_data[2].toDouble();
+									transformer->transformer_R=t_data[0].toDouble();
+									transformer->transformer_X=t_data[1].toDouble();
+								}
+							}
 							if(k==0)
 							{
-								TranformerDummylines=3;
-							}else TranformerDummylines=4;
+								TranformerDummylines=2;
+							}else TranformerDummylines=3;
 
 							for(int i=0;i<TranformerDummylines;i++)
 								stream.readLine();
@@ -336,6 +355,27 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 						}
 						break;
 
+						case T_FACTSDEVICE:
+						{
+							int from,to;
+							QString devicename=datalist[0].remove(0,1);
+							devicename.chop(1);
+							from = datalist[1].toInt();
+							to   = datalist[2].toInt();
+							iBUS* frombus = getBUS(from);
+							iBUS* tobus = getBUS(to);
+							if((frombus!=NULL)&&(tobus!=NULL))
+							{
+								iFACTSDEVICE* factsdevice = new iFACTSDEVICE(datarows,frombus->Uid(),tobus->Uid(),this);
+								factsdevice->devicename=devicename;
+								factsdevice->frombus=frombus;
+								factsdevice->tobus=tobus;
+								frombus->addLink(factsdevice);
+								tobus->addLink(factsdevice);
+								addFACTSDEVICE(factsdevice);	
+							}
+						}
+						break;
 					}
 					readline=stream.readLine();
 				}

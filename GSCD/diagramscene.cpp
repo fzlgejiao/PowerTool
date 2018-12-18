@@ -360,14 +360,18 @@ void DiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 			break;
 		case T_NOTE:
 			{
-				iNote *note=(iNote *)data;
-				QMenu* menu = getMenu(MENU_NOTE);
-				if(!menu)	return;
-				QAction* action = menu->exec(event->screenPos());
-				if(action==propertyAction)
-					viewNote(note);
-				else if(action==deleteAction)
-					deleteNote(note);
+				if(item->type() == DiagramNoteItem::Type)	
+				{
+					DiagramNoteItem *noteitem = qgraphicsitem_cast<DiagramNoteItem *>(item);
+					iNote *note=(iNote *)data;
+					QMenu* menu = getMenu(MENU_NOTE);
+					if(!menu)	return;
+					QAction* action = menu->exec(event->screenPos());
+					if(action==propertyAction)
+						viewNote(note);
+					else if(action==deleteAction)
+						deleteNote(noteitem,note);
+				}
 			}
 			break;
 		}
@@ -406,20 +410,21 @@ void DiagramScene::editItem()
 }
 void DiagramScene::deleteItems()
 {
-    foreach (QGraphicsItem *item, selectedItems()) 
+	foreach (QGraphicsItem *item, selectedItems()) 
 	{
 		iData* data = (iData *)item->data(ITEM_DATA).toUInt();
 		if(!data)
 			continue;
-         if (data->type() == T_STAT && item->type() == DiagramItem::Type) 
-		 {
-			 DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
-             deleteStation(statItem,(iSTAT *)data);
-		 }else if(data->type()==T_NOTE)
-		 {
-			 deleteNote((iNote*)data);
-		 }
-     }
+		if (data->type() == T_STAT && item->type() == DiagramItem::Type) 
+		{
+			DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
+			deleteStation(statItem,(iSTAT *)data);
+		}else if(data->type()==T_NOTE)
+		{
+			DiagramNoteItem *noteitem = qgraphicsitem_cast<DiagramNoteItem *>(item);
+			deleteNote(noteitem,(iNote*)data);
+		}
+	}
 }
 void DiagramScene::procItem(ACT_TYPE act,QGraphicsItem* item)
 {
@@ -747,10 +752,14 @@ void DiagramScene::viewNote(iNote *note)
 	note->noteitem()->setPlainText(dlg.GetText());
 }
 
-void DiagramScene::deleteNote(iNote *note)
+void DiagramScene::deleteNote(DiagramNoteItem *itme,iNote *note)
 {
-	this->removeItem(note->noteitem());
+	this->removeItem(itme);
+	note->setnoteitem(NULL);
 	myDoc->Note_delete(note->Id());
+
+	delete itme;
+	//itme->deleteLater();
 }
 
 void DiagramScene::drawBackground ( QPainter * painter, const QRectF & rect )

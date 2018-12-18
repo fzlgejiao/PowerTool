@@ -67,6 +67,7 @@ private:
 	QColor m_color;
 	qreal m_default_width;
 	qreal m_default_height;	
+	QPointF m_center;	
 };
 
 #endif // DIAGRAMNOTEITEM_H

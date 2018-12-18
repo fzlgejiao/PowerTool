@@ -108,9 +108,13 @@ void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setColumnWidth(ID,80);
 	tablewidget->setColumnWidth(Name,100);
 	tablewidget->setColumnWidth(VB,80);
+	//set sorting
+	tablewidget->sortByColumn(ID,Qt::AscendingOrder);
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
+
+	tablewidget->setIconSize(QSize(24,24));
 }
 void AddDialog::ClearTableContext(QTableWidget *tablewidget)
 {
@@ -249,6 +253,9 @@ void AddDialog::showConnectionNode(QTableWidget *tablewidget)
 				}else if(link->type()==T_TRANSFORMER)
 				{
 					addNode2Rows(ui.tableWidget_branch,fromnode,TransformerIcon,checknodecanbeselected(fromnode));
+				}else if(link->type()==T_FACTSDEVICE)
+				{
+					addNode2Rows(ui.tableWidget_branch,fromnode,FactsDeviceIcon,checknodecanbeselected(fromnode));
 				}
 			}
 			if((!Branchnodelist.contains(tonode)) && (selectnode!=tonode) )
@@ -260,6 +267,9 @@ void AddDialog::showConnectionNode(QTableWidget *tablewidget)
 				}else if(link->type()==T_TRANSFORMER)
 				{
 					addNode2Rows(ui.tableWidget_branch,tonode,TransformerIcon,checknodecanbeselected(tonode));
+				}else if(link->type()==T_FACTSDEVICE)
+				{
+					addNode2Rows(ui.tableWidget_branch,tonode,FactsDeviceIcon,checknodecanbeselected(tonode));
 				}
 			}
 		}		
@@ -495,6 +505,20 @@ void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType
 				}
 			}
 			break;
+		case FactsDeviceIcon:
+			{					
+				if(isselectable)
+				{
+					item0=new QTableWidgetItem(FactsDeviceUnSelected);
+					item0->setIcon(QIcon(":/images/facts.png"));
+				}
+				else 
+				{
+					item0=new QTableWidgetItem(UnSelectable);	
+					item0->setIcon(QIcon(":/images/factsgray.png"));
+				}
+			}
+			break;
 		default:
 			item0 = new QTableWidgetItem();
 			break;
@@ -563,6 +587,14 @@ void AddDialog::OnBranchnodeActived(int row,int column)
 	{
 		IDitem=new QTableWidgetItem(LinkUnSelected);			
 		IDitem->setIcon(QIcon(":/images/link.png"));		
+	}else if(type==FactsDeviceUnSelected)
+	{
+		IDitem=new QTableWidgetItem(FactsDeviceSelected);			
+		IDitem->setIcon(QIcon(":/images/factsyes.png"));
+	}else if(type==FactsDeviceSelected)
+	{
+		IDitem=new QTableWidgetItem(FactsDeviceUnSelected);			
+		IDitem->setIcon(QIcon(":/images/facts.png"));		
 	}
 
 	IDitem->setData(Qt::UserRole,(uint)node);

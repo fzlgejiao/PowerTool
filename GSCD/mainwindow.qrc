@@ -25,11 +25,15 @@
         <file alias="addcomment.png">Resources/images/addcomment.png</file>
         <file alias="addnet.png">Resources/images/addnet.png</file>
         <file alias="delete.png">Resources/images/delete.png</file>
-        <file alias="link.png">Resources/images/link.png</file>
-        <file alias="transformer.png">Resources/images/transformer.png</file>
-        <file alias="linkyes.png">Resources/images/linkyes.png</file>
-        <file alias="transformeryes.png">Resources/images/transformeryes.png</file>
-        <file alias="transformergray.png">Resources/images/transformergray.png</file>
-        <file alias="linkgray.png">Resources/images/linkgray.png</file>
+        <file alias="link.png">Resources/images/B.png</file>
+        <file alias="linkgray.png">Resources/images/B_gray.png</file>
+        <file alias="linkyes.png">Resources/images/B_yes.png</file>
+        <file alias="transformer.png">Resources/images/T.png</file>
+        <file alias="transformergray.png">Resources/images/T_gray.png</file>
+        <file alias="transformeryes.png">Resources/images/T_yes.png</file>
+        <file alias="facts.png">Resources/images/F.png</file>
+        <file alias="factsgray.png">Resources/images/F_gray.png</file>
+        <file alias="factsyes.png">Resources/images/F_yes.png</file>
+        <file alias="yes.png">Resources/images/yes.png</file>
     </qresource>
 </RCC>

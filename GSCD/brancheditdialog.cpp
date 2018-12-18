@@ -135,12 +135,26 @@ void BranchEditDialog::addlink2Rows(QTableWidget *tablewidget, iLinkData *link)
 		iTRANSFORMER *transformer=(iTRANSFORMER *)link;
 		QTableWidgetItem *fromitem = new QTableWidgetItem();		
 		QTableWidgetItem *enditem = new QTableWidgetItem();
+		QTableWidgetItem *rxitem = new QTableWidgetItem();
 
 		fromitem->setText(transformer->getFromBus()->name());
 		enditem->setText(transformer->getToBus()->name());
+		rxitem->setText(transformer->getRX());
 
 		tablewidget->setItem(row, Node1, fromitem);
 		tablewidget->setItem(row, Node2, enditem);
+		tablewidget->setItem(row, R_JX, rxitem);
+	}else if(link->type()==T_FACTSDEVICE)	
+	{
+		iFACTSDEVICE *factsdevice=(iFACTSDEVICE *)link;
+		QTableWidgetItem *fromitem = new QTableWidgetItem();		
+		QTableWidgetItem *enditem = new QTableWidgetItem();
+		
+		fromitem->setText(factsdevice->getFromBus()->name());
+		enditem->setText(factsdevice->getToBus()->name());
+	
+		tablewidget->setItem(row, Node1, fromitem);
+		tablewidget->setItem(row, Node2, enditem);		
 	}
 }
 void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * > linkgroup)
@@ -165,6 +179,12 @@ void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * 
 			QTreeWidgetItem *transformeritem=new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4").arg(transformer->getFromBus()->name()).arg(transformer->getFromBus()->GetRefVoltage()).arg(transformer->getToBus()->name()).arg(transformer->getToBus()->GetRefVoltage())));
 			transformeritem->setIcon(0,QIcon(":/images/transformer.png"));
 			items.append(transformeritem);
+		}else if(linkgroup[i]->type()==T_FACTSDEVICE)
+		{
+			iFACTSDEVICE *factsdevice=(iFACTSDEVICE *)linkgroup[i];
+			QTreeWidgetItem *factsitem=new QTreeWidgetItem(rootgroup,QStringList(QString("%1 %2 ---- %3 %4").arg(factsdevice->getFromBus()->name()).arg(factsdevice->getFromBus()->GetRefVoltage()).arg(factsdevice->getToBus()->name()).arg(factsdevice->getToBus()->GetRefVoltage())));
+			factsitem->setIcon(0,QIcon(":/images/facts.png"));
+			items.append(factsitem);
 		}
 	}
 

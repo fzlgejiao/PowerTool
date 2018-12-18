@@ -29,7 +29,8 @@ typedef enum
 {
 	NoIcon   =0,
 	BranchIcon,
-	TransformerIcon
+	TransformerIcon,
+	FactsDeviceIcon
 }IconType;
 
 typedef enum  
@@ -38,7 +39,9 @@ typedef enum
 	LinkSelected,
 	LinkUnSelected,
 	TransformerSelected,
-	TransformerUnSelected
+	TransformerUnSelected,
+	FactsDeviceSelected,
+	FactsDeviceUnSelected
 }IconItemType;
 
 class AddDialog : public QDialog
