@@ -414,7 +414,8 @@ void DiagramScene::deleteItems()
          if (data->type() == T_STAT && item->type() == DiagramItem::Type) 
 		 {
 			 DiagramItem *statItem = qgraphicsitem_cast<DiagramItem *>(item);
-             deleteStation(statItem,(iSTAT *)data);
+			 if(statItem)
+				deleteStation(statItem,(iSTAT *)data);
 		 }else if(data->type()==T_NOTE)
 		 {
 			 deleteNote((iNote*)data);

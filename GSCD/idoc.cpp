@@ -825,7 +825,7 @@ void iDoc::writeStats(QXmlStreamWriter *xmlWriter)
 		{
 			xmlWriter->writeStartElement("node");
 			xmlWriter->writeAttribute("id", QString::number(node->Id()));
-			xmlWriter->writeAttribute("load_show",node->isShowVoltge()?"true":"false");
+			xmlWriter->writeAttribute("v_show",node->isShowVoltge()?"true":"false");
 			QString name;
 			if(node->type() == T_BUS)
 				name = ((iBUS*)node)->name();

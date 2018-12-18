@@ -22,6 +22,9 @@ DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *sce
 
 }
 //! [0]
+DiagramItem::~DiagramItem()
+{
+}
 iData* DiagramItem::myData()
 {
 	return (iData *)data(ITEM_DATA).toUInt();

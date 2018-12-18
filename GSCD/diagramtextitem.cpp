@@ -11,7 +11,7 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
-    setFlag(QGraphicsItem::ItemIsFocusable);
+    //setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 		
 	defPos = QPointF(10,10);
@@ -44,7 +44,7 @@ void DiagramTextItem::mousePressEvent ( QGraphicsSceneMouseEvent * mouseEvent )
 }
 void DiagramTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-//    QGraphicsTextItem::mouseDoubleClickEvent(event);
+    QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
 void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {

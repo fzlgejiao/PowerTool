@@ -28,6 +28,7 @@ public:
     enum { Type = UserType + 15 };
 
     DiagramItem(iData* data, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+	~DiagramItem();
 
     void removeArrow(Arrow *arrow);
     void removeArrows();

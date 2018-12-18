@@ -636,65 +636,46 @@ void MainWindow::OnModeButtonGroupClicked(int id)
 
 void MainWindow::OnSelectionChanged()
 {
+	deleteAction->setEnabled(false);
+	editObjectAction->setEnabled(false);
+	propertyAction->setEnabled(false);
+
 	QList<QGraphicsItem *> items = selectedItems();
 	if(items.count())
 	{
 		//todo: enable/disable menu items of mainwindow
 		if(items.count()==1)
-		{
 			propertyAction->setEnabled(true);
-			QGraphicsItem* item = selectedItems().first();
 
-			if(!item)
-				return;
-			iData* data = (iData *)item->data(ITEM_DATA).toUInt();
-			if(!data)
-				return;
-			switch(data->type())
+		QGraphicsItem* item = selectedItems().first();
+
+		if(!item)
+			return;
+		iData* data = (iData *)item->data(ITEM_DATA).toUInt();
+		if(!data)
+			return;
+		switch(data->type())
+		{
+		case T_STAT:																				//select station item/station name item/station value item 
+			if(item->type() == DiagramItem::Type)
 			{
-			case T_STAT:
-				if(item->type() == DiagramItem::Type)
-				{
-					deleteAction->setEnabled(true);
-					editObjectAction->setEnabled(true);
-				}
-				else
-				{
-					deleteAction->setEnabled(false);
-					editObjectAction->setEnabled(false);
-				}
-				break;
-			case T_BRANCH:
+				deleteAction->setEnabled(true);
 				editObjectAction->setEnabled(true);
-				break;
-			case T_SLINK:
-				if(item->type() == Arrow::Type)
-				{
-					deleteAction->setEnabled(false);
-					editObjectAction->setEnabled(true);
-				}
-				else
-				{
-					deleteAction->setEnabled(false);
-					editObjectAction->setEnabled(false);
-				}
-				break;
-
-			case T_NOTE:
-				{
-					deleteAction->setEnabled(true);
-					editObjectAction->setEnabled(true);
-				}
-				break;
 			}
+			break;
+		//case T_BRANCH:
+		//	editObjectAction->setEnabled(true);
+		//	break;
+		case T_SLINK:
+			if(item->type() == Arrow::Type)
+				editObjectAction->setEnabled(true);
+			break;
+
+		case T_NOTE:
+			deleteAction->setEnabled(true);
+			editObjectAction->setEnabled(true);
+			break;
 		}
-	}
-	else
-	{
-		//todo: enable/disable menu items of mainwindow
-		deleteAction->setEnabled(false);
-		editObjectAction->setEnabled(false);
-		propertyAction->setEnabled(false);
 	}
 }
 
