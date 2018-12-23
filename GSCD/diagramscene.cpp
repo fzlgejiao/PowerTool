@@ -27,6 +27,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 
 	myFont =  QFont("Times New Roman", 12, QFont::Bold);
 	//myFont.setWeight(QFont::Bold);
+	setItemIndexMethod(NoIndex);																	//to fix bug of Qt: QTBUG-18021: Crash in QGraphicsSceneFindItemBspTreeVisitor::visit(QList<QGraphicsItem*>*) when delete items
 
 	//context menus
 	propertyAction = new QAction(tr("&Properties..."), this);
@@ -45,12 +46,12 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	defPositionAction->setStatusTip(tr("Return to default position"));
 
 	sceneMenu=new QMenu();
-	sceneMenu->addAction("Scaling...");
-	sceneMenu->addAction("Select all Stations");
-	sceneMenu->addAction("Return labels to default position");
-	sceneMenu->addAction("Map properties...");
-	sceneMenu->addAction("Image area...");
-	sceneMenu->addAction("Font...");
+	//sceneMenu->addAction("Scaling...");
+	//sceneMenu->addAction("Select all Stations");
+	//sceneMenu->addAction("Return labels to default position");
+	//sceneMenu->addAction("Map properties...");
+	//sceneMenu->addAction("Image area...");
+	//sceneMenu->addAction("Font...");
 
 	multiMenu=new QMenu();
 	multiMenu->addAction("multi-select1");
@@ -771,4 +772,18 @@ void DiagramScene::drawBackground ( QPainter * painter, const QRectF & rect )
 	painter->setPen(QPen(Qt::darkBlue, 4, Qt::SolidLine));
 	painter->setBrush(Qt::NoBrush);
     painter->drawRect(sceneRect);
+}
+void DiagramScene::selectAllStations()
+{
+	QMap<int,iSTAT *>& listStats = myDoc->getStatlist();
+	foreach(iSTAT *stat,listStats)
+	{
+		DiagramItem* item = stat->myItem();
+		if(item)
+			item->setSelected(true);
+	}
+}
+void DiagramScene::defAllPositions()
+{
+	emit allDefPositioned();																		//tell all text item back to def position
 }

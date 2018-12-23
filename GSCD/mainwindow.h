@@ -63,6 +63,8 @@ private:
     QMenu *helpMenu;
 
     QToolBar *tBar;
+
+	//actions for 'File' menu
     QAction *newAct;
     QAction *openAct;
     QAction *saveAct;
@@ -73,52 +75,62 @@ private:
 	QAction *pageSettingAct;
     QAction *exitAct;
 
-    QAction *cutAct;
-    QAction *copyAct;
-    QAction *pasteAct;
-
+	//actions for 'Edit' menu
 	QAction *addStationAction;
 	QAction *addNoteAction;
     QAction *deleteAction;
 	QAction *editObjectAction;
 
-	QAction *zoomOutAction;
-	QAction *zoomInAction;
-	QAction *zoomResetAction;
-	QAction *scaledialogAction;
-
-    QAction *toFrontAction;
-    QAction *sendBackAction;
-
+	//actions for 'View' menu
 	QAction *toolbarAct;
-	QAction *statusbarAct;
+	QAction *statusbarAct;	
+	QAction *scaledialogAction;
 	QAction *propertyAction;
 	QAction *controlpanelAction;
 
+	//actions for 'Settings' menu
 	QAction *imageAreaAction;
 	QAction *viewFontAction;
 	QAction *voltageLevelAction;
 	QAction *optionsAction;
 
+	//actions for 'Window' menu
     QAction *closeAct;
     QAction *closeAllAct;
     QAction *tileAct;
     QAction *cascadeAct;
     QAction *separatorAct;
 
+	//actions for 'Help' menu
     QAction *aboutAct;
     QAction *aboutQtAct;
 
-	QAction *escAct;
-
+	//actions for toolbar
+	QAction *zoomOutAction;
+	QAction *zoomInAction;
+	QAction *zoomResetAction;
 	QAction *arrowCursor;
 	QAction *handCursor;
-	QActionGroup * modeActionGroup;
-
 	QAction *fitwidthAction;
-
+	QActionGroup *dragModeGroup;
 	QButtonGroup *buttonModeGroup;
 	QActionGroup *actionModeGroup;
+
+	//actions for context menu
+	QAction *selectAllAction;
+	QAction *defAllPositionAction;
+
+
+	//other actions
+    QAction *toFrontAction;
+    QAction *sendBackAction;
+	
+	QAction *escAct;
+    QAction *cutAct;
+    QAction *copyAct;
+    QAction *pasteAct;
+
+
 	//QComboBox *sceneScaleCombo;
 	QLabel *currentScale;
 
@@ -164,7 +176,7 @@ private slots:
 	//view menu
 	//void showToolBar();
 	//void showStatusBar();
-	void OnZoomDialog();
+	void OnScaling();
 	void viewProperty();
 	void OnControlPanelDialog();
 	//void viewCtrl();
@@ -186,7 +198,7 @@ private slots:
 
 	//toolbar events
 	void OnfitInView();
-	void OnscaleChanged(int scale);
+	void OnScaleChanged(int scale);
 	void OnZoomOut();
 	void OnZoomIn();
 
@@ -199,6 +211,8 @@ private slots:
 	void OnModeDone();
 	//void OnScaleChanged(const QString &scale);
 	void OnSelectionChanged();
+	void OnSelectAllStations();
+	void OnDefAllPositions();
 
 
 	//not in use

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TextDialog</string>
+   <string>Text Property</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -106,7 +106,7 @@
       <item>
        <widget class="QPushButton" name="pushButton_font">
         <property name="text">
-         <string>Font</string>
+         <string>Font...</string>
         </property>
        </widget>
       </item>

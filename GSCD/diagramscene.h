@@ -63,6 +63,8 @@ public:
 	void viewItem();																				//to deal with view property event from main menu
 	void editItem();																				//to deal with edit object event from main menu
 	void deleteItems();																				//to deal with delete items event from main menu
+	void selectAllStations();
+	void defAllPositions();
 	
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
@@ -126,6 +128,7 @@ public slots:
 signals:
 	void modeDone();
 	void applyNameFont2all(QFont &font);
+	void allDefPositioned();
 };
 //! [0]
 

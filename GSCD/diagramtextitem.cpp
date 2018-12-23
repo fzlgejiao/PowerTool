@@ -15,6 +15,8 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 		
 	defPos = QPointF(10,10);
+
+	connect(scene, SIGNAL(allDefPositioned()),	this, SLOT(backToDefaultPos()));
 }
 //! [0]
 

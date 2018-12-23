@@ -30,7 +30,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     scale(qreal(m_scale/100.0), qreal(m_scale/100.0));
 	
-	setDragMode(QGraphicsView::RubberBandDrag);
+	setDragMode(QGraphicsView::NoDrag);
 	//setDragMode(QGraphicsView::ScrollHandDrag);	
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 		

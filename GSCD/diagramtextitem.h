@@ -27,6 +27,8 @@ public:
         { return Type; }
 
 	void setDefaultPos(const QPointF& pos){defPos = pos;}
+
+public slots:
 	void backToDefaultPos(){setPos(defPos);}
 
 

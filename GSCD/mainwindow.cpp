@@ -101,7 +101,7 @@ void MainWindow::updateMenus()
 
 	if(hasMdiChild)
 	{
-		if(activeMdiChild()->dragMode()==QGraphicsView::RubberBandDrag)
+		if(activeMdiChild()->dragMode()==QGraphicsView::NoDrag)
 		{
 			arrowCursor->setChecked(true);
 		}else 
@@ -152,6 +152,18 @@ MdiChild *MainWindow::createMdiChild()
 	DiagramScene* scene	= new DiagramScene(doc,this);
 	MdiChild *child		= new MdiChild(scene,doc);
 
+	//add actions to scene context menu
+	QMenu* menuScene = scene->getMenu(MENU_SCENE);
+	if(menuScene)
+	{
+		menuScene->addAction(scaledialogAction);
+		menuScene->addAction(selectAllAction);
+		menuScene->addAction(defAllPositionAction);
+		menuScene->addAction(controlpanelAction);
+		menuScene->addAction(imageAreaAction);
+		menuScene->addAction(viewFontAction);
+	}
+
 	mdiArea->addSubWindow(child);
 	child->showMaximized();
 
@@ -163,7 +175,7 @@ MdiChild *MainWindow::createMdiChild()
 	connect(scene, SIGNAL(modeDone()),this, SLOT(OnModeDone()));
 
 	connect(doc,   SIGNAL(areaSizeChanged(QSize &)),child,SLOT(OnAreaSizeChanged(QSize &)));
-	connect(child, SIGNAL(scaleChanged(int)),this,SLOT(OnscaleChanged(int)));
+	connect(child, SIGNAL(scaleChanged(int)),this,SLOT(OnScaleChanged(int)));
 
 	return child;
 }
@@ -289,10 +301,10 @@ void MainWindow::createActions()
 	handCursor->setCheckable(true);
 	handCursor->setChecked(false);
 
-	modeActionGroup=new QActionGroup(this);
-	modeActionGroup->addAction(arrowCursor);
-	modeActionGroup->addAction(handCursor);
-	modeActionGroup->setExclusive(true);
+	dragModeGroup=new QActionGroup(this);
+	dragModeGroup->addAction(arrowCursor);
+	dragModeGroup->addAction(handCursor);
+	dragModeGroup->setExclusive(true);
 
 	fitwidthAction = new QAction(QIcon(":/images/fitwidth.png"),
 		tr("&Fit In View"), this);	
@@ -316,7 +328,7 @@ void MainWindow::createActions()
 
 	scaledialogAction = new QAction(tr("&Scaling..."), this);
 	scaledialogAction->setStatusTip(tr("Change the scale"));
-	connect(scaledialogAction, SIGNAL(triggered()),this, SLOT(OnZoomDialog()));
+	connect(scaledialogAction, SIGNAL(triggered()),this, SLOT(OnScaling()));
 
 	propertyAction = new QAction(tr("&Properties..."), this);
 	propertyAction->setStatusTip(tr("Show object property"));
@@ -377,6 +389,15 @@ void MainWindow::createActions()
 	aboutQtAct = new QAction(tr("About &Qt"), this);
 	aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
 	connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+	//actions for context menu
+	selectAllAction = new QAction(tr("Select all Stations"), this);
+	selectAllAction->setStatusTip(tr("Select all Stations"));
+	connect(selectAllAction, SIGNAL(triggered()), this, SLOT(OnSelectAllStations()));
+
+	defAllPositionAction = new QAction(tr("Return labels to default position"), this);
+	defAllPositionAction->setStatusTip(tr("Return labels to default position"));
+	connect(defAllPositionAction, SIGNAL(triggered()), this, SLOT(OnDefAllPositions()));
 
 	escAct = new QAction(tr("&Esc"), this);
 	escAct->setShortcut(Qt::Key_Escape);
@@ -880,8 +901,15 @@ void MainWindow::options()
 }
 void MainWindow::about()
 {
-	QMessageBox::about(this, tr("About GWD"),
-		tr("The <b>GWD</b> is Geographical wiring diagram for power system."));
+	QString nameVersion = QApplication::applicationName() + " " + QApplication::applicationVersion();
+	QString aboutText = tr("<h2>%1 </h2>Geographical wiring diagram for power system." \
+							"<p>Version: %2 (compiled %3)" \
+							"<P>Author: itismelg@163.com" \
+							"<p>Copyright &#169; XXX Co.,Ltd. 2018.  All rights reserved." \
+							"<p>Warning: This computer program and its related documentation are protected by copyright law and international treaties. Unauthorized reproduction or distribution of this program or related documentation, or any portion thereof is strictly prohibited." \
+							"<p><a>http://www.XXX.com/</a><p><br>");
+	QMessageBox mgxBox(QMessageBox::Information, nameVersion,aboutText.arg(QApplication::applicationName()).arg(QApplication::applicationVersion()).arg(__DATE__", "__TIME__));
+	mgxBox.exec();
 }
 
 void MainWindow::esc()
@@ -931,8 +959,9 @@ void MainWindow::OnSelectModeChanged()
 	MdiChild* child = activeMdiChild();
 	if(!child)	return;
 	bool isSelectedmode=arrowCursor->isChecked();
-	child->setDragMode(isSelectedmode?QGraphicsView::RubberBandDrag: QGraphicsView::ScrollHandDrag);
+	child->setDragMode(isSelectedmode?QGraphicsView::NoDrag: QGraphicsView::ScrollHandDrag);
 	child->setInteractive(arrowCursor->isChecked());
+	child->scene()->clearSelection();
 
 	addStationAction->setEnabled(isSelectedmode);
 	addNoteAction->setEnabled(isSelectedmode);
@@ -940,7 +969,7 @@ void MainWindow::OnSelectModeChanged()
 	foreach(QAbstractButton *button, buttonModeGroup->buttons())
 		button->setEnabled(isSelectedmode);
 }
-void MainWindow::OnZoomDialog()
+void MainWindow::OnScaling()
 {
 	MdiChild* child = activeMdiChild();
 	if(!child)	return;
@@ -954,7 +983,7 @@ void MainWindow::OnZoomDialog()
 	}
 }
 
-void MainWindow::OnscaleChanged(int scale)
+void MainWindow::OnScaleChanged(int scale)
 {
 	QString scaletxt=QString("%1%").arg(scale,3,10,QChar(' '));		
 	this->currentScale->setText(scaletxt);
@@ -979,6 +1008,20 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 	{
         QMainWindow::keyPressEvent(event);
     }
+}
+void MainWindow::OnSelectAllStations()
+{
+	MdiChild* child = activeMdiChild();
+	if(!child)	
+		return;
+	child->scene()->selectAllStations();
+}
+void MainWindow::OnDefAllPositions()
+{
+	MdiChild* child = activeMdiChild();
+	if(!child)	
+		return;
+	child->scene()->defAllPositions();
 }
 QString MainWindow::getDataFile(const QString& mapFile)
 {
