@@ -21,9 +21,12 @@ public:
 
 	bool	readDataFile(const QString& fileName);
 	bool	readMapFile(const QString& fileName);
+	bool    readPfFile();
 	QString dataFile(){return m_szDataFile;}
 	QString mapFile(){return m_szMapFile;}
+	QString pfFile(){return m_PfFile;}
 	void	setDataFile(const QString& dataFile){m_szDataFile = dataFile;}
+	void	setPfFile(const QString& file){m_PfFile = file;}
 	bool	writeMapFile(const QString& mapFile);
 	void	writeStats(QXmlStreamWriter *xmlWriter);
 	void	writeNotes(QXmlStreamWriter *xmlWriter);
@@ -50,7 +53,10 @@ public:
 
 	iBUS*	getBUS(int id){return listBUS.value(id,NULL);}
 	iBRANCH*	getBRANCH(int id){return listBRANCH.value(id,NULL);}
+	iBRANCH*	getBRANCH(int node1ID,int node2ID,int ckt);
+
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
+	iTRANSFORMER*	getTRANSFORMER(int node1ID,int node2ID);
 
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
@@ -67,6 +73,8 @@ public:
 
 	iData*	Uid2Data(int uid);
 	double	sBase(){return SBase;}
+
+	QStringList wanningmessage(){return m_wanningmessage;}
 
 	//test func
 	void	test();
@@ -105,7 +113,7 @@ private:
 	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");
 	void GetBaseParameter(QFile& file);
 	void GetDataModel(QFile& file,T_DATA datatype);
-
+	void ParserPowerFlow(QString & filename);
 	//for data and map files
 	void readMapElement();
 	void readStations();
@@ -122,8 +130,10 @@ private:
 	ControlPanel	m_controlpanel;
 	double			SBase;
 	QString			m_szDataFile;
+	QString			m_PfFile;
 	QString			m_szMapFile;
 	bool			m_bModified;
+	QStringList     m_wanningmessage;
 signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);

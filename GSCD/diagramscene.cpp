@@ -1,6 +1,6 @@
 
 #include <QtGui>
-
+#include <QtCore/qmath.h>
 #include "diagramscene.h"
 #include "arrow.h"
 #include "idoc.h"
@@ -543,7 +543,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			DiagramItem *endItem	= slink->endItem();
 			if(!startItem || !endItem)
 				continue;
-
+			 
 			//arrow item
 			Arrow *arrow = new Arrow(startItem, endItem,slink,i,0,this);							//create arrow item for one line group
 			arrow->setColor(myLineColor);
@@ -552,19 +552,20 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			arrow->setZValue(-1000.0);
 			arrow->setVisible(myDoc->getControlPanel().isShowBranchLine);
 			addItem(arrow);
-
+			slink->setArrow(arrow);
+						
 			//arrow text item
-			DiagramTextItem* nameItem = new DiagramTextItem(arrow,this);
-			nameItem->setPlainText("Arrow Text");
-			nameItem->setFont(myFont);
+			DiagramTextItem* linkvalueItem = new DiagramTextItem(arrow,this);			
+			linkvalueItem->setPlainText(slink->linkvalue(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
+			linkvalueItem->setFont(myFont);
 			//nameItem->setDefaultTextColor(Qt::red);
 			//nameItem->setPos(QPointF(10,10));
 			//nameItem->setDefaultPos(QPointF(10,10));
-			nameItem->setData(ITEM_DATA,(uint)slink);
-			nameItem->setVisible(myDoc->getControlPanel().isShowBranchValue);
+			linkvalueItem->setData(ITEM_DATA,(uint)slink);
+			linkvalueItem->setVisible(myDoc->getControlPanel().isShowBranchValue);
 			//nameItem->setZValue(-1000.0);
-			addItem(nameItem);	
-			arrow->setTextItem(nameItem);
+			addItem(linkvalueItem);	
+			arrow->setTextItem(linkvalueItem);
 			arrow->updatePosition();
 		}
 	}

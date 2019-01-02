@@ -6,7 +6,7 @@
 #include <iostream>
 #include "diagramitem.h"
 #include "diagramtextitem.h"
-
+#include <QChar>
 
 iDoc::iDoc(QObject *parent)
 	: QObject(parent)
@@ -28,6 +28,7 @@ iDoc::iDoc(QObject *parent)
 	
 	m_AreaSize=QSize(297,210);
 	SBase=1;
+	m_wanningmessage.clear();
 }
 
 iDoc::~iDoc()
@@ -142,15 +143,28 @@ bool iDoc::readDataFile(const QString& fileName)
 	GetDataModel(file,T_AREA);
 	GetDataModel(file,T_FACTSDEVICE);
 	file.close();
-	if (file.error() != QFile::NoError) {
-        std::cerr << "Error: Cannot read file " << qPrintable(fileName)
-                  << ": " << qPrintable(file.errorString())
-                  << std::endl;
-        return false;
-    }
-
+	
 	setDataFile(fileName);																			//set current opened data file
     return true;
+}
+
+bool iDoc::readPfFile()
+{
+	if(m_szDataFile.isNull()) return false;
+	QString pffile=m_szDataFile.section(".",0,0)+".txt";
+	//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
+	if(QFile::exists(pffile))
+	{
+		ParserPowerFlow(pffile);
+		setPfFile(pffile);
+		return true;
+	}
+	else	
+	{
+		m_wanningmessage.append(tr("Can't found power flow file,must have the same directory of the data file,and has <*.txt> extension!"));		
+		//QMessageBox::warning(NULL,tr("Message Log"),tr("Can't found power flow file,must have the same directory of the data file,and has <*.txt> extension"), QMessageBox::Yes,QMessageBox::No);
+		return false;
+	}	
 }
 
 void iDoc::GetBaseParameter(QFile& file)
@@ -168,6 +182,214 @@ void iDoc::GetBaseParameter(QFile& file)
 			break;
 		}
 	}
+}
+void iDoc::ParserPowerFlow(QString & filename)
+{
+	QFile file(filename);
+	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+		std::cerr << "Error: Cannot read file " << qPrintable(filename)
+			<< ": " << qPrintable(file.errorString())
+			<< std::endl;
+		return ;
+	}
+	int sts=0;
+	QString stringline="";
+	QString nameccolumn="X-- NAME --X";
+	QString tranformercolumn="RATIO";
+	int namlength=nameccolumn.length();
+	int tranformerlength=tranformercolumn.length();
+	int fromnameindex=0;
+	int tonameindex=0;
+	int t_index=0;
+	bool nameindexok=false;
+	QString cutline="--------------------------------------------------------------";
+	iBUS *frombus=NULL;
+	QTextStream stream(&file);
+	stream.seek(0);
+	while(!stream.atEnd())
+	{
+		stringline=stream.readLine();
+
+		if(stringline.contains(cutline))  sts=1;
+		else if(stringline=="") sts=0;
+		else if(stringline.contains(nameccolumn)) sts=4;			
+		
+		switch(sts)
+		{
+		case 4:
+			{
+				fromnameindex=stringline.indexOf(nameccolumn);
+				tonameindex=stringline.lastIndexOf(nameccolumn);
+				t_index=stringline.indexOf(tranformercolumn);
+				if((fromnameindex!=0)&&(tonameindex!=0))
+					nameindexok=true;
+			}
+			break;
+
+		case 0:		
+			break;
+
+		case 1:
+			{
+				//To do :update bus node
+				//first get the name
+				if(!nameindexok) continue;
+				QString fromname=stringline.mid(fromnameindex,namlength).trimmed();
+
+				QStringList datalist=stringline.replace(fromname,"").split(" ",QString::SkipEmptyParts);
+
+				int fromid=datalist[0].toInt();				
+				float refvoltage=datalist[1].toFloat();
+				float voltage=datalist[3].toFloat();
+				float voltageangle=datalist[4].toFloat();
+				float PowerActive=datalist[5].toFloat();
+				float LoadActive=datalist[6].toFloat();
+				float ShuntActive=datalist[7].toFloat();
+				sts=2;
+
+				frombus=this->getBUS(fromid);
+				if(frombus)
+				{
+					//if the PowerFlow file has the bus data ,update it from this file
+					frombus->m_refvoltage=refvoltage;
+					frombus->m_voltage=voltage;
+					frombus->m_angle=voltageangle;
+					frombus->power_PG=PowerActive;
+					frombus->Load_PL=LoadActive;
+					frombus->Compensation_GL=ShuntActive;
+				}
+			}
+			break;
+
+		case 2:
+			{
+				//to do : update link data
+				if(!nameindexok) continue;
+				QString toname=stringline.mid(tonameindex,namlength).trimmed();
+
+				QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
+				QString PowerReActiveStr=tobusdata[2];								//it maybe has suffix, one letter
+				if(PowerReActiveStr.at(PowerReActiveStr.length()-1).isLetter())
+				{
+					PowerReActiveStr.chop(1);
+				}
+				float PowerReActive=PowerReActiveStr.toFloat();
+				float LoadReActive=tobusdata[3].toFloat();
+				float ShuntReActive=tobusdata[4].toFloat();
+				if(frombus)
+				{
+					//if the PowerFlow file has the bus data ,update it from this file
+					frombus->Compensation_BL=ShuntReActive;
+					frombus->Load_QL=LoadReActive;
+					frombus->power_QG=PowerReActive;
+				}
+				//to do :update Bus data		
+
+				int toid=tobusdata[5].toInt();				
+				float refvoltage=tobusdata[6].toFloat();
+				int ckt=tobusdata[8].toInt();				
+				float P=tobusdata[9].toFloat();
+				float Q=tobusdata[10].toFloat();
+				sts=3;
+
+				iBUS *tobus=this->getBUS(toid);
+				if(tobus) tobus->m_refvoltage=refvoltage;
+				if(frombus && tobus)
+				{					
+					QString t_vaue=stringline.mid(t_index-toname.length(),tranformerlength).trimmed();
+					if(t_vaue!="")
+					{
+						// search transformer
+						iTRANSFORMER *transformer=getTRANSFORMER(frombus->Id(),toid);
+						if(transformer)
+						{
+							if(transformer->getToBus()->Id()==toid)
+							{
+								transformer->m_P1=P/SBase;
+								transformer->m_Q1=Q/SBase;
+							}else
+							{
+								transformer->m_P2=P/SBase;
+								transformer->m_Q2=Q/SBase;
+							}
+						}
+					}else
+					{
+						//search branch
+						iBRANCH *branch=getBRANCH(frombus->Id(),toid,ckt);
+						if(branch)
+						{
+							if(branch->tobus->Id()==toid)
+							{
+								branch->m_P1=P/SBase;
+								branch->m_Q1=Q/SBase;
+							}else
+							{
+								branch->m_P2=P/SBase;
+								branch->m_Q2=Q/SBase;
+							}
+						}
+					}
+				}
+			}
+			break;
+
+		case 3:
+			{
+				if(!nameindexok) continue;
+				QString toname=stringline.mid(tonameindex,namlength).trimmed();
+				//todo : update link data, from second line
+				QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
+
+				//to do :update to Bus data and link data
+				int toid=tobusdata[0].toInt();		
+				float refvoltage=tobusdata[1].toFloat();
+				int ckt=tobusdata[3].toInt();
+				float P=tobusdata[4].toFloat();
+				float Q=tobusdata[5].toFloat();
+
+				QString t_vaue=stringline.mid(t_index-toname.length(),tranformerlength).trimmed();
+				if(t_vaue!="")
+				{
+					// transformer
+					iTRANSFORMER *transformer=getTRANSFORMER(frombus->Id(),toid);
+						if(transformer)
+						{
+							if(transformer->getToBus()->Id()==toid)
+							{
+								transformer->m_P1=P/SBase;
+								transformer->m_Q1=Q/SBase;
+							}else
+							{
+								transformer->m_P2=P/SBase;
+								transformer->m_Q2=Q/SBase;
+							}
+						}
+				
+				}else
+				{
+					//branch
+					iBRANCH *branch=getBRANCH(frombus->Id(),toid,ckt);
+						if(branch)
+						{
+							if(branch->tobus->Id()==toid)
+							{
+								branch->m_P1=P/SBase;
+								branch->m_Q1=Q/SBase;
+							}else
+							{
+								branch->m_P2=P/SBase;
+								branch->m_Q2=Q/SBase;
+							}
+						}
+				}
+			}
+			break;
+		}	
+	
+	}
+
+	file.close();
 }
 void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 {
@@ -467,6 +689,7 @@ iSLINK* iDoc::SLINK_new(iSTAT* startSTAT,iSTAT* endSTAT)
 {
 	iSLINK* statLINK = new iSLINK(SLINK_getId(),startSTAT,endSTAT,this);
 	listSLINK.insert(statLINK->Id(),statLINK);
+	connect(this,SIGNAL(controlpanelChanged(ControlPanel &,uint)),statLINK,SLOT(OncontrolpanelChanged(ControlPanel &,uint)));
 	return statLINK;
 }
 void iDoc::SLINK_delete(int id)
@@ -503,6 +726,39 @@ iNodeData* iDoc::getNode(int type,int id)
 		return NULL;
 }
 
+iTRANSFORMER*	iDoc::getTRANSFORMER(int node1ID,int node2ID)
+{
+	QMapIterator<int, iTRANSFORMER *> it(listTRANSFORMER);
+   while (it.hasNext()) 
+   {
+	   it.next();
+	   int fromid=it.value()->frombus->Id();
+	   int toid=it.value()->tobus->Id();
+
+	   if( (fromid== node1ID) &&(toid==node2ID))
+		   return it.value();
+	    if( (toid== node1ID) &&(fromid==node2ID))
+		   return it.value();
+   }
+	return NULL;
+}
+iBRANCH*	iDoc::getBRANCH(int node1ID,int node2ID,int ckt)
+{
+	QMapIterator<int, iBRANCH *> it(listBRANCH);
+   while (it.hasNext()) 
+   {
+	   it.next();
+	   int fromid=it.value()->frombus->Id();
+	   int toid=it.value()->tobus->Id();
+	   int p_code=it.value()->ParallelCode;
+
+	   if( (fromid== node1ID) &&(toid==node2ID) && (p_code==ckt))
+		   return it.value();
+	    if( (toid== node1ID) &&(fromid==node2ID)&& (p_code==ckt))
+		   return it.value();
+   }
+	return NULL;
+}
 iAREA*	iDoc::getAREA(const QString& name)
 {
    QMapIterator<int, iAREA *> it(listAREA);

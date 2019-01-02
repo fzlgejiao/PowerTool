@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include "diagramscene.h"
 #include "idoc.h"
+#include "messageoutput.h"
 
 class QGraphicsScene;
 class QRubberBand;
@@ -59,6 +60,7 @@ private:
 	int			scale_max;
 	QPoint		posRubberOrigin;
 	QRubberBand	*rubberBand;
+	MessageOutput *m_messageoutput;
 
 };
 
