@@ -129,7 +129,7 @@ signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);
 	void statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&);
-	void noteAdded(iNote*,const QPointF&);
+	void noteAdded(iNote*,const QPointF& pos,const QSizeF& size);
 
 };
 

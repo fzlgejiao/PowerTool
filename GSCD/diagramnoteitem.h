@@ -44,6 +44,7 @@ public:
 	void setTextFont(QFont font){m_font=font;}
 	void setAlignMode(Qt::Alignment alignmode);
 	void setSize(const QSizeF & size){ m_rect=QRectF(QPointF(0,0),size);}
+	QSizeF size(){return m_rect.size();}
 
 signals:
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>299</height>
+    <width>517</width>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,12 +18,12 @@
     <rect>
      <x>10</x>
      <y>11</y>
-     <width>331</width>
+     <width>361</width>
      <height>81</height>
     </rect>
    </property>
    <property name="title">
-    <string>SceneType</string>
+    <string>Scene Type</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -31,14 +31,14 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="radioButton_nonote">
         <property name="text">
-         <string>NoNote</string>
+         <string>No Note</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QRadioButton" name="radioButton_powerflow">
         <property name="text">
-         <string>PowerFlow</string>
+         <string>Power Flow</string>
         </property>
        </widget>
       </item>
@@ -76,7 +76,7 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>390</x>
      <y>21</y>
      <width>101</width>
      <height>61</height>
@@ -97,7 +97,7 @@
     <rect>
      <x>10</x>
      <y>91</y>
-     <width>331</width>
+     <width>361</width>
      <height>191</height>
     </rect>
    </property>
@@ -124,7 +124,7 @@
       <item>
        <widget class="QCheckBox" name="checkBox_reactivepowerflow">
         <property name="text">
-         <string>ReactivePower Flow</string>
+         <string>Reactive Power Flow</string>
         </property>
        </widget>
       </item>
@@ -174,7 +174,7 @@
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>380</x>
      <y>201</y>
      <width>121</width>
      <height>81</height>
