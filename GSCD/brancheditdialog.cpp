@@ -113,14 +113,29 @@ void BranchEditDialog::addlink2Rows(QTableWidget *tablewidget, iLinkData *link)
 {
 	int row = tablewidget->rowCount();
 	tablewidget->insertRow(row);
+	QTableWidgetItem *P1Q1item=NULL;
+	QTableWidgetItem *P2Q2item=NULL;
+	if((link->P1_active()!=0) || (link->Q1_reactive()!=0))
+	{
+		P1Q1item=new QTableWidgetItem();
+		P1Q1item->setText(QString("%1+j%2").arg(link->P1_active()).arg(link->Q1_reactive()));
+	}
+	if((link->P2_active()!=0) || (link->Q2_reactive()!=0))
+	{
+		P2Q2item=new QTableWidgetItem();
+		P2Q2item->setText(QString("%1+j%2").arg(link->P2_active()).arg(link->Q2_reactive()));
+	}
+	if(P1Q1item) tablewidget->setItem(row, P1_JQ1, P1Q1item);
+	if(P2Q2item) tablewidget->setItem(row, P2_JQ2, P2Q2item);
+
 	if(link->type()==T_BRANCH)
 	{
-		iBRANCH *branch=(iBRANCH *)link;
+		iBRANCH *branch=(iBRANCH *)link;		
 		QTableWidgetItem *fromitem = new QTableWidgetItem();		
 		QTableWidgetItem *enditem = new QTableWidgetItem();
 		QTableWidgetItem *codeitem = new QTableWidgetItem();
 		QTableWidgetItem *rxitem = new QTableWidgetItem();
-
+		
 		fromitem->setText(branch->getFromBus()->name());
 		enditem->setText(branch->getToBus()->name());
 		codeitem->setText(QString::number(branch->getParallelCode()));
@@ -130,6 +145,7 @@ void BranchEditDialog::addlink2Rows(QTableWidget *tablewidget, iLinkData *link)
 		tablewidget->setItem(row, Node2, enditem);
 		tablewidget->setItem(row, ParallelCode, codeitem);
 		tablewidget->setItem(row, R_JX, rxitem);
+	
 	}else if(link->type()==T_TRANSFORMER)	
 	{
 		iTRANSFORMER *transformer=(iTRANSFORMER *)link;

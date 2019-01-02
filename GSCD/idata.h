@@ -123,9 +123,19 @@ public:
 	int fromUid(){return m_fromUid;}
 	int toUid(){return m_toUid;}
 
+	float P1_active(){return m_P1;}
+	float Q1_reactive(){return m_Q1;}
+	float P2_active(){return m_P2;}
+	float Q2_reactive(){return m_Q2;}
+
 protected:
 	int			m_fromUid;																			//uid of from node
 	int			m_toUid;																			//uid of to node
+
+	float       m_P1;
+	float       m_Q1;
+	float       m_P2;
+	float       m_Q2;
 };
 
 class iNodeData : public iData
@@ -242,10 +252,10 @@ public:
 	DiagramTextItem* itemName(){return m_itemName;}
 	void	setItemValue(DiagramTextItem* item){m_itemValue = item;}
 	DiagramTextItem* itemValue(){return m_itemValue;}
-
+	
 	void	addSlink(iSLINK* slink);
 	void	removeSlinks();
-	void	removeSlink(iSLINK* slink);	
+	void	removeSlink(iSLINK* slink);		
 
 	PF_VTYPE	powerShowtype(){return m_power_showtype;}
 	void		setPowerType(PF_VTYPE type){m_power_showtype=type;}
@@ -277,14 +287,16 @@ private:
 
 	QList<iNodeData *>	m_nodeDatas;
 	QList<iSLINK *>		m_sLinks;
-
-	
+		
 	bool is_loadshown;
 	bool is_compensationshown;
 };
 
+class Arrow;
 class iSLINK : public iData
 {
+	Q_OBJECT
+
 public:
 	iSLINK(int id,iSTAT* startSTAT,iSTAT* endSTAT,QObject *parent=0);
 	~iSLINK(){}
@@ -304,9 +316,18 @@ public:
 	iSTAT*			startStat(){return m_startSTAT;}
 	iSTAT*			endStat(){return m_endSTAT;}
 
+	void setArrow(Arrow *arrow){m_arrow=arrow;}
+	Arrow * myArrow() {return m_arrow;}
+
+	QString linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower);
+
+public slots:
+	void OncontrolpanelChanged(ControlPanel &,uint);
+
 private:
 	friend class iDoc;
 
+	Arrow *         m_arrow;
 	iSTAT*			m_startSTAT;																	//start station
 	iSTAT*			m_endSTAT;																		//end station
 	DiagramItem*	m_startItem;

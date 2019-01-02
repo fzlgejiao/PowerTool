@@ -5,6 +5,7 @@
 #include <QGraphicsLineItem>
 
 #include "diagramitem.h"
+#include "diagramtextitem.h"
 
 QT_BEGIN_NAMESPACE
 class QGraphicsPolygonItem;
@@ -38,6 +39,7 @@ public:
     DiagramItem *endItem() const
         { return myEndItem; }
 	void setTextItem(DiagramTextItem* item){myTextItem = item;}
+	DiagramTextItem *textItem(){return myTextItem;}
 
     void updatePosition();
 

@@ -5,6 +5,7 @@
 #include "arrow.h"
 #include "stationparameterdialog.h"
 
+
 MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	: QGraphicsView(scene)
 	,dpi(100)
@@ -18,6 +19,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	m_doc	= doc;
 	
 	rubberBand = NULL;
+	m_messageoutput=NULL;
 	QSizeF viewsize=m_doc->getAreaSize();
 	int width=viewsize.width()*dpi/25.4;
 	int height=viewsize.height()*dpi/25.4;
@@ -59,10 +61,16 @@ void MdiChild::newFile(const QString& datafile)
     	
 	//todo: open data file
 	m_doc->readDataFile(datafile);
-
+	m_doc->readPfFile();
     QApplication::restoreOverrideCursor();
-
+	
     connect(m_scene, SIGNAL(changed ( const QList<QRectF> &)), this, SLOT(documentWasModified()));
+	if(m_doc->wanningmessage().count()>0)
+	{
+
+		m_messageoutput=new MessageOutput(m_doc->wanningmessage());
+		m_messageoutput->show();
+	}
 }
 
 bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
@@ -81,6 +89,7 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
     	
 	//read data and map file
 	bool bRet1 = m_doc->readDataFile(dataFile);														//read data from data file
+	bool ispfok=m_doc->readPfFile();
 	bool bRet2 = m_doc->readMapFile(mapFile);														//read map from map file
 	if(dataFile != m_doc->dataFile())																//data file name changed
 	{
@@ -93,7 +102,12 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(mapFile);
-
+				
+	if(m_doc->wanningmessage().count()>0)
+	{
+		m_messageoutput=new MessageOutput(m_doc->wanningmessage());
+		m_messageoutput->show();
+	}
     return (bRet1 && bRet2);
 }
 

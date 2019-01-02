@@ -14,7 +14,6 @@
 #include "arrow.h"
 #include "newdialog.h"
 #include <iostream>
-
 const int InsertTextButton = 10;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
@@ -710,7 +709,7 @@ void MainWindow::newFile()
 	child->newFile(dlg.FileName());																	//new a map with a data file(not saved to a map file)
 	statusBar()->showMessage(tr("File loaded"), 2000);
 	child->show();
-	barDataFile->setText(dlg.FileName());
+	barDataFile->setText(dlg.FileName());		
 }
 
 void MainWindow::open()
@@ -738,6 +737,7 @@ void MainWindow::open()
 			child->doc()->setModified(false);
 
 			connect(child->scene(), SIGNAL(changed ( const QList<QRectF> &)), child, SLOT(documentWasModified()));
+			
 		} 
 		else 
 		{
@@ -909,7 +909,7 @@ void MainWindow::about()
 							"<p>Warning: This computer program and its related documentation are protected by copyright law and international treaties. Unauthorized reproduction or distribution of this program or related documentation, or any portion thereof is strictly prohibited." \
 							"<p><a>http://www.XXX.com/</a><p><br>");
 	QMessageBox mgxBox(QMessageBox::Information, nameVersion,aboutText.arg(QApplication::applicationName()).arg(QApplication::applicationVersion()).arg(__DATE__", "__TIME__));
-	mgxBox.exec();
+	mgxBox.exec();	
 }
 
 void MainWindow::esc()

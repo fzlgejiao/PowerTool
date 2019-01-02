@@ -17,7 +17,10 @@ iData::~iData()
 iLinkData::iLinkData(int id,int fromUid,int toUid,QObject *parent)
 	: iData(id,parent),m_fromUid(fromUid),m_toUid(toUid)
 {
-
+	m_P1=0;
+	m_P2=0;
+	m_Q1=0;
+	m_Q2=0;
 }
 iNodeData::iNodeData(int id,QObject *parent)
 	: iData(id,parent),m_statId(0)
@@ -272,11 +275,11 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWSTATNAME)
 	{
-		this->itemName()->setVisible(settings.isShowStationName);
+		m_itemName->setVisible(settings.isShowStationName);
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWSTATVALUE)
 	{
-		this->itemValue()->setVisible(settings.isShowStationValue);
+		m_itemValue->setVisible(settings.isShowStationValue);
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWBRNACHLINE)
 	{
@@ -301,7 +304,7 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 	if(changes & CHG_CONTROLPANEL_SHOWREACTIVEVALUE)
 	{	
 		double base=this->nodeDatas().first()->getSBase();
-		this->itemValue()->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
+		m_itemValue->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWADMITTANCE)
 	{	
@@ -310,18 +313,17 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 		(changes & CHG_CONTROLPANEL_SHOWALLVOLTAGE) ||
 		(changes & CHG_CONTROLPANEL_UNIT))
 	{	
-		if(changes & CHG_CONTROLPANEL_UNIT)
-			//Change the station value to current unit type
+		if(changes & CHG_CONTROLPANEL_UNIT)	//Change the station value to current unit type			
 		{
-			double base=this->nodeDatas().first()->getSBase();
-			this->itemValue()->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
+			double base=this->nodeDatas().first()->getSBase();			
+			m_itemValue->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));			
 		}
 		if(settings.isShowAllNodeVoltage)
 		{
-			this->itemName()->setPlainText(this->allNodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
+			m_itemName->setPlainText(this->allNodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
 		}else
 		{
-			this->itemName()->setPlainText(this->nodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
+			m_itemName->setPlainText(this->nodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
 		}
 	}
 }
@@ -335,6 +337,7 @@ iSLINK::iSLINK(int id,iSTAT* startSTAT,iSTAT* endSTAT,QObject *parent)
 	m_endSTAT	= endSTAT;
 	m_startItem = NULL;
 	m_endItem	= NULL;
+	m_arrow=NULL;
 }
 void iSLINK::addLinkData(int groupId,iLinkData *linkData)
 {
@@ -357,6 +360,60 @@ int iSLINK::groupLineCount(int groupId)
 		return 0;
 
 	return m_linkGroups[groupId].count();
+}
+void iSLINK::OncontrolpanelChanged(ControlPanel &settings,uint changes)
+{	
+	if(!m_arrow) return ;
+	double base=m_startSTAT->nodeDatas().first()->getSBase();
+	if((changes & CHG_CONTROLPANEL_SHOWREACTIVEVALUE) || 
+		(changes & CHG_CONTROLPANEL_UNIT)
+	  )
+	{	
+		m_arrow->textItem()->setPlainText(this->linkvalue(base,settings.unittype,settings.isShowReactivePowerValue));
+	}		
+}
+QString iSLINK::linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower)
+{
+	float link_P=0;
+	float link_Q=0;
+	QString linktext="";
+	foreach(iLinkData *link,m_linkDatas)
+	{
+		if(link->P1_active()>=0)
+		{
+			link_P+=link->P1_active();
+			link_Q+=link->Q1_reactive();
+		}
+		else 
+		{
+			link_P+=link->P2_active();
+			link_Q+=link->Q2_reactive();
+		}
+	}
+	if((link_P==0) && (link_Q==0)) return linktext; 
+
+	if(unit==UNIT_ACTUALVALUE)
+	{
+		link_P*=sbase;
+		link_Q*=sbase;
+	}
+	if(!showReactivePower)
+	{
+		linktext=QString("%1").arg(link_P);
+	}
+	else
+	{
+		if(link_Q>0)			
+			linktext=QString("%1+j%2").arg(link_P).arg(link_Q);
+		else
+			linktext=QString("%1-j%2").arg(link_P).arg(qAbs(link_Q));			
+	}
+
+	int count=m_linkDatas.count();
+	if(count>1) 
+		linktext.append(QString("(%1)").arg(count));
+
+	return linktext;
 }
 //--------------------------------------------------------------------------------------------------
 //	iBUS funcs
