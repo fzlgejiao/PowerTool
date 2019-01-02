@@ -159,7 +159,7 @@ void DiagramNoteItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
 	QPointF pos1 = event->pos();        
 	QPointF pos2 = event->lastPos();
-	this->prepareGeometryChange();
+	//this->prepareGeometryChange();
 	float delta_x = pos2.x()-pos1.x();
 	float delta_y = pos2.y()-pos1.y();		
 	qreal newwidth,newheight;

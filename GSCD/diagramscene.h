@@ -89,7 +89,6 @@ protected:
 	void updateArrows(iSTAT* stat);
 
 	//actions for note
-	void addNote(const QPointF& pos);
 	void viewNote(iNote *note);
 	void deleteNote(DiagramNoteItem *itme,iNote *note);
 
@@ -124,6 +123,7 @@ private:
 	
 public slots:
 	void addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName = QPointF(10,10),QPointF& posValue = QPointF(10,-20));
+	void addNote(iNote* note,const QPointF& pos);
 
 signals:
 	void modeDone();

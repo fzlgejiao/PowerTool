@@ -89,6 +89,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_NOTE,noteMenu);
 
 	connect(doc, SIGNAL(statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)),	this, SLOT(addStation(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)));
+	connect(doc, SIGNAL(noteAdded(iNote*,const QPointF&)),	this, SLOT(addNote(iNote*,const QPointF&)));
 	
 }
 //! [0]
@@ -180,70 +181,51 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 				{
 					AddDialog dlg(myDoc,NULL,pMain);
 					if(dlg.exec()!=QDialog::Accepted)
-					{
-						emit modeDone();
-						return;
-					}
+						break;
 
 					if(!dlg.IsAddSite()) 
-						return ;
+						break ;
 					//add new station data object			
 					iSTAT* stat= myDoc->STAT_new(myDoc->STAT_getId(),dlg.NewStationName());												//create a new station object
-					if(!stat)
-						return;
-					
-					QList<iNodeData *> addednodes=dlg.GetAddedNodes();
-					stat->setNodes(addednodes);
-					stat->setsType(dlg.getstationtype());
+					if(stat)
+					{	
+						QList<iNodeData *> addednodes=dlg.GetAddedNodes();
+						stat->setNodes(addednodes);
+						stat->setsType(dlg.getstationtype());
 
-					addStation(stat,mouseEvent->scenePos(),dlg.GetFont());
+						addStation(stat,mouseEvent->scenePos(),dlg.GetFont());
+					}
 				}
 
-				emit modeDone();
+				
 			}
 			break;
 
 		case M_AddNote:
-			{				
-				addNote(mouseEvent->scenePos());				
-				emit modeDone();
+			{	
+				TextDialog dlg(NULL,pMain);
+				if(dlg.exec()!=QDialog::Accepted) 
+					break ;
+	
+				if(dlg.GetText().isEmpty()) 
+					break ;
+
+				iNote* note= myDoc->Note_new(dlg.GetText());
+				if(note) 
+				{
+					note->setTextFont(dlg.GetFont());
+					note->setTextColor(dlg.GetTextcolor());
+					note->setAlignmode(dlg.GetAlignmode());
+					note->setborder(dlg.HasBorder());
+					addNote(note,mouseEvent->scenePos());				
+				}
 			}
 			break;
 		}
 	}
-	/*
-    if (line != 0 && myMode == InsertLine) {
-        QList<QGraphicsItem *> startItems = items(line->line().p1());
-        if (startItems.count() && startItems.first() == line)
-            startItems.removeFirst();
-        QList<QGraphicsItem *> endItems = items(line->line().p2());
-        if (endItems.count() && endItems.first() == line)
-            endItems.removeFirst();
 
-        removeItem(line);
-        delete line;
-//! [11] //! [12]
+	emit modeDone();
 
-        if (startItems.count() > 0 && endItems.count() > 0 &&
-            startItems.first()->type() == DiagramItem::Type &&
-            endItems.first()->type() == DiagramItem::Type &&
-            startItems.first() != endItems.first()) {
-            DiagramItem *startItem =
-                qgraphicsitem_cast<DiagramItem *>(startItems.first());
-            DiagramItem *endItem =
-                qgraphicsitem_cast<DiagramItem *>(endItems.first());
-            Arrow *arrow = new Arrow(startItem, endItem);
-            arrow->setColor(myLineColor);
-            startItem->addArrow(arrow);
-            endItem->addArrow(arrow);
-            arrow->setZValue(-1000.0);
-            addItem(arrow);
-            arrow->updatePosition();
-        }
-    }
-//! [12] //! [13]
-    line = 0;
-	*/
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 void DiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent)
@@ -722,21 +704,8 @@ void DiagramScene::editSLink(iSLINK* slink)
 		//to do : group change
 	}
 }
-void DiagramScene::addNote(const QPointF& pos)
+void DiagramScene::addNote(iNote* note,const QPointF& pos)
 {
-	TextDialog dlg(NULL,pMain);
-	if(dlg.exec()!=QDialog::Accepted) return ;
-	
-	if(dlg.GetText().isEmpty()) return ;
-
-	iNote* note= myDoc->Note_new(dlg.GetText());
-	if(!note) return ;
-
-	note->setTextFont(dlg.GetFont());
-	note->setTextColor(dlg.GetTextcolor());
-	note->setAlignmode(dlg.GetAlignmode());
-	note->setborder(dlg.HasBorder());
-	
 	DiagramNoteItem* noteitem = new DiagramNoteItem(note,NULL,this);
 	noteitem->setPos(pos);		
 	addItem(noteitem);

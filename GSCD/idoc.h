@@ -118,8 +118,9 @@ private:
 	void readMapElement();
 	void readStations();
 	void readStatElement();
-
 	void readNodes(QList<iNodeData *> &listNodes);
+
+	void readNotes();
 	void skipUnknownElement();
 	QXmlStreamReader xmlReader;
 
@@ -138,6 +139,7 @@ signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);
 	void statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&);
+	void noteAdded(iNote*,const QPointF&);
 
 };
 
