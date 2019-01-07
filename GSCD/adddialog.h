@@ -90,6 +90,7 @@ private:
 	iSTAT *m_editstation;
 	bool is_edit;
 	void addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon= NoIcon,bool isselectable=true);		
+	void addNodeList2Table(QTableWidget *tablewidget,QList<iNodeData *> nodes);
 	//iNodeData * GetNodefromItem(QString name,double refvlotage,QString areaname,QList<iNodeData *> nodelist);
 	int finditemrow(iNodeData *node);
 	void showConnectionNode(QTableWidget *tablewidget);

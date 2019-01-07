@@ -50,8 +50,9 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
-	foreach(iNodeData *bus ,hiddennodelist)
-		addNode2Rows(ui.tableWidget_hidden,bus);
+	//foreach(iNodeData *bus ,hiddennodelist)
+	//	addNode2Rows(ui.tableWidget_hidden,bus);
+	addNodeList2Table(ui.tableWidget_hidden,hiddennodelist);
 
 	connect(ui.tableWidget_hidden,SIGNAL(cellClicked (int,int)),this,SLOT(OnHiddenTableActived(int,int)));
 	connect(ui.tableWidget_added,SIGNAL(cellClicked (int,int)),this,SLOT(OnAddedTableActived(int,int)));
@@ -76,6 +77,9 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 
 	connect(ui.tableWidget_hidden->verticalScrollBar(),SIGNAL(valueChanged(int)),this,SLOT(acceptVScrollValueChanged(int)));
+	ui.tableWidget_added->sortByColumn(ID,Qt::AscendingOrder);
+	ui.tableWidget_branch->sortByColumn(ID,Qt::AscendingOrder);
+	ui.tableWidget_hidden->sortByColumn(ID,Qt::AscendingOrder);
 }
 void AddDialog::acceptVScrollValueChanged(int value)
 {
@@ -109,7 +113,7 @@ void AddDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setColumnWidth(Name,100);
 	tablewidget->setColumnWidth(VB,80);
 	//set sorting
-	tablewidget->sortByColumn(ID,Qt::AscendingOrder);
+	//tablewidget->sortByColumn(ID,Qt::AscendingOrder);
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
@@ -463,6 +467,31 @@ void AddDialog::OnRevokeAll()
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
 	ui.lineEdit_addedCnt->setText(QString::number(ui.tableWidget_added->rowCount()));
 	m_changes|=CHG_STAT_DATA;
+}
+void AddDialog::addNodeList2Table(QTableWidget *tablewidget,QList<iNodeData *> nodes)
+{
+	int rows=nodes.count();
+	if(rows==0) return ;
+	tablewidget->setRowCount(rows);
+
+	for(int row=0;row<rows;row++)
+	{
+		QTableWidgetItem *item0 = new QTableWidgetItem();	
+		QTableWidgetItem *item1 = new QTableWidgetItem();
+		QTableWidgetItem *item2 = new QTableWidgetItem();
+		iNodeData *node=nodes[row];
+		item0->setData(Qt::UserRole,(uint)node);
+	
+		item0->setData(Qt::DisplayRole,((iBUS *)node)->Id());
+		item1->setData(Qt::DisplayRole,((iBUS *)node)->name());
+		item2->setData(Qt::DisplayRole,node->GetRefVoltage());
+
+		tablewidget->setItem(row, ID, item0);
+		//int id_row=tablewidget->row(item0);
+		tablewidget->setItem(row, Name, item1);
+		//int name_row=tablewidget->row(item1);
+		tablewidget->setItem(row, VB, item2);
+	}
 }
 void AddDialog::addNode2Rows(QTableWidget *tablewidget, iNodeData *node,IconType icon,bool isselectable)
 {

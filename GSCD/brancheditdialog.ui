@@ -255,7 +255,7 @@
            </column>
            <column>
             <property name="text">
-             <string>ParallelCode</string>
+             <string>ID</string>
             </property>
            </column>
            <column>

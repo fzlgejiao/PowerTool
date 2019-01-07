@@ -8,6 +8,7 @@
 #include "diagramtextitem.h"
 #include "diagramnoteitem.h"
 #include <QChar>
+#include <QFileInfo>
 
 iDoc::iDoc(QObject *parent)
 	: QObject(parent)
@@ -152,8 +153,11 @@ bool iDoc::readDataFile(const QString& fileName)
 bool iDoc::readPfFile()
 {
 	if(m_szDataFile.isNull()) return false;
-	QString pffile=m_szDataFile.section(".",0,0)+".txt";
+	QFileInfo fi(m_szDataFile);
 	//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
+	QString extension=fi.suffix();
+	QString pffile=fi.absoluteFilePath().replace(extension,"txt");
+
 	if(QFile::exists(pffile))
 	{
 		ParserPowerFlow(pffile);
@@ -194,10 +198,15 @@ void iDoc::ParserPowerFlow(QString & filename)
 		return ;
 	}
 	int sts=0;
+	int linenumber=0;
 	QString stringline="";
-	QString nameccolumn="X-- NAME --X";
+	//QString nameccolumn="X-- NAME --X";
+	//int namelength=nameccolumn.length();
+	QString namestart="X-";
+	QString nameend="-X";
 	QString tranformercolumn="RATIO";
-	int namlength=nameccolumn.length();
+	int fromnamelength=0;
+	int tonamelength=0;
 	int tranformerlength=tranformercolumn.length();
 	int fromnameindex=0;
 	int tonameindex=0;
@@ -210,19 +219,31 @@ void iDoc::ParserPowerFlow(QString & filename)
 	while(!stream.atEnd())
 	{
 		stringline=stream.readLine();
-
+		linenumber++;
 		if(stringline.contains(cutline))  sts=1;
 		else if(stringline=="") sts=0;
-		else if(stringline.contains(nameccolumn)) sts=4;			
-		
+		//else if(stringline.contains(nameccolumn)) sts=4;			
+		else if(stringline.contains(nameend) && stringline.contains(namestart)) sts=4;			
 		switch(sts)
 		{
 		case 4:
 			{
-				fromnameindex=stringline.indexOf(nameccolumn);
-				tonameindex=stringline.lastIndexOf(nameccolumn);
+				/*fromnameindex=stringline.indexOf(nameccolumn);
+				tonameindex=stringline.lastIndexOf(nameccolumn);*/
+				fromnameindex=stringline.indexOf(namestart);
+				int fromnameindex1=stringline.indexOf(nameend);
+
+				tonameindex=stringline.lastIndexOf(namestart);
+				int tonameindex1=stringline.lastIndexOf(nameend);
+
+				if(stringline.mid(fromnameindex,fromnameindex1-fromnameindex).contains("NAME"))
+					fromnamelength=fromnameindex1-fromnameindex+nameend.length();
+
+				if(stringline.mid(tonameindex,tonameindex1-tonameindex).contains("NAME"))
+					tonamelength=tonameindex1-tonameindex+nameend.length();
+
 				t_index=stringline.indexOf(tranformercolumn);
-				if((fromnameindex!=0)&&(tonameindex!=0))
+				if((fromnameindex!=0)&&(tonameindex!=0)&&(fromnamelength!=0)&&(tonamelength!=0))
 					nameindexok=true;
 			}
 			break;
@@ -234,31 +255,43 @@ void iDoc::ParserPowerFlow(QString & filename)
 			{
 				//To do :update bus node
 				//first get the name
-				if(!nameindexok) continue;
-				QString fromname=stringline.mid(fromnameindex,namlength).trimmed();
-
-				QStringList datalist=stringline.replace(fromname,"").split(" ",QString::SkipEmptyParts);
-
-				int fromid=datalist[0].toInt();				
-				float refvoltage=datalist[1].toFloat();
-				float voltage=datalist[3].toFloat();
-				float voltageangle=datalist[4].toFloat();
-				float PowerActive=datalist[5].toFloat();
-				float LoadActive=datalist[6].toFloat();
-				float ShuntActive=datalist[7].toFloat();
-				sts=2;
-
-				frombus=this->getBUS(fromid);
-				if(frombus)
+				if(!nameindexok) continue;						
+				QByteArray bytes=stringline.toLocal8Bit();				
+				QByteArray bytsexcludename=bytes.remove(fromnameindex,fromnamelength);				
+				stringline=QString(bytsexcludename);
+				//QStringList datalist=stringline.replace(fromname,"").split(" ",QString::SkipEmptyParts);
+				QStringList datalist=stringline.split(" ",QString::SkipEmptyParts);
+				if(datalist.count()==9)
 				{
-					//if the PowerFlow file has the bus data ,update it from this file
-					frombus->m_refvoltage=refvoltage;
-					frombus->m_voltage=voltage;
-					frombus->m_angle=voltageangle;
-					frombus->power_PG=PowerActive;
-					frombus->Load_PL=LoadActive;
-					frombus->Compensation_GL=ShuntActive;
+					int fromid=datalist[0].toInt();		
+					if(fromid==0) 
+					{
+						m_wanningmessage.append(QString(tr("Power Flow file->Line %1, invalid BUS ID number!")).arg(linenumber));
+						continue;
+					}
+					float refvoltage=datalist[1].toFloat();
+					float voltage=datalist[3].toFloat();
+					float voltageangle=datalist[4].toFloat();
+					float PowerActive=datalist[5].toFloat();
+					float LoadActive=datalist[6].toFloat();
+					float ShuntActive=datalist[7].toFloat();
+					
+					frombus=this->getBUS(fromid);
+					if(frombus)
+					{
+						//if the PowerFlow file has the bus data ,update it from this file
+						frombus->m_refvoltage=refvoltage;
+						frombus->m_voltage=voltage;
+						frombus->m_angle=voltageangle;
+						frombus->power_PG=PowerActive/SBase;
+						frombus->Load_PL=LoadActive/SBase;
+						frombus->Compensation_GL=ShuntActive/SBase;
+					}
+				}else
+				{
+					m_wanningmessage.append(QString(tr("Power Flow file->Line %1, the line of contain cutoff line format error!")).arg(linenumber));
 				}
+				sts=2;
 			}
 			break;
 
@@ -266,9 +299,19 @@ void iDoc::ParserPowerFlow(QString & filename)
 			{
 				//to do : update link data
 				if(!nameindexok) continue;
-				QString toname=stringline.mid(tonameindex,namlength).trimmed();
+				sts=3;
 
-				QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
+				QByteArray bytes=stringline.toLocal8Bit();
+				QByteArray toname=bytes.mid(tonameindex,tonamelength).trimmed();
+				QByteArray bytsexcludename=bytes.remove(tonameindex,tonamelength);
+				stringline=QString(bytsexcludename);
+				//QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
+				QStringList tobusdata=stringline.split(" ",QString::SkipEmptyParts);
+				if(tobusdata.count()<11) 
+				{					
+					m_wanningmessage.append(QString(tr("Power Flow file->Line %1, Link data line format error!")).arg(linenumber));
+					continue;
+				}
 				QString PowerReActiveStr=tobusdata[2];								//it maybe has suffix, one letter
 				if(PowerReActiveStr.at(PowerReActiveStr.length()-1).isLetter())
 				{
@@ -280,18 +323,23 @@ void iDoc::ParserPowerFlow(QString & filename)
 				if(frombus)
 				{
 					//if the PowerFlow file has the bus data ,update it from this file
-					frombus->Compensation_BL=ShuntReActive;
-					frombus->Load_QL=LoadReActive;
-					frombus->power_QG=PowerReActive;
+					frombus->Compensation_BL=ShuntReActive/SBase;
+					frombus->Load_QL=LoadReActive/SBase;
+					frombus->power_QG=PowerReActive/SBase;
 				}
 				//to do :update Bus data		
 
-				int toid=tobusdata[5].toInt();				
+				int toid=tobusdata[5].toInt();	
+				if(toid==0) 
+				{
+					m_wanningmessage.append(QString(tr("Power Flow file->Line %1, invalid BUS ID number!")).arg(linenumber));
+					continue;
+				}
 				float refvoltage=tobusdata[6].toFloat();
 				int ckt=tobusdata[8].toInt();				
 				float P=tobusdata[9].toFloat();
 				float Q=tobusdata[10].toFloat();
-				sts=3;
+				
 
 				iBUS *tobus=this->getBUS(toid);
 				if(tobus) tobus->m_refvoltage=refvoltage;
@@ -338,52 +386,66 @@ void iDoc::ParserPowerFlow(QString & filename)
 		case 3:
 			{
 				if(!nameindexok) continue;
-				QString toname=stringline.mid(tonameindex,namlength).trimmed();
+				QByteArray bytes=stringline.toLocal8Bit();
+				QByteArray toname=bytes.mid(tonameindex,tonamelength).trimmed();
+				QByteArray bytsexcludename=bytes.remove(tonameindex,tonamelength);
+				stringline=QString(bytsexcludename);
 				//todo : update link data, from second line
-				QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
-
-				//to do :update to Bus data and link data
+				//QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
+				QStringList tobusdata=stringline.split(" ",QString::SkipEmptyParts);
+				if(tobusdata.count()<6) 
+				{					
+					m_wanningmessage.append(QString(tr("Power Flow file->Line %1, Link data line format error!")).arg(linenumber));
+					continue;
+				}
+				//to do :update to Bus data and link data							
 				int toid=tobusdata[0].toInt();		
+				if(toid==0) 
+				{
+					m_wanningmessage.append(QString(tr("Power Flow file->Line %1, invalid BUS ID number!")).arg(linenumber));
+					continue;
+				}
 				float refvoltage=tobusdata[1].toFloat();
 				int ckt=tobusdata[3].toInt();
 				float P=tobusdata[4].toFloat();
 				float Q=tobusdata[5].toFloat();
-
+				if(!frombus) continue;
 				QString t_vaue=stringline.mid(t_index-toname.length(),tranformerlength).trimmed();
 				if(t_vaue!="")
 				{
 					// transformer
 					iTRANSFORMER *transformer=getTRANSFORMER(frombus->Id(),toid);
-						if(transformer)
+					if(transformer)
+					{
+						if(transformer->getToBus()->Id()==toid)
 						{
-							if(transformer->getToBus()->Id()==toid)
-							{
-								transformer->m_P1=P/SBase;
-								transformer->m_Q1=Q/SBase;
-							}else
-							{
-								transformer->m_P2=P/SBase;
-								transformer->m_Q2=Q/SBase;
-							}
+							transformer->m_P1=P/SBase;
+							transformer->m_Q1=Q/SBase;
+						}else
+						{
+							transformer->m_P2=P/SBase;
+							transformer->m_Q2=Q/SBase;
 						}
-				
+					}
+
 				}else
 				{
 					//branch
 					iBRANCH *branch=getBRANCH(frombus->Id(),toid,ckt);
-						if(branch)
+					if(branch)
+					{
+						if(branch->tobus->Id()==toid)
 						{
-							if(branch->tobus->Id()==toid)
-							{
-								branch->m_P1=P/SBase;
-								branch->m_Q1=Q/SBase;
-							}else
-							{
-								branch->m_P2=P/SBase;
-								branch->m_Q2=Q/SBase;
-							}
+							branch->m_P1=P/SBase;
+							branch->m_Q1=Q/SBase;
+						}else
+						{
+							branch->m_P2=P/SBase;
+							branch->m_Q2=Q/SBase;
 						}
+					}
 				}
+
 			}
 			break;
 		}	
@@ -395,6 +457,7 @@ void iDoc::ParserPowerFlow(QString & filename)
 void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 {
 	int datarows=0;		
+	int linenumber=0;
 	int TranformerDummylines=0;
 	QString dataname;
 	if(datatype==T_BUS)
@@ -419,9 +482,11 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 	while(!stream.atEnd())
 	{
 		QString Beginingline=stream.readLine();
+		linenumber++;
 		if(Beginingline.contains(Prefix_keyword+dataname))
 		{
 				QString readline=stream.readLine();
+				linenumber++;
 				QStringList columnames;
 				int columnCnt=0;
 				int RowsCnt=0;
@@ -430,6 +495,7 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 					columnames.append(readline.remove(ColumnName_keyword).split(",",QString::SkipEmptyParts));
 					columnCnt+=columnames.count();
 					readline=stream.readLine();
+					linenumber++;
 					RowsCnt++;
 				}
 										
@@ -508,11 +574,13 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 						{
 							int from,to;
 							double r,x;
+							int onservice;
 							QString CKT= datalist[2].replace(QString("'"),QString("")).trimmed();
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
 							r=datalist[3].toDouble();
 							x=datalist[4].toDouble();
+							onservice=datalist[23].toInt();
 							iBUS* frombus = getBUS(from);
 							iBUS* tobus = getBUS(to);
 							if((frombus!=NULL)&&(tobus!=NULL))
@@ -526,6 +594,9 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 									//add branch into bus link list	
 								frombus->addLink(branch);	
 								tobus->addLink(branch);
+								if(onservice==1) branch->m_onservice=true;
+								else if(onservice==0) branch->m_onservice=false;
+								else m_wanningmessage.append(QString(tr("Raw File,Line %1 Unknown Branch stat,STAT=%2")).arg(linenumber).arg(datalist[23]));
 								addBRANCH(branch);														//add branch into branch list
 							}
 						}
@@ -533,11 +604,11 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 
 					case T_TRANSFORMER:																//Transformer Data Area 
 						{
-							int from,to,k;
+							int from,to,k,onservice;
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
 							k=datalist[2].toInt();
-
+							onservice=datalist[11].toInt();
 							iBUS* frombus = getBUS(from);
 							iBUS* tobus = getBUS(to);
 							if((frombus!=NULL)&&(tobus!=NULL))
@@ -548,15 +619,19 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 								transformer->tobus=tobus;
 								frombus->addLink(transformer);
 								tobus->addLink(transformer);
+								/*if(onservice==1) transformer->m_onservice=true;
+								else if(onservice==0) transformer->m_onservice=false;
+								else m_wanningmessage.append(QString(tr("Raw File,Line %1 Unknown Transformer STAT!")).arg(linenumber));*/
 								addTRANSFORMER(transformer);											//add transformer into transformer list
 
 								//Next read the transformer data line
 								QStringList t_data=stream.readLine().split(",",QString::SkipEmptyParts);
-								if(t_data.count()==3)	//valid data
+								linenumber++;
+								//if(t_data.count()==3)	//valid data
 								{
 									double t_sbase=t_data[2].toDouble();
-									transformer->transformer_R=t_data[0].toDouble();
-									transformer->transformer_X=t_data[1].toDouble();
+									transformer->transformer_R=t_data[0].toDouble()*t_sbase/SBase;
+									transformer->transformer_X=t_data[1].toDouble()*t_sbase/SBase;
 								}
 							}
 							if(k==0)
@@ -566,6 +641,7 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 
 							for(int i=0;i<TranformerDummylines;i++)
 								stream.readLine();
+							linenumber+=TranformerDummylines;
 						}
 						break;
 
@@ -601,6 +677,7 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 						break;
 					}
 					readline=stream.readLine();
+					linenumber++;
 				}
 				 break;
 		}
@@ -745,7 +822,7 @@ iTRANSFORMER*	iDoc::getTRANSFORMER(int node1ID,int node2ID)
 }
 iBRANCH*	iDoc::getBRANCH(int node1ID,int node2ID,int ckt)
 {
-	QMapIterator<int, iBRANCH *> it(listBRANCH);
+   QMapIterator<int, iBRANCH *> it(listBRANCH);
    while (it.hasNext()) 
    {
 	   it.next();

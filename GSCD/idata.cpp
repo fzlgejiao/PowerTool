@@ -457,13 +457,15 @@ iBUS::iBUS(int id,int areaid,const QString& name,QObject *parent)
 //}
 iBRANCH::iBRANCH(int id,int fromUid,int toUid,QObject *parent)
 	: iLinkData(id,fromUid,toUid,parent)
+	,m_onservice(false)
 {
-
+	
 }
 iTRANSFORMER::iTRANSFORMER(int id,int fromUid,int toUid,QObject *parent)
 	: iLinkData(id,fromUid,toUid,parent)
+	,m_onservice(false)
 {
-
+	
 }
 iFACTSDEVICE::iFACTSDEVICE(int id,int fromUid,int toUid,QObject *parent)
 	: iLinkData(id,fromUid,toUid,parent)

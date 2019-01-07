@@ -373,6 +373,7 @@ public:
 	iBUS * getToBus(){return tobus;}
 	int    getParallelCode(){return ParallelCode;}
 	QString getRX(){return QString("%1+j%2").arg(branch_R,0,'f',5).arg(branch_X,0,'f',5);}
+	bool onService(){return m_onservice;}
 
 private:
 	friend class iDoc;
@@ -381,6 +382,7 @@ private:
 	int ParallelCode;
 	double branch_R;
 	double branch_X;
+	bool m_onservice;
 	//properties
 };
 
@@ -394,13 +396,15 @@ public:
 	iBUS * getFromBus() {return frombus;}
 	iBUS * getToBus() {return tobus;}	
 	QString getRX(){return QString("%1+j%2").arg(transformer_R,0,'f',5).arg(transformer_X,0,'f',5);}
+	bool onService(){return m_onservice;}
 
 private:
 	friend class iDoc;
 	iBUS *frombus;
 	iBUS *tobus;
 	double transformer_R;
-	double transformer_X;	
+	double transformer_X;
+	bool m_onservice;
 	//properties
 };
 class iFACTSDEVICE : public iLinkData

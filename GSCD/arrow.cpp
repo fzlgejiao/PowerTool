@@ -91,7 +91,8 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 {
 	if (myStartItem->collidesWithItem(myEndItem))
 		return;
-
+	double totalPowerActive=0;
+	double totalPowerReactive=0;
 	QStyleOptionGraphicsItem op(*option);
 
 	// set state to State_None when selected
@@ -117,7 +118,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 	
 	QPen myPen = pen();
 	myPen.setColor(myColor);
-	painter->setPen(myPen);
+	
 	painter->setBrush(Qt::white);
 
 
@@ -135,6 +136,18 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
     qreal radAngle = centerLine.angle()* M_PI / 180;
 	for(int i=0;i<nLines;i++)
 	{
+		iLinkData *link=slink->groupLinkDatas(1)[i];								//just for Group 1
+		if(!link) continue;
+		totalPowerActive+=link->P1_active();
+		totalPowerReactive+=link->Q1_reactive();
+		if(link->type()==T_BRANCH)
+		{
+			iBRANCH *branch=(iBRANCH *)link;
+			if(branch->onService())
+				myPen.setStyle(Qt::SolidLine);
+			else
+				myPen.setStyle(Qt::DashLine);
+		}	
 		qreal dx = (nLines-1-i*2) * LINE_HALF_GAP * sin(radAngle);
 		qreal dy = (nLines-1-i*2) * LINE_HALF_GAP * cos(radAngle);
 		QPointF offset = QPointF(dx, dy);
@@ -151,6 +164,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 			arrowLine.append(xline.p2());
 			arrowLine.append(xline.p1());
 		}
+		painter->setPen(myPen);
 		painter->drawLine(xline);
 	}
 
@@ -161,13 +175,24 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 	if (line().dy() >= 0)
 		angle = (M_PI * 2) - angle;
 
-	QPointF arrowP1 = middlepoint + QPointF(sin(angle + M_PI / 3) * ARROW_SIZE,cos(angle + M_PI / 3) * ARROW_SIZE);
-	QPointF arrowP2 = middlepoint + QPointF(sin(angle + M_PI - M_PI / 3) * ARROW_SIZE,cos(angle + M_PI - M_PI / 3) * ARROW_SIZE);
-
-	arrowHead.clear();
-	arrowHead << middlepoint << arrowP1 << arrowP2;
-	painter->drawPolygon(arrowHead);
-
+	QPointF arrowP1,arrowP2;
+	if(totalPowerActive<0)
+	{
+		arrowP1 = middlepoint + QPointF(sin(angle + M_PI / 3) * ARROW_SIZE,cos(angle + M_PI / 3) * ARROW_SIZE);
+		arrowP2 = middlepoint + QPointF(sin(angle + M_PI - M_PI / 3) * ARROW_SIZE,cos(angle + M_PI - M_PI / 3) * ARROW_SIZE);
+	}else
+	{
+		arrowP1 = middlepoint - QPointF(sin(angle + M_PI / 3) * ARROW_SIZE,cos(angle + M_PI / 3) * ARROW_SIZE);
+		arrowP2 = middlepoint - QPointF(sin(angle + M_PI - M_PI / 3) * ARROW_SIZE,cos(angle + M_PI - M_PI / 3) * ARROW_SIZE);
+	}
+	if((totalPowerActive!=0) || (totalPowerReactive!=0))
+	{
+		arrowHead.clear();
+		arrowHead << middlepoint << arrowP1 << arrowP2;
+		myPen.setStyle(Qt::SolidLine);
+		painter->setPen(myPen);
+		painter->drawPolygon(arrowHead);
+	}
 	//QGraphicsLineItem::paint(painter, &op, widget);	
 
 }
