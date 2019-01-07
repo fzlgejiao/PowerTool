@@ -66,12 +66,12 @@ void StationParameterDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setEditTriggers(QAbstractItemView::NoEditTriggers);	//can bot be edit
 	//set column width	
 	tablewidget->setColumnWidth(NAME,100);
-	tablewidget->setColumnWidth(Ref_Volatge,80);
+	tablewidget->setColumnWidth(Ref_Volatge,90);
 	tablewidget->setColumnWidth(Voltage,65);
 	tablewidget->setColumnWidth(Angle,50);
-	tablewidget->setColumnWidth(Energy,105);
-	tablewidget->setColumnWidth(Load,105);
-	tablewidget->setColumnWidth(Compensation,105);
+	tablewidget->setColumnWidth(Energy,110);
+	tablewidget->setColumnWidth(Load,110);
+	tablewidget->setColumnWidth(Compensation,115);
 	
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 

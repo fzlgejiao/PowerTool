@@ -876,7 +876,11 @@ void iDoc::readMapElement()
         }
 
         if (xmlReader.isStartElement()) {
-			if(xmlReader.name() == "stats")  
+			if(xmlReader.name() == "settings")
+			{
+				readSettings();
+			}
+			else if(xmlReader.name() == "stats")  
 			{
 				readStations();
 			}
@@ -898,6 +902,33 @@ void iDoc::readMapElement()
     }
 }
 
+void iDoc::readSettings()
+{
+	xmlReader.readNext();
+	while (!xmlReader.atEnd()) {
+		if (xmlReader.isEndElement()) {
+			xmlReader.readNext();
+			break;
+		}
+
+		if (xmlReader.isStartElement()) {
+			if (xmlReader.name() == "area_size") {
+				QString size = xmlReader.readElementText();											//read area size
+				QStringList list = size.split(",");
+				if(list.count()>=2)
+					setAreaSize(QSize(list.at(0).toInt(),list.at(1).toInt()));
+				if (xmlReader.isEndElement())
+					xmlReader.readNext(); 
+			}
+			else 
+			{
+				skipUnknownElement();
+			}
+		} else {
+			xmlReader.readNext();
+		}
+	}
+}
 
 void iDoc::readStations()
 {
@@ -1129,6 +1160,7 @@ bool iDoc::writeMapFile(const QString& mapFile)
     xmlWriter.writeStartElement("map");
 	xmlWriter.writeAttribute("version", "1.0");
 	xmlWriter.writeAttribute("data", dataFile());
+	writeSettings(&xmlWriter);
     writeStats(&xmlWriter);
 	writeNotes(&xmlWriter);
 	writeLegends(&xmlWriter);
@@ -1215,6 +1247,16 @@ void iDoc::writeNotes(QXmlStreamWriter *xmlWriter)
 void iDoc::writeLegends(QXmlStreamWriter *xmlWriter)
 {
 	xmlWriter->writeStartElement("legends");
+
+	xmlWriter->writeEndElement();
+}
+void iDoc::writeSettings(QXmlStreamWriter *xmlWriter)
+{
+	xmlWriter->writeStartElement("settings");
+
+	xmlWriter->writeStartElement("area_size");
+	xmlWriter->writeCharacters(QString("%1,%2").arg(m_AreaSize.width()).arg(m_AreaSize.height()));
+	xmlWriter->writeEndElement();
 
 	xmlWriter->writeEndElement();
 }

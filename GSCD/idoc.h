@@ -28,9 +28,6 @@ public:
 	void	setDataFile(const QString& dataFile){m_szDataFile = dataFile;}
 	void	setPfFile(const QString& file){m_PfFile = file;}
 	bool	writeMapFile(const QString& mapFile);
-	void	writeStats(QXmlStreamWriter *xmlWriter);
-	void	writeNotes(QXmlStreamWriter *xmlWriter);
-	void	writeLegends(QXmlStreamWriter *xmlWriter);
 
 	int		STAT_getId();																			//get available station id for a new station
 	iSTAT*	STAT_get(int id){return listSTAT.value(id,NULL);}
@@ -114,11 +111,18 @@ private:
 	void GetBaseParameter(QFile& file);
 	void GetDataModel(QFile& file,T_DATA datatype);
 	void ParserPowerFlow(QString & filename);
-	//for data and map files
+
+	//for map file
+	void readSettings();
 	void readMapElement();
 	void readStations();
 	void readStatElement();
 	void readNodes(QList<iNodeData *> &listNodes);
+
+	void writeSettings(QXmlStreamWriter *xmlWriter);
+	void writeStats(QXmlStreamWriter *xmlWriter);
+	void writeNotes(QXmlStreamWriter *xmlWriter);
+	void writeLegends(QXmlStreamWriter *xmlWriter);
 
 	void readNotes();
 	void skipUnknownElement();
