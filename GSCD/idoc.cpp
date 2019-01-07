@@ -302,7 +302,7 @@ void iDoc::ParserPowerFlow(QString & filename)
 				sts=3;
 
 				QByteArray bytes=stringline.toLocal8Bit();
-				QByteArray toname=bytes.mid(tonameindex,tonamelength).trimmed();
+				QByteArray toname=bytes.mid(tonameindex,tonamelength);
 				QByteArray bytsexcludename=bytes.remove(tonameindex,tonamelength);
 				stringline=QString(bytsexcludename);
 				//QStringList tobusdata=stringline.replace(toname,"").split(" ",QString::SkipEmptyParts);
@@ -345,7 +345,7 @@ void iDoc::ParserPowerFlow(QString & filename)
 				if(tobus) tobus->m_refvoltage=refvoltage;
 				if(frombus && tobus)
 				{					
-					QString t_vaue=stringline.mid(t_index-toname.length(),tranformerlength).trimmed();
+					QString t_vaue=stringline.mid(t_index-QString(toname).length(),tranformerlength).trimmed();
 					if(t_vaue!="")
 					{
 						// search transformer
@@ -387,7 +387,7 @@ void iDoc::ParserPowerFlow(QString & filename)
 			{
 				if(!nameindexok) continue;
 				QByteArray bytes=stringline.toLocal8Bit();
-				QByteArray toname=bytes.mid(tonameindex,tonamelength).trimmed();
+				QByteArray toname=bytes.mid(tonameindex,tonamelength);
 				QByteArray bytsexcludename=bytes.remove(tonameindex,tonamelength);
 				stringline=QString(bytsexcludename);
 				//todo : update link data, from second line
@@ -410,7 +410,7 @@ void iDoc::ParserPowerFlow(QString & filename)
 				float P=tobusdata[4].toFloat();
 				float Q=tobusdata[5].toFloat();
 				if(!frombus) continue;
-				QString t_vaue=stringline.mid(t_index-toname.length(),tranformerlength).trimmed();
+				QString t_vaue=stringline.mid(t_index-QString(toname).length(),tranformerlength).trimmed();
 				if(t_vaue!="")
 				{
 					// transformer
