@@ -953,7 +953,11 @@ void iDoc::readMapElement()
         }
 
         if (xmlReader.isStartElement()) {
-			if(xmlReader.name() == "stats")  
+			if(xmlReader.name() == "settings")
+			{
+				readSettings();
+			}
+			else if(xmlReader.name() == "stats")  
 			{
 				readStations();
 			}
@@ -975,6 +979,33 @@ void iDoc::readMapElement()
     }
 }
 
+void iDoc::readSettings()
+{
+	xmlReader.readNext();
+	while (!xmlReader.atEnd()) {
+		if (xmlReader.isEndElement()) {
+			xmlReader.readNext();
+			break;
+		}
+
+		if (xmlReader.isStartElement()) {
+			if (xmlReader.name() == "area_size") {
+				QString size = xmlReader.readElementText();											//read area size
+				QStringList list = size.split(",");
+				if(list.count()>=2)
+					setAreaSize(QSize(list.at(0).toInt(),list.at(1).toInt()));
+				if (xmlReader.isEndElement())
+					xmlReader.readNext(); 
+			}
+			else 
+			{
+				skipUnknownElement();
+			}
+		} else {
+			xmlReader.readNext();
+		}
+	}
+}
 
 void iDoc::readStations()
 {
@@ -1135,9 +1166,15 @@ void iDoc::readNotes()
 				int		id = xmlReader.attributes().value("id").toString().toInt();
 				QString szPos = xmlReader.attributes().value("pos").toString();
 				QPointF pos;
-				QStringList list = szPos.split(",");
-				if(list.count()>=2)
-					pos = QPointF(list.at(0).toFloat(),list.at(1).toFloat());
+				QStringList listPos = szPos.split(",");
+				if(listPos.count()>=2)
+					pos = QPointF(listPos.at(0).toFloat(),listPos.at(1).toFloat());
+				QString szSize = xmlReader.attributes().value("size").toString();
+				QSizeF size;
+				QStringList listSize = szSize.split(",");
+				if(listSize.count()>=2)
+					size = QSizeF(listSize.at(0).toFloat(),listSize.at(1).toFloat());
+
 				QFont font;
 				font.fromString(xmlReader.attributes().value("font").toString()); 
 				int     color = xmlReader.attributes().value("color").toString().toInt();
@@ -1154,7 +1191,7 @@ void iDoc::readNotes()
 					note->setborder(border);
 				}
 
-				emit noteAdded(note,pos);															//tell scene to add note item
+				emit noteAdded(note,pos,size);														//tell scene to add note item
 				if (xmlReader.isEndElement())
 					xmlReader.readNext();
 			}
@@ -1200,6 +1237,7 @@ bool iDoc::writeMapFile(const QString& mapFile)
     xmlWriter.writeStartElement("map");
 	xmlWriter.writeAttribute("version", "1.0");
 	xmlWriter.writeAttribute("data", dataFile());
+	writeSettings(&xmlWriter);
     writeStats(&xmlWriter);
 	writeNotes(&xmlWriter);
 	writeLegends(&xmlWriter);
@@ -1273,7 +1311,7 @@ void iDoc::writeNotes(QXmlStreamWriter *xmlWriter)
 		xmlWriter->writeAttribute("id", QString::number(note->Id()));
 		DiagramNoteItem* noteItem = note->noteitem();
 		xmlWriter->writeAttribute("pos", QString("%1,%2").arg(noteItem->pos().x()).arg(noteItem->pos().y()));
-
+		xmlWriter->writeAttribute("size", QString("%1,%2").arg(noteItem->size().width()).arg(noteItem->size().height()));
 		xmlWriter->writeAttribute("font",note->getTextFont().toString());
 		xmlWriter->writeAttribute("color", QString::number(note->getTextColor().value()));
 		xmlWriter->writeAttribute("align", QString::number(note->getAlignMode()));
@@ -1286,6 +1324,16 @@ void iDoc::writeNotes(QXmlStreamWriter *xmlWriter)
 void iDoc::writeLegends(QXmlStreamWriter *xmlWriter)
 {
 	xmlWriter->writeStartElement("legends");
+
+	xmlWriter->writeEndElement();
+}
+void iDoc::writeSettings(QXmlStreamWriter *xmlWriter)
+{
+	xmlWriter->writeStartElement("settings");
+
+	xmlWriter->writeStartElement("area_size");
+	xmlWriter->writeCharacters(QString("%1,%2").arg(m_AreaSize.width()).arg(m_AreaSize.height()));
+	xmlWriter->writeEndElement();
 
 	xmlWriter->writeEndElement();
 }

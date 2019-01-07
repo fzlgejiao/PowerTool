@@ -123,7 +123,7 @@ private:
 	
 public slots:
 	void addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName = QPointF(10,10),QPointF& posValue = QPointF(10,-20));
-	void addNote(iNote* note,const QPointF& pos);
+	void addNote(iNote* note,const QPointF& pos,const QSizeF& size);
 
 signals:
 	void modeDone();

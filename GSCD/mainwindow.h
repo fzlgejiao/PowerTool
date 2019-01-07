@@ -90,7 +90,7 @@ private:
 
 	//actions for 'Settings' menu
 	QAction *imageAreaAction;
-	QAction *viewFontAction;
+	QAction *resultFontAction;
 	QAction *voltageLevelAction;
 	QAction *optionsAction;
 
@@ -184,7 +184,7 @@ private slots:
 
 	//setting menu
 	void imageArea();
-	void viewFont();
+	void resultFont();
 	void voltageLevel();
 	void options();
 

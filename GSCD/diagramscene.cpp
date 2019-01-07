@@ -89,7 +89,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 	addMenu(MENU_NOTE,noteMenu);
 
 	connect(doc, SIGNAL(statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)),	this, SLOT(addStation(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)));
-	connect(doc, SIGNAL(noteAdded(iNote*,const QPointF&)),	this, SLOT(addNote(iNote*,const QPointF&)));
+	connect(doc, SIGNAL(noteAdded(iNote*,const QPointF&,const QSizeF&)),	this, SLOT(addNote(iNote*,const QPointF&,const QSizeF&)));
 	
 }
 //! [0]
@@ -217,7 +217,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 					note->setTextColor(dlg.GetTextcolor());
 					note->setAlignmode(dlg.GetAlignmode());
 					note->setborder(dlg.HasBorder());
-					addNote(note,mouseEvent->scenePos());				
+					addNote(note,mouseEvent->scenePos(),QSizeF(50,50));				
 				}
 			}
 			break;
@@ -525,7 +525,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			DiagramItem *endItem	= slink->endItem();
 			if(!startItem || !endItem)
 				continue;
-			 
+
 			//arrow item
 			Arrow *arrow = new Arrow(startItem, endItem,slink,i,0,this);							//create arrow item for one line group
 			arrow->setColor(myLineColor);
@@ -535,7 +535,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			arrow->setVisible(myDoc->getControlPanel().isShowBranchLine);
 			addItem(arrow);
 			slink->setArrow(arrow);
-						
+
 			//arrow text item
 			DiagramTextItem* linkvalueItem = new DiagramTextItem(arrow,this);			
 			linkvalueItem->setPlainText(slink->linkvalue(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
@@ -548,7 +548,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			//nameItem->setZValue(-1000.0);
 			addItem(linkvalueItem);	
 			arrow->setTextItem(linkvalueItem);
-			arrow->updatePosition();
+			arrow->updatePosition();																//update arrow line position when add/edit station item 
 		}
 	}
 }
@@ -704,10 +704,11 @@ void DiagramScene::editSLink(iSLINK* slink)
 		//to do : group change
 	}
 }
-void DiagramScene::addNote(iNote* note,const QPointF& pos)
+void DiagramScene::addNote(iNote* note,const QPointF& pos,const QSizeF& size)
 {
 	DiagramNoteItem* noteitem = new DiagramNoteItem(note,NULL,this);
-	noteitem->setPos(pos);		
+	noteitem->setPos(pos);	
+	noteitem->setSize(size);
 	addItem(noteitem);
 
 	note->setnoteitem(noteitem);

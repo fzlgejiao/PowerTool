@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	a.setApplicationName(QObject::tr("GWD"));
-	a.setApplicationVersion(QObject::tr("X00.00.04"));
+	a.setApplicationVersion(QObject::tr("X00.00.05"));
 	MainWindow w;
 	w.show();
 	return a.exec();

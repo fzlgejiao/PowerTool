@@ -160,7 +160,7 @@ MdiChild *MainWindow::createMdiChild()
 		menuScene->addAction(defAllPositionAction);
 		menuScene->addAction(controlpanelAction);
 		menuScene->addAction(imageAreaAction);
-		menuScene->addAction(viewFontAction);
+		menuScene->addAction(resultFontAction);
 	}
 
 	mdiArea->addSubWindow(child);
@@ -346,9 +346,9 @@ void MainWindow::createActions()
 	imageAreaAction->setStatusTip(tr("Image area"));
 	connect(imageAreaAction, SIGNAL(triggered()),this, SLOT(imageArea()));
 
-	viewFontAction = new QAction(tr("&Font..."), this);
-	viewFontAction->setStatusTip(tr("View font"));
-	connect(viewFontAction, SIGNAL(triggered()),this, SLOT(viewFont()));
+	resultFontAction = new QAction(tr("&Result Font..."), this);
+	resultFontAction->setStatusTip(tr("Result font"));
+	connect(resultFontAction, SIGNAL(triggered()),this, SLOT(resultFont()));
 
 	voltageLevelAction = new QAction(tr("&Voltage Level..."), this);
 	voltageLevelAction->setStatusTip(tr("Voltage level"));
@@ -451,7 +451,7 @@ void MainWindow::createMenus()
 
 	settingMenu = menuBar()->addMenu(tr("&Settings"));
 	settingMenu->addAction(imageAreaAction);
-	settingMenu->addAction(viewFontAction);
+	settingMenu->addAction(resultFontAction);
 	settingMenu->addAction(voltageLevelAction);
 	settingMenu->addAction(optionsAction);
 
@@ -890,7 +890,7 @@ void MainWindow::imageArea()
 		child->doc()->setAreaSize(dlg.getAreasize());
 	}
 }
-void MainWindow::viewFont()
+void MainWindow::resultFont()
 {
 }
 void MainWindow::voltageLevel()
