@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>637</width>
-    <height>326</height>
+    <width>736</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>true</bool>
@@ -36,7 +36,7 @@
           <rect>
            <x>10</x>
            <y>120</y>
-           <width>267</width>
+           <width>351</width>
            <height>16</height>
           </rect>
          </property>
@@ -47,10 +47,10 @@
         <widget class="QTreeWidget" name="treeWidget">
          <property name="geometry">
           <rect>
-           <x>283</x>
+           <x>390</x>
            <y>10</y>
            <width>311</width>
-           <height>231</height>
+           <height>241</height>
           </rect>
          </property>
          <property name="editTriggers">
@@ -76,7 +76,7 @@
           <rect>
            <x>10</x>
            <y>143</y>
-           <width>261</width>
+           <width>351</width>
            <height>181</height>
           </rect>
          </property>

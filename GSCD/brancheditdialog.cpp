@@ -102,9 +102,9 @@ void BranchEditDialog::SetTableStyle(QTableWidget *tablewidget)
 	tablewidget->setColumnWidth(Node1,80);
 	tablewidget->setColumnWidth(Node2,80);
 	tablewidget->setColumnWidth(ParallelCode,120);
-	tablewidget->setColumnWidth(R_JX,100);
-	tablewidget->setColumnWidth(P1_JQ1,100);
-	tablewidget->setColumnWidth(P2_JQ2,100);
+	tablewidget->setColumnWidth(R_JX,130);
+	tablewidget->setColumnWidth(P1_JQ1,130);
+	tablewidget->setColumnWidth(P2_JQ2,110);
 	//set style	 
 	tablewidget->setStyleSheet("selection-background-color:lightblue;"); 
 	tablewidget->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}"); 
