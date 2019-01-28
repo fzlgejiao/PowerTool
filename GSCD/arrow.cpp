@@ -201,11 +201,15 @@ QVariant Arrow::itemChange(GraphicsItemChange change,
 {
     if (change == QGraphicsItem::ItemPositionChange) 
 	{
-		return value;
     }
 	if (change == QGraphicsItem::ItemSelectedHasChanged)
     {
-		return value;
+		foreach(QGraphicsItem *item,childItems())
+		{
+			DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
+			if(txtItem)
+				txtItem->update();
+		}
 	}
 	return value;
 }

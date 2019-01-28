@@ -77,6 +77,15 @@ QVariant DiagramItem::itemChange(GraphicsItemChange change,
             arrow->updatePosition();
         }
     }
+	if (change == QGraphicsItem::ItemSelectedHasChanged)
+	{
+		foreach(QGraphicsItem *item,childItems())
+		{
+			DiagramTextItem* txtItem = qgraphicsitem_cast<DiagramTextItem *>(item);
+			if(txtItem)
+				txtItem->update();
+		}
+	}
 
     return value;
 }
