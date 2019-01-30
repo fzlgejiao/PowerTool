@@ -320,7 +320,7 @@ public:
 	Arrow * myArrow() {return m_arrow;}
 
 	QString linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower);
-
+	QString linkresistance();
 public slots:
 	void OncontrolpanelChanged(ControlPanel &,uint);
 
