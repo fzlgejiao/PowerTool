@@ -542,7 +542,7 @@ void DiagramScene::updateArrows(iSTAT* stat)
 			linkvalueItem->setFont(myFont);
 			//nameItem->setDefaultTextColor(Qt::red);
 			//nameItem->setPos(QPointF(10,10));
-			//nameItem->setDefaultPos(QPointF(10,10));
+			linkvalueItem->setDefaultPos(QPointF(15,15));
 			linkvalueItem->setData(ITEM_DATA,(uint)slink);
 			linkvalueItem->setVisible(myDoc->getControlPanel().isShowBranchValue);
 			//nameItem->setZValue(-1000.0);

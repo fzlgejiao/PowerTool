@@ -13,6 +13,7 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
     setFlag(QGraphicsItem::ItemIsSelectable);
     //setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+	setCacheMode(QGraphicsItem::ItemCoordinateCache);
 		
 	defPos = QPointF(10,10);
 

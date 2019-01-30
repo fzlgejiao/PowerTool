@@ -240,7 +240,7 @@ void AddDialog::showConnectionNode(QTableWidget *tablewidget)
 	if(!selectnode) return;
 	if(selectnode->type()==T_BUS)
 	{
-		QString connection=QString(tr("connection with %1")).arg(((iBUS *)selectnode)->name());
+		QString connection=QString(tr("Connected Buses: %1")).arg(((iBUS *)selectnode)->name());
 		ui.label_branch->setText(connection);
 
 		foreach(iLinkData *link,selectnode->linkDatas())
@@ -361,7 +361,7 @@ void AddDialog::OnAdd()
 	}		
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	ui.tableWidget_hidden->clearSelection();
-	ui.label_branch->setText("connection with ....");
+	//ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
@@ -392,7 +392,7 @@ void AddDialog::OnAddAll()
 	}		
 
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-	ui.label_branch->setText("connection with ....");
+	//ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
@@ -428,7 +428,7 @@ void AddDialog::OnRevoke()
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 
 	ui.tableWidget_added->clearSelection();
-	ui.label_branch->setText("connection with ....");
+	//ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
 
 	ui.lineEdit_hiddenCnt->setText(QString::number(ui.tableWidget_hidden->rowCount()));
@@ -460,7 +460,7 @@ void AddDialog::OnRevokeAll()
 		
 		ui.tableWidget_added->removeRow(firstrow);
 	}		
-	ui.label_branch->setText("connection with ....");
+	//ui.label_branch->setText("connection with ....");
 	ClearTableContext(ui.tableWidget_branch);
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
