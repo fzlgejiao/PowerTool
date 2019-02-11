@@ -31,6 +31,14 @@ iDoc::iDoc(QObject *parent)
 	m_AreaSize=QSize(297,210);
 	SBase=1;
 	m_wanningmessage.clear();
+	m_parserdatas.insert(T_BUS,"BUS");
+	m_parserdatas.insert(T_LOAD,"LOAD");
+	m_parserdatas.insert(T_COMPENSATION,"FIXED SHUNT");
+	m_parserdatas.insert(T_GENERATOR,"GENERATOR");
+	m_parserdatas.insert(T_BRANCH,"BRANCH");
+	m_parserdatas.insert(T_TRANSFORMER,"TRANSFORMER");
+	m_parserdatas.insert(T_AREA,"AREA");
+	m_parserdatas.insert(T_FACTSDEVICE,"FACTS DEVICE");
 }
 
 iDoc::~iDoc()
@@ -105,7 +113,6 @@ void iDoc::test()
 	//stat2->setNodes(listNodes2);
 
 }
-
 void	iDoc::close()
 {
 	qDeleteAll(listSTAT);
@@ -136,17 +143,17 @@ bool iDoc::readDataFile(const QString& fileName)
 
 	//deal with data file
 	GetBaseParameter(file);
-	GetDataModel(file,T_BUS);	
-	GetDataModel(file,T_LOAD);	
+	GetDataModel(file);	
+	/*GetDataModel(file,T_LOAD);	
 	GetDataModel(file,T_COMPENSATION);
 	GetDataModel(file,T_GENERATOR);
 	GetDataModel(file,T_BRANCH);
 	GetDataModel(file,T_TRANSFORMER);
 	GetDataModel(file,T_AREA);
-	GetDataModel(file,T_FACTSDEVICE);
+	GetDataModel(file,T_FACTSDEVICE);*/
 	file.close();
 	
-	setDataFile(fileName);																			//set current opened data file
+	setDataFile(fileName);																			//set current opened data file		
     return true;
 }
 
@@ -214,7 +221,9 @@ void iDoc::ParserPowerFlow(QString & filename)
 	bool nameindexok=false;
 	QString cutline="--------------------------------------------------------------";
 	iBUS *frombus=NULL;
-	QTextStream stream(&file);
+	uchar *fptr=file.map(0,file.size());
+	QTextStream stream(QByteArray((char *)fptr));
+	//QTextStream stream(&file);
 	stream.seek(0);
 	while(!stream.atEnd())
 	{
@@ -344,12 +353,13 @@ void iDoc::ParserPowerFlow(QString & filename)
 				iBUS *tobus=this->getBUS(toid);
 				if(tobus) tobus->m_refvoltage=refvoltage;
 				if(frombus && tobus)
-				{					
+				{
 					QString t_vaue=stringline.mid(t_index-QString(toname).length(),tranformerlength).trimmed();
 					if(t_vaue!="")
 					{
-						// search transformer
-						iTRANSFORMER *transformer=getTRANSFORMER(frombus->Id(),toid);
+						// search transformer						
+						iTRANSFORMER *transformer=getTRANSFORMERfromHash(Link2ID(frombus->Id(),toid,0));	
+						if(!transformer) transformer=getTRANSFORMERfromHash(Link2ID(toid,frombus->Id(),0));	
 						if(transformer)
 						{
 							if(transformer->getToBus()->Id()==toid)
@@ -365,7 +375,9 @@ void iDoc::ParserPowerFlow(QString & filename)
 					}else
 					{
 						//search branch
-						iBRANCH *branch=getBRANCH(frombus->Id(),toid,ckt);
+						//iBRANCH *branch=getBRANCH(frombus->Id(),toid,ckt);
+						iBRANCH *branch=getBRANCHfromHash(Link2ID(frombus->Id(),toid,ckt));
+						if(!branch)	branch=getBRANCHfromHash(Link2ID(toid,frombus->Id(),ckt));
 						if(branch)
 						{
 							if(branch->tobus->Id()==toid)
@@ -411,10 +423,13 @@ void iDoc::ParserPowerFlow(QString & filename)
 				float Q=tobusdata[5].toFloat();
 				if(!frombus) continue;
 				QString t_vaue=stringline.mid(t_index-QString(toname).length(),tranformerlength).trimmed();
+								
 				if(t_vaue!="")
 				{
 					// transformer
-					iTRANSFORMER *transformer=getTRANSFORMER(frombus->Id(),toid);
+					//iTRANSFORMER *transformer=getTRANSFORMER(frombus->Id(),toid);
+					iTRANSFORMER *transformer=getTRANSFORMERfromHash(Link2ID(frombus->Id(),toid,0));
+					if(!transformer) transformer=getTRANSFORMERfromHash(Link2ID(toid,frombus->Id(),0));	
 					if(transformer)
 					{
 						if(transformer->getToBus()->Id()==toid)
@@ -427,11 +442,11 @@ void iDoc::ParserPowerFlow(QString & filename)
 							transformer->m_Q2=Q/SBase;
 						}
 					}
-
 				}else
 				{
-					//branch
-					iBRANCH *branch=getBRANCH(frombus->Id(),toid,ckt);
+					//branch					
+					iBRANCH *branch=getBRANCHfromHash(Link2ID(frombus->Id(),toid,ckt));
+					if(!branch)	branch=getBRANCHfromHash(Link2ID(toid,frombus->Id(),ckt));
 					if(branch)
 					{
 						if(branch->tobus->Id()==toid)
@@ -454,13 +469,29 @@ void iDoc::ParserPowerFlow(QString & filename)
 
 	file.close();
 }
-void iDoc::GetDataModel(QFile& file,T_DATA datatype)
+
+T_DATA iDoc::getdatatype(QString stringline)
 {
+   QMapIterator<T_DATA,QString> it_data(m_parserdatas);
+
+   while(it_data.hasNext())
+   {
+	   it_data.next();
+	   if(stringline.contains(Prefix_keyword+it_data.value()))
+	   {
+		   return it_data.key();
+	   }
+   }
+	return T_NONE;
+}
+void iDoc::GetDataModel(QFile& file)
+{	 
 	int datarows=0;		
 	int linenumber=0;
 	int TranformerDummylines=0;
 	QString dataname;
-	if(datatype==T_BUS)
+	T_DATA datatype=T_NONE;
+	/*if(datatype==T_BUS)
 		dataname="BUS";
 	else if(datatype==T_GENERATOR)
 		dataname="GENERATOR";
@@ -476,15 +507,19 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 		dataname="AREA";
 	else if(datatype==T_FACTSDEVICE)
 		dataname="FACTS DEVICE";
-	else return;
-	QTextStream stream(&file);
+	else return;*/
+	uchar *fptr=file.map(0,file.size());
+	QTextStream stream(QByteArray((char *)fptr));
+	//QTextStream stream(&file);
 	stream.seek(0);
 	while(!stream.atEnd())
 	{
 		QString Beginingline=stream.readLine();
 		linenumber++;
-		if(Beginingline.contains(Prefix_keyword+dataname))
-		{
+		//if(Beginingline.contains(Prefix_keyword+dataname))
+		datatype=getdatatype(Beginingline);
+		while(datatype)
+		{			
 				QString readline=stream.readLine();
 				linenumber++;
 				QStringList columnames;
@@ -572,12 +607,13 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 
 					case T_BRANCH:
 						{
-							int from,to;
+							int from,to,ckt;							
 							double r,x;
 							int onservice;
 							QString CKT= datalist[2].replace(QString("'"),QString("")).trimmed();
 							from = datalist[0].toInt();
 							to   = datalist[1].toInt();
+							ckt=CKT.toInt();
 							r=datalist[3].toDouble();
 							x=datalist[4].toDouble();
 							onservice=datalist[23].toInt();
@@ -585,19 +621,20 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 							iBUS* tobus = getBUS(to);
 							if((frombus!=NULL)&&(tobus!=NULL))
 							{
-								iBRANCH* branch = new iBRANCH(datarows,frombus->Uid(),tobus->Uid(),this);					//row index is the branch id
+								iBRANCH* branch = new iBRANCH(datarows,frombus->Uid(),tobus->Uid(),this);					//row index is the branch id							
 								branch->frombus=frombus;
 								branch->tobus=tobus;
-								branch->ParallelCode=CKT.toInt();
+								branch->ParallelCode=ckt;
 								branch->branch_R=r;
 								branch->branch_X=x;
 									//add branch into bus link list	
 								frombus->addLink(branch);	
-								tobus->addLink(branch);
+								tobus->addLink(branch);							
 								if(onservice==1) branch->m_onservice=true;
 								else if(onservice==0) branch->m_onservice=false;
 								else m_wanningmessage.append(QString(tr("Raw File,Line %1 Unknown Branch stat,STAT=%2")).arg(linenumber).arg(datalist[23]));
-								addBRANCH(branch);														//add branch into branch list
+								addBRANCH(branch);													//add branch into branch list									
+								BRANCH_hash.insert(Link2ID(from,to,ckt),branch);
 							}
 						}
 					break;
@@ -613,7 +650,7 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 							iBUS* tobus = getBUS(to);
 							if((frombus!=NULL)&&(tobus!=NULL))
 							{
-								iTRANSFORMER* transformer = new iTRANSFORMER(datarows,frombus->Uid(),tobus->Uid(),this);	//row index is the transformer id
+								iTRANSFORMER* transformer = new iTRANSFORMER(datarows,frombus->Uid(),tobus->Uid(),this);	//row index is the transformer id								
 								// transformer  add into linkdatas
 								transformer->frombus=frombus;
 								transformer->tobus=tobus;
@@ -622,8 +659,8 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 								/*if(onservice==1) transformer->m_onservice=true;
 								else if(onservice==0) transformer->m_onservice=false;
 								else m_wanningmessage.append(QString(tr("Raw File,Line %1 Unknown Transformer STAT!")).arg(linenumber));*/
-								addTRANSFORMER(transformer);											//add transformer into transformer list
-
+								addTRANSFORMER(transformer);											//add transformer into transformer list									
+								TRANSFORMER_hash.insert(Link2ID(from,to,0),transformer);								
 								//Next read the transformer data line
 								QStringList t_data=stream.readLine().split(",",QString::SkipEmptyParts);
 								linenumber++;
@@ -676,10 +713,11 @@ void iDoc::GetDataModel(QFile& file,T_DATA datatype)
 						}
 						break;
 					}
-					readline=stream.readLine();
-					linenumber++;
+					readline=stream.readLine();					
+					linenumber++;					
 				}
-				 break;
+				datatype=getdatatype(readline);	
+				datarows=0;
 		}
 	}
 }
@@ -802,40 +840,6 @@ iNodeData* iDoc::getNode(int type,int id)
 		return getBUS(id);
 	else
 		return NULL;
-}
-
-iTRANSFORMER*	iDoc::getTRANSFORMER(int node1ID,int node2ID)
-{
-	QMapIterator<int, iTRANSFORMER *> it(listTRANSFORMER);
-   while (it.hasNext()) 
-   {
-	   it.next();
-	   int fromid=it.value()->frombus->Id();
-	   int toid=it.value()->tobus->Id();
-
-	   if( (fromid== node1ID) &&(toid==node2ID))
-		   return it.value();
-	    if( (toid== node1ID) &&(fromid==node2ID))
-		   return it.value();
-   }
-	return NULL;
-}
-iBRANCH*	iDoc::getBRANCH(int node1ID,int node2ID,int ckt)
-{
-   QMapIterator<int, iBRANCH *> it(listBRANCH);
-   while (it.hasNext()) 
-   {
-	   it.next();
-	   int fromid=it.value()->frombus->Id();
-	   int toid=it.value()->tobus->Id();
-	   int p_code=it.value()->ParallelCode;
-
-	   if( (fromid== node1ID) &&(toid==node2ID) && (p_code==ckt))
-		   return it.value();
-	    if( (toid== node1ID) &&(fromid==node2ID)&& (p_code==ckt))
-		   return it.value();
-   }
-	return NULL;
 }
 iAREA*	iDoc::getAREA(const QString& name)
 {

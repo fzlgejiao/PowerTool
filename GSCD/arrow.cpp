@@ -23,6 +23,7 @@ Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int grou
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
 	myColor = Qt::darkCyan;
 	setPen(QPen(myColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	m_isarrowshow=true;
 }
 Arrow::~Arrow()
 {
@@ -187,11 +188,14 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 	}
 	if((totalPowerActive!=0) || (totalPowerReactive!=0))
 	{
-		arrowHead.clear();
-		arrowHead << middlepoint << arrowP1 << arrowP2;
-		myPen.setStyle(Qt::SolidLine);
-		painter->setPen(myPen);
-		painter->drawPolygon(arrowHead);
+		if(m_isarrowshow)
+		{
+			arrowHead.clear();
+			arrowHead << middlepoint << arrowP1 << arrowP2;
+			myPen.setStyle(Qt::SolidLine);
+			painter->setPen(myPen);
+			painter->drawPolygon(arrowHead);
+		}
 	}
 	//QGraphicsLineItem::paint(painter, &op, widget);	
 

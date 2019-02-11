@@ -3,10 +3,14 @@
 
 #include <QObject>
 #include <QMap>
+#include <QHash>
 #include <QFile>
 #include "idata.h"
 #include <QSize>
 #include <QXmlStreamReader>
+
+//#define Link2ID(from,to,ckt)	((((quint64)from)<<32) | (to<<4) | (ckt))		//use the unsigned int 64bit data,ckt is very small, maybe just less than 10
+	
 
 class iDoc : public QObject
 {
@@ -50,10 +54,10 @@ public:
 
 	iBUS*	getBUS(int id){return listBUS.value(id,NULL);}
 	iBRANCH*	getBRANCH(int id){return listBRANCH.value(id,NULL);}
-	iBRANCH*	getBRANCH(int node1ID,int node2ID,int ckt);
-
 	iTRANSFORMER*	getTRANSFORMER(int id){return listTRANSFORMER.value(id,NULL);}
-	iTRANSFORMER*	getTRANSFORMER(int node1ID,int node2ID);
+
+	iBRANCH*	getBRANCHfromHash(QString & linkid){return BRANCH_hash.value(linkid,NULL);}
+	iTRANSFORMER*	getTRANSFORMERfromHash(QString & linkid){return TRANSFORMER_hash.value(linkid,NULL);}
 
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
@@ -99,19 +103,22 @@ private:
 	QMap<int,iBUS *>			listBUS;															//<id,iBUS*>: id is the bus id
 	QMap<int,iBRANCH *>			listBRANCH;															//<id,iBRANCH*>: id is the branch squence id
 	QMap<int,iTRANSFORMER *>	listTRANSFORMER;													//<id,iTRANSFORMER*>: id is the transformer squence id
+	QHash<QString,iBRANCH *>		BRANCH_hash;															//<id,iBRANCH*>: id use the link message
+	QHash<QString,iTRANSFORMER *>	TRANSFORMER_hash;													//<id,iTRANSFORMER*>: id use the link message
 	QMap<int,iAREA *>			listAREA;
 	QMap<int,iNote *>			listNotes;
 	QMap<int,iFACTSDEVICE *>	listFACTSDEVICE;
-
+		
+	inline QString  Link2ID(int from,int to,int ckt) { return QString("%1%2%3").arg(from).arg(to).arg(ckt);}
 
 	//for data file
 	void GetBUSData(const QString& dataname="BUS");
 	void GetBRANCHData(const QString& dataname="BRANCH");
 	void GetTRANSMORMERData(const QString& dataname="TRANSFORMER");
 	void GetBaseParameter(QFile& file);
-	void GetDataModel(QFile& file,T_DATA datatype);
+	void GetDataModel(QFile& file);
 	void ParserPowerFlow(QString & filename);
-
+	T_DATA getdatatype(QString stringline);
 	//for map file
 	void readSettings();
 	void readMapElement();
@@ -127,7 +134,7 @@ private:
 	void readNotes();
 	void skipUnknownElement();
 	QXmlStreamReader xmlReader;
-
+	
 	QSize			m_AreaSize;
 	QString			Prefix_keyword;
 	QString			Suffix_keyword;
@@ -139,6 +146,8 @@ private:
 	QString			m_szMapFile;
 	bool			m_bModified;
 	QStringList     m_wanningmessage;
+	QMap<T_DATA,QString> m_parserdatas;
+
 signals:
 	void controlpanelChanged(ControlPanel &settings,uint changes);
 	void areaSizeChanged(QSize & size);

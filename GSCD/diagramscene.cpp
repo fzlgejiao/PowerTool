@@ -671,6 +671,7 @@ void DiagramScene::viewStationName(DiagramTextItem *item,iSTAT* stat)
 	if(dlg.exec()==QDialog::Accepted)
 	{		
 		//Update the voltage and name text		
+		if(myDoc->getControlPanel().showtype!=SHOW_POWERFLOW) return ;
 		stat->itemName()->setFont(dlg.GetFont());
 		if(myDoc->getControlPanel().isShowAllNodeVoltage)
 		{

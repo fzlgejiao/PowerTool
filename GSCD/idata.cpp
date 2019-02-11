@@ -221,9 +221,9 @@ QString iSTAT::nodeVoltage(bool withangle,UNIT_TYPE unit) const
 		if(node->isShowVoltge())
 		{
 			if(withangle)
-				value += QString::number(voltage,10,1)+" < "+QString::number(angle,10,1) + "\n";
+				value += QString::number(voltage,10,2)+" < "+QString::number(angle,10,2) + "\n";
 			else
-				value += QString::number(voltage,10,1)+ "\n";
+				value += QString::number(voltage,10,2)+ "\n";
 		}
 	}
 	return value;
@@ -264,13 +264,31 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 		switch(settings.showtype)
 		{
 		case SHOW_ONLYNAME:
+		case SHOW_RESISTANCE:
+			{
+				if(settings.isShowStationName)
+					m_itemName->setPlainText(this->name());	
+				else 
+					m_itemName->setVisible(false);
+				m_itemValue->setVisible(false);
+			}
 			break;
 
 		case SHOW_POWERFLOW:
-			break;
-
-		case SHOW_RESISTANCE:
-			break;
+			{
+				m_itemName->setVisible(settings.isShowStationName);
+				m_itemValue->setVisible(settings.isShowStationValue);
+				if(settings.isShowAllNodeVoltage)
+				{
+					m_itemName->setPlainText(this->allNodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
+				}else
+				{
+					m_itemName->setPlainText(this->nodeVoltage(settings.isShowVoltageAngle,settings.unittype)+this->name());
+				}
+				double base=this->nodeDatas().first()->getSBase();		
+				m_itemValue->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
+			}
+			break;			
 		}
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWSTATNAME)
@@ -279,16 +297,17 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWSTATVALUE)
 	{
-		m_itemValue->setVisible(settings.isShowStationValue);
+		if(settings.showtype==SHOW_POWERFLOW)
+			m_itemValue->setVisible(settings.isShowStationValue);
 	}
-	if(changes & CHG_CONTROLPANEL_SHOWBRNACHLINE)
+	/*if(changes & CHG_CONTROLPANEL_SHOWBRNACHLINE)
 	{
 		foreach(Arrow *arrow,this->myItem()->getArows())
 		{
 			arrow->setVisible(settings.isShowBranchLine);
 		}
-	}
-	if(changes & CHG_CONTROLPANEL_SHOWBRNACHVALUE)
+	}*/
+	/*if(changes & CHG_CONTROLPANEL_SHOWBRNACHVALUE)
 	{	
 		foreach(Arrow *arrow,this->myItem()->getArows())
 		{
@@ -300,11 +319,12 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 					 txtItem->setVisible(settings.isShowBranchValue);
 			 }
 		}
-	}
+	}*/
 	if(changes & CHG_CONTROLPANEL_SHOWREACTIVEVALUE)
-	{	
+	{			
 		double base=this->nodeDatas().first()->getSBase();
-		m_itemValue->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
+		if(settings.showtype==SHOW_POWERFLOW)
+			m_itemValue->setPlainText(this->value(base,settings.unittype,settings.isShowReactivePowerValue));
 	}
 	if(changes & CHG_CONTROLPANEL_SHOWADMITTANCE)
 	{	
@@ -313,6 +333,7 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 		(changes & CHG_CONTROLPANEL_SHOWALLVOLTAGE) ||
 		(changes & CHG_CONTROLPANEL_UNIT))
 	{	
+		if(settings.showtype!=SHOW_POWERFLOW)	return ;
 		if(changes & CHG_CONTROLPANEL_UNIT)	//Change the station value to current unit type			
 		{
 			double base=this->nodeDatas().first()->getSBase();			
@@ -369,8 +390,47 @@ void iSLINK::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 		(changes & CHG_CONTROLPANEL_UNIT)
 	  )
 	{	
-		m_arrow->textItem()->setPlainText(this->linkvalue(base,settings.unittype,settings.isShowReactivePowerValue));
-	}		
+		if(settings.showtype==SHOW_POWERFLOW)
+			m_arrow->textItem()->setPlainText(this->linkvalue(base,settings.unittype,settings.isShowReactivePowerValue));		
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWBRNACHLINE)
+	{		
+		m_arrow->setVisible(settings.isShowBranchLine);		
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWBRNACHVALUE)
+	{	
+		if(settings.showtype!=SHOW_ONLYNAME)
+			m_arrow->textItem()->setVisible(settings.isShowBranchValue);
+	}
+	if(changes & CHG_CONTROLPANEL_SHOWTYPE)
+	{
+		switch(settings.showtype)
+		{
+		case SHOW_ONLYNAME:
+			{
+				m_arrow->setshowArrow(false);
+				m_arrow->textItem()->setVisible(false);
+			}
+			break;
+
+		case SHOW_POWERFLOW:
+			{
+				m_arrow->setshowArrow(true);
+				m_arrow->textItem()->setPlainText(this->linkvalue(base,settings.unittype,settings.isShowReactivePowerValue));
+				m_arrow->textItem()->setVisible(settings.isShowBranchValue);
+				m_arrow->setVisible(settings.isShowBranchLine);
+			}
+			break;
+
+		case SHOW_RESISTANCE:
+			{
+				m_arrow->setshowArrow(false);
+				m_arrow->textItem()->setPlainText(this->linkresistance());
+				m_arrow->textItem()->setVisible(settings.isShowBranchValue);
+			}
+			break;
+		}
+	}
 }
 QString iSLINK::linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower)
 {
@@ -413,6 +473,18 @@ QString iSLINK::linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower)
 	if(count>1) 
 		linktext.append(QString("(%1)").arg(count));
 
+	return linktext;
+}
+QString iSLINK::linkresistance()
+{	
+	QString linktext="";
+	if(m_linkDatas.count()==0) return linktext;
+	iLinkData * link=m_linkDatas.last();						//show the last link data
+	if(link->type()==T_BRANCH)	
+		linktext=((iBRANCH *)link)->getRX();
+	else if(link->type()==T_TRANSFORMER)
+		linktext=((iTRANSFORMER *)link)->getRX();
+	
 	return linktext;
 }
 //--------------------------------------------------------------------------------------------------

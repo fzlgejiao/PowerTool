@@ -41,6 +41,8 @@ public:
 	void setTextItem(DiagramTextItem* item){myTextItem = item;}
 	DiagramTextItem *textItem(){return myTextItem;}
 
+	void setshowArrow(bool ishow){m_isarrowshow=ishow;}
+
     void updatePosition();
 
 protected:
@@ -58,6 +60,7 @@ private:
     QPolygonF		arrowHead;
 	QPolygonF		arrowLine;
 	int				myGroupId;
+	bool			m_isarrowshow;
 };
 
 
