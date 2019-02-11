@@ -569,7 +569,7 @@ void DiagramScene::addStation(iSTAT* stat,const QPointF& posStat,const QFont& fo
 	nameItem->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
 	nameItem->setDefaultTextColor(Qt::red);
 	nameItem->setPos(posName);
-	nameItem->setDefaultPos(QPointF(10,10));
+	nameItem->setDefaultPos(QPointF(30,10));
 	nameItem->setData(ITEM_DATA,(uint)stat);	
 	addItem(nameItem);
 	nameItem->setVisible(myDoc->getControlPanel().isShowStationName);
@@ -581,7 +581,7 @@ void DiagramScene::addStation(iSTAT* stat,const QPointF& posStat,const QFont& fo
 	valueItem->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
 	valueItem->setDefaultTextColor(Qt::red);
 	valueItem->setPos(posValue);
-	valueItem->setDefaultPos(QPointF(10,-20));
+	valueItem->setDefaultPos(QPointF(30,-30));
 	valueItem->setData(ITEM_DATA,(uint)stat);
 	addItem(valueItem);
 	valueItem->setVisible(myDoc->getControlPanel().isShowStationValue);
