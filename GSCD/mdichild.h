@@ -18,6 +18,7 @@ public:
 
     void	newFile(const QString& datafile);
     bool	loadFile(const QString &mapFile,const QString& dataFile);
+	bool	loadFile(const QString &mapFile,const QString& dataFile,const QString& pfFile);
     bool	save();
     bool	saveAs();
     bool	saveFile(const QString &fileName);

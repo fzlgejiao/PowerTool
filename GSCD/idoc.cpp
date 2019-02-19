@@ -157,13 +157,18 @@ bool iDoc::readDataFile(const QString& fileName)
     return true;
 }
 
-bool iDoc::readPfFile()
+bool iDoc::readPfFile(const QString& fileName)
 {
-	if(m_szDataFile.isNull()) return false;
-	QFileInfo fi(m_szDataFile);
-	//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
-	QString extension=fi.suffix();
-	QString pffile=fi.absoluteFilePath().replace(extension,"txt");
+	QString pffile = fileName;
+	if(fileName.isEmpty())
+	{
+		if(m_szDataFile.isNull()) 
+			return false;
+		QFileInfo fi(m_szDataFile);
+		//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
+		QString extension=fi.suffix();
+		pffile=fi.absoluteFilePath().replace(extension,"txt");
+	}
 
 	if(QFile::exists(pffile))
 	{

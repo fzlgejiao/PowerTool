@@ -1078,3 +1078,23 @@ QString MainWindow::getDataFile(const QString& mapFile)
 		return "";
 	return dlg.FileName();
 }
+void MainWindow::openCmdFiles(const QString& mapFile,const QString& dataFile,const QString& pfFile)
+{
+	MdiChild *child = createMdiChild();																//create child when open a file
+
+	if (child->loadFile(mapFile,dataFile,pfFile))													//load map,data and pf files
+	{
+		statusBar()->showMessage(tr("File loaded"), 2000);
+		child->show();
+		barDataFile->setText(child->doc()->dataFile());
+
+		child->doc()->setModified(false);
+
+		connect(child->scene(), SIGNAL(changed ( const QList<QRectF> &)), child, SLOT(documentWasModified()));
+			
+	} 
+	else 
+	{
+		child->close();
+	}
+}
