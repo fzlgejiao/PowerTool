@@ -11,16 +11,18 @@ int main(int argc, char *argv[])
 	QString szMap,szRaw,szPF;
 	QStringList	argvs = QApplication::arguments();
 	int count = argvs.count();
-	int idx = argvs.indexOf("-map");
-	if(count > (idx+1))
-		szMap = argvs.at(idx+1);
-	idx = argvs.indexOf("-data");
-	if(count > (idx+1))
-		szRaw = argvs.at(idx+1);
-	idx = argvs.indexOf("-pf");
-	if(count > (idx+1))
-		szPF = argvs.at(idx+1);
-
+	if(count > 2)
+	{
+		int idx = argvs.indexOf("-map");
+		if(count > (idx+1))
+			szMap = argvs.at(idx+1);
+		idx = argvs.indexOf("-data");
+		if(count > (idx+1))
+			szRaw = argvs.at(idx+1);
+		idx = argvs.indexOf("-pf");
+		if(count > (idx+1))
+			szPF = argvs.at(idx+1);
+	}
 	MainWindow w;
 	w.show();
 
