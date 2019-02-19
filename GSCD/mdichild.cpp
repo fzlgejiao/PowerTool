@@ -54,7 +54,7 @@ void MdiChild::newFile(const QString& datafile)
     static int sequenceNumber = 1;
 
     isUntitled = true;
-    curFile = tr("GWD%1").arg(sequenceNumber++);
+    curFile = tr("GSCD%1").arg(sequenceNumber++);
     setWindowTitle(curFile + "[*]");
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -77,7 +77,7 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
 {
     QFile file(mapFile);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("GWD"),
+        QMessageBox::warning(this, tr("GSCD"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(mapFile)
                              .arg(file.errorString()));
@@ -134,7 +134,7 @@ bool MdiChild::saveFile(const QString &fileName)
 {
     //QFile file(fileName);
     //if (!file.open(QFile::WriteOnly | QFile::Text)) {
-    //    QMessageBox::warning(this, tr("GWD"),
+    //    QMessageBox::warning(this, tr("GSCD"),
     //                         tr("Cannot write file %1:\n%2.")
     //                         .arg(fileName)
     //                         .arg(file.errorString()));
@@ -176,7 +176,7 @@ bool MdiChild::maybeSave()
 	if (this->isWindowModified()) 
 	{
 		QMessageBox::StandardButton ret;
-        ret = QMessageBox::warning(this, tr("GWD"),
+        ret = QMessageBox::warning(this, tr("GSCD"),
                      tr("'%1' has been modified.\n"
                         "Do you want to save your changes?")
                      .arg(userFriendlyCurrentFile()),

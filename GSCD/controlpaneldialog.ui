@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>Scene Type</string>
+    <string>Diagram Type</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -102,7 +102,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>Shown</string>
+    <string>View</string>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>

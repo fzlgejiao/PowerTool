@@ -1001,6 +1001,23 @@ void iDoc::readSettings()
 				if (xmlReader.isEndElement())
 					xmlReader.readNext(); 
 			}
+			//else if(xmlReader.name() == "ctrl_panel")  
+			//{
+			//	m_controlpanel.showtype = (SHOW_TYPE)xmlReader.attributes().value("diagram_type").toString().toInt();
+			//	m_controlpanel.isShowStationName = xmlReader.attributes().value("show_statname").toString().toInt();
+			//	m_controlpanel.isShowStationValue = xmlReader.attributes().value("show_statvalue").toString().toInt();
+			//	m_controlpanel.isShowBranchLine = xmlReader.attributes().value("show_branchline").toString().toInt();
+			//	m_controlpanel.isShowBranchValue = xmlReader.attributes().value("show_branchvalue").toString().toInt();
+			//	m_controlpanel.isShowReactivePowerValue = xmlReader.attributes().value("show_reactive").toString().toInt();
+			//	m_controlpanel.isShowAdmittance = xmlReader.attributes().value("show_admittance").toString().toInt();
+			//	m_controlpanel.isShowVoltageAngle = xmlReader.attributes().value("show_voltageangle").toString().toInt();
+			//	m_controlpanel.isShowAllNodeVoltage = xmlReader.attributes().value("show_allnodevoltage").toString().toInt();
+			//	m_controlpanel.unittype = (UNIT_TYPE)xmlReader.attributes().value("unit_type").toString().toInt();
+
+			//	QString value_text = xmlReader.readElementText();
+			//	if (xmlReader.isEndElement())
+			//		xmlReader.readNext();
+			//}
 			else 
 			{
 				skipUnknownElement();
@@ -1335,9 +1352,25 @@ void iDoc::writeSettings(QXmlStreamWriter *xmlWriter)
 {
 	xmlWriter->writeStartElement("settings");
 
+	//image area size
 	xmlWriter->writeStartElement("area_size");
 	xmlWriter->writeCharacters(QString("%1,%2").arg(m_AreaSize.width()).arg(m_AreaSize.height()));
 	xmlWriter->writeEndElement();
+
+	//control panel
+	//xmlWriter->writeStartElement("ctrl_panel");
+	//xmlWriter->writeAttribute("diagram_type", QString::number(m_controlpanel.showtype));
+	//xmlWriter->writeAttribute("show_statname",QString::number(m_controlpanel.isShowStationName));
+	//xmlWriter->writeAttribute("show_statvalue",QString::number(m_controlpanel.isShowStationValue));
+	//xmlWriter->writeAttribute("show_branchline",QString::number(m_controlpanel.isShowBranchLine));
+	//xmlWriter->writeAttribute("show_branchvalue",QString::number(m_controlpanel.isShowBranchValue));
+	//xmlWriter->writeAttribute("show_reactive",QString::number(m_controlpanel.isShowReactivePowerValue));
+	//xmlWriter->writeAttribute("show_admittance",QString::number(m_controlpanel.isShowAdmittance));
+	//xmlWriter->writeAttribute("show_voltageangle",QString::number(m_controlpanel.isShowVoltageAngle));
+	//xmlWriter->writeAttribute("show_allnodevoltage",QString::number(m_controlpanel.isShowAllNodeVoltage));
+	//xmlWriter->writeAttribute("unit_type", QString::number(m_controlpanel.unittype));
+	//xmlWriter->writeEndElement();
+	
 
 	xmlWriter->writeEndElement();
 }

@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 
 	setCentralWidget(widget);
 
-	setWindowTitle(tr("GWD"));
+	setWindowTitle(tr("GSCD"));
 	setUnifiedTitleAndToolBarOnMac(true);
 
 	m_nActMode = M_MoveItem;
@@ -156,8 +156,10 @@ MdiChild *MainWindow::createMdiChild()
 	if(menuScene)
 	{
 		menuScene->addAction(scaledialogAction);
+		menuScene->addSeparator();
 		menuScene->addAction(selectAllAction);
 		menuScene->addAction(defAllPositionAction);
+		menuScene->addSeparator();
 		menuScene->addAction(controlpanelAction);
 		menuScene->addAction(imageAreaAction);
 		menuScene->addAction(resultFontAction);
@@ -464,7 +466,7 @@ void MainWindow::createMenus()
 
 	helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(aboutAct);
-	helpMenu->addAction(aboutQtAct);
+	//helpMenu->addAction(aboutQtAct);
 
 }
 
@@ -902,7 +904,7 @@ void MainWindow::options()
 void MainWindow::about()
 {
 	QString nameVersion = QApplication::applicationName() + " " + QApplication::applicationVersion();
-	QString aboutText = tr("<h2>%1 </h2>Geographical wiring diagram for power system." \
+	QString aboutText = tr("<h2>%1 </h2>Geographical System Connection Diagram(GSCD)." \
 							"<p>Version: %2 (compiled %3)" \
 							"<P>Author: itismelg@163.com" \
 							"<p>Copyright &#169; XXX Co.,Ltd. 2018.  All rights reserved." \
