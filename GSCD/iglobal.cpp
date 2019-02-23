@@ -242,6 +242,8 @@ void iGlobal::deletevoltagelevel(CVoltageLevel *level)
 
 void iGlobal::widthValidated(CVoltageLevel *newlevel)
 {
+	if(voltageLevels.count()==1) return ;					//it's always OK when only one level
+
 	int newlevelindex=voltageLevels.indexOf(newlevel);
 	int width=newlevel->m_width;
 	if(newlevelindex==0)

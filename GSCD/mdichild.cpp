@@ -53,7 +53,7 @@ void MdiChild::newFile(const QString& datafile)
     static int sequenceNumber = 1;
 
     isUntitled = true;
-    curFile = tr("GWD%1").arg(sequenceNumber++);
+    curFile = tr("GSCD%1").arg(sequenceNumber++);
     setWindowTitle(curFile + "[*]");
 
     QApplication::setOverrideCursor(Qt::WaitCursor);    
@@ -75,7 +75,7 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
 {
     QFile file(mapFile);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("GWD"),
+        QMessageBox::warning(this, tr("GSCD"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(mapFile)
                              .arg(file.errorString()));
@@ -87,7 +87,7 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
     	
 	//read data and map file
 	bool bRet1 = m_doc->readDataFile(dataFile);														//read data from data file
-	bool ispfok=m_doc->readPfFile();
+	bool ispfok= m_doc->readPfFile();																//read pf data from pf file							
 	bool bRet2 = m_doc->readMapFile(mapFile);														//read map from map file
 	if(dataFile != m_doc->dataFile())																//data file name changed
 	{
@@ -109,6 +109,33 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
     return (bRet1 && bRet2);
 }
 
+bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile,const QString& pfFile)
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    	
+	//read data and map file
+	bool bRet1 = m_doc->readDataFile(dataFile);														//read data from data file
+	bool ispfok= m_doc->readPfFile(pfFile);															//read pf data from pf file							
+	bool bRet2 = m_doc->readMapFile(mapFile);														//read map from map file
+	if(dataFile != m_doc->dataFile())																//data file name changed
+	{
+		m_doc->setDataFile(dataFile);																//set current opened data file
+		setWindowModified(true);
+	}
+
+	m_scene->clearSelection();
+
+    QApplication::restoreOverrideCursor();
+
+    setCurrentFile(mapFile);
+				
+	if(m_doc->wanningmessage().count()>0)
+	{
+		m_messageoutput=new MessageOutput(m_doc->wanningmessage());
+		m_messageoutput->show();
+	}
+    return (bRet1 && bRet2);
+}
 bool MdiChild::save()
 {
     if (isUntitled) {
@@ -132,7 +159,7 @@ bool MdiChild::saveFile(const QString &fileName)
 {
     //QFile file(fileName);
     //if (!file.open(QFile::WriteOnly | QFile::Text)) {
-    //    QMessageBox::warning(this, tr("GWD"),
+    //    QMessageBox::warning(this, tr("GSCD"),
     //                         tr("Cannot write file %1:\n%2.")
     //                         .arg(fileName)
     //                         .arg(file.errorString()));
@@ -174,7 +201,7 @@ bool MdiChild::maybeSave()
 	if (this->isWindowModified()) 
 	{
 		QMessageBox::StandardButton ret;
-        ret = QMessageBox::warning(this, tr("GWD"),
+        ret = QMessageBox::warning(this, tr("GSCD"),
                      tr("'%1' has been modified.\n"
                         "Do you want to save your changes?")
                      .arg(userFriendlyCurrentFile()),

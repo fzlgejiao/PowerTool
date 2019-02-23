@@ -29,6 +29,7 @@ public:
 	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
 	ACT_MODE mode(){return m_nActMode;}
+	void openCmdFiles(const QString& mapFile,const QString& dataFile,const QString& pfFile);
 
 protected:
     void closeEvent(QCloseEvent *event);

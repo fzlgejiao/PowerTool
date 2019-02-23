@@ -25,7 +25,7 @@ public:
 
 	bool	readDataFile(const QString& fileName);
 	bool	readMapFile(const QString& fileName);
-	bool    readPfFile();
+	bool    readPfFile(const QString& fileName=QString());
 	QString dataFile(){return m_szDataFile;}
 	QString mapFile(){return m_szMapFile;}
 	QString pfFile(){return m_PfFile;}
