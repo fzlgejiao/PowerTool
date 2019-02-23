@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Global version="1.0">
+    <levels>
+        <level voltage="0" width="1" color="#ffff7f"/>
+        <level voltage="0.9" width="1" color="#000000"/>
+        <level voltage="0.98" width="1" color="#000000"/>
+        <level voltage="1" width="2" color="#aaffff"/>
+        <level voltage="2" width="2" color="#ff0000"/>
+    </levels>
+    <options>
+        <colormap>false</colormap>
+        <warning>false</warning>
+        <dcwidth>0</dcwidth>
+        <dccolor>#000000</dccolor>
+        <defaultcolor>#000000</defaultcolor>
+    </options>
+</Global>
