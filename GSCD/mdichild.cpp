@@ -37,8 +37,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 		
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-	setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-	
+	setResizeAnchor(QGraphicsView::AnchorUnderMouse);	
 	//m_scene->addEllipse(QRectF(0,0,200,200),QPen(Qt::green, 1, Qt::SolidLine));	
 	//m_scene->addEllipse(QRectF(500,500,100,100),QPen(Qt::red, 1, Qt::SolidLine));	
 }
@@ -57,8 +56,7 @@ void MdiChild::newFile(const QString& datafile)
     curFile = tr("GWD%1").arg(sequenceNumber++);
     setWindowTitle(curFile + "[*]");
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    	
+    QApplication::setOverrideCursor(Qt::WaitCursor);    
 	//todo: open data file
 	m_doc->readDataFile(datafile);
 	m_doc->readPfFile();

@@ -62,7 +62,7 @@ public:
 	void	getAvailableNode(QList<iNodeData *>& list);												//to get buses which need to be show in scene
 	QMap<int,iAREA *>&   getArealist(){return listAREA;}
 	QMap<int,iSTAT *>&   getStatlist(){return listSTAT;}
-
+	
 	ControlPanel getControlPanel(){return m_controlpanel;}
 	void	setControlPanel(ControlPanel &value,uint changes);
 
@@ -76,6 +76,8 @@ public:
 	double	sBase(){return SBase;}
 
 	QStringList wanningmessage(){return m_wanningmessage;}
+
+	bool readvoltagelevelsFile();
 
 	//test func
 	void	test();
@@ -108,7 +110,7 @@ private:
 	QMap<int,iAREA *>			listAREA;
 	QMap<int,iNote *>			listNotes;
 	QMap<int,iFACTSDEVICE *>	listFACTSDEVICE;
-		
+	
 	inline QString  Link2ID(int from,int to,int ckt) { return QString("%1%2%3").arg(from).arg(to).arg(ckt);}
 
 	//for data file
@@ -118,6 +120,7 @@ private:
 	void GetBaseParameter(QFile& file);
 	void GetDataModel(QFile& file);
 	void ParserPowerFlow(QString & filename);
+	void ParserNewPowerFlow(QString & filename);
 	T_DATA getdatatype(QString stringline);
 	//for map file
 	void readSettings();
@@ -134,7 +137,7 @@ private:
 	void readNotes();
 	void skipUnknownElement();
 	QXmlStreamReader xmlReader;
-	
+		
 	QSize			m_AreaSize;
 	QString			Prefix_keyword;
 	QString			Suffix_keyword;

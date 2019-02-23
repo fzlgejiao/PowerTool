@@ -459,14 +459,14 @@ QString iSLINK::linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower)
 	}
 	if(!showReactivePower)
 	{
-		linktext=QString("%1").arg(link_P);
+		linktext=QString("%1").arg(link_P,0,'f',1);
 	}
 	else
 	{
 		if(link_Q>0)			
-			linktext=QString("%1+j%2").arg(link_P).arg(link_Q);
+			linktext=QString("%1+j%2").arg(link_P,0,'f',(unit==UNIT_ACTUALVALUE)?1:2).arg(link_Q,0,'f',(unit==UNIT_ACTUALVALUE)?1:2);
 		else
-			linktext=QString("%1-j%2").arg(link_P).arg(qAbs(link_Q));			
+			linktext=QString("%1-j%2").arg(link_P,0,'f',(unit==UNIT_ACTUALVALUE)?1:2).arg(qAbs(link_Q),0,'f',(unit==UNIT_ACTUALVALUE)?1:2);			
 	}
 
 	int count=m_linkDatas.count();

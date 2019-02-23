@@ -6,6 +6,7 @@
 #include <QList>
 #include <QColor>
 #include <QFont>
+#include "iglobal.h"
 //data type
 typedef enum{
 	T_NONE			= 0,
@@ -21,7 +22,7 @@ typedef enum{
 	T_FACTSDEVICE,
 	T_NOTE,
 	T_SYSINFO,
-	T_LEGEND
+	T_LEGEND	
 }T_DATA;
 
 //station type
@@ -480,4 +481,5 @@ public:
 private:
 	friend class iDoc;
 };
+
 #endif // IDATA_H

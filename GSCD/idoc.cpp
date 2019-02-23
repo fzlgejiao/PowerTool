@@ -14,7 +14,7 @@ iDoc::iDoc(QObject *parent)
 	: QObject(parent)
 	,Prefix_keyword("BEGIN ")
 	,Suffix_keyword("0 / END OF ")
-	,ColumnName_keyword("@!")
+	,ColumnName_keyword("@!")	
 {
 	// my   control panle default settings
 	m_controlpanel.showtype=SHOW_POWERFLOW;
@@ -163,17 +163,18 @@ bool iDoc::readPfFile()
 	QFileInfo fi(m_szDataFile);
 	//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
 	QString extension=fi.suffix();
-	QString pffile=fi.absoluteFilePath().replace(extension,"txt");
+	QString pffile=fi.absoluteFilePath().replace(extension,"csv");
 
 	if(QFile::exists(pffile))
 	{
-		ParserPowerFlow(pffile);
+		//ParserPowerFlow(pffile);
+		ParserNewPowerFlow(pffile);
 		setPfFile(pffile);
 		return true;
 	}
 	else	
 	{
-		m_wanningmessage.append(tr("Can't found power flow file,must have the same directory of the data file,and has <*.txt> extension!"));		
+		m_wanningmessage.append(tr("Can't found power flow file,must have the same directory of the data file,and has <*.csv> extension!"));		
 		//QMessageBox::warning(NULL,tr("Message Log"),tr("Can't found power flow file,must have the same directory of the data file,and has <*.txt> extension"), QMessageBox::Yes,QMessageBox::No);
 		return false;
 	}	
@@ -192,6 +193,99 @@ void iDoc::GetBaseParameter(QFile& file)
 			QStringList datalist=readline.split(",",QString::SkipEmptyParts);
 			SBase=datalist[1].toDouble();
 			break;
+		}
+	}
+}
+void iDoc::ParserNewPowerFlow(QString & filename)
+{
+	QFile file(filename);
+	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+		std::cerr << "Error: Cannot read file " << qPrintable(filename)
+			<< ": " << qPrintable(file.errorString())
+			<< std::endl;
+		return ;
+	}	
+	int linenumber=0;
+	QString stringline="";
+	
+	QTextStream stream(&file);
+	stream.seek(0);
+	while(!stream.atEnd())
+	{
+		stringline=stream.readLine();
+		linenumber++;
+
+		QStringList datalist=stringline.split(",",QString::SkipEmptyParts);
+		if(datalist.length()!=19) continue;									//must equal to 19 columns
+		int frombusid=datalist[0].toInt();
+		int tobusid=datalist[1].toInt();
+		int ckt=datalist[2].toInt();
+
+		float frombusrefvoltage=datalist[4].toFloat();
+		float tobusrefvoltage=datalist[6].toFloat();
+		float frombusvoltage=datalist[7].toFloat();
+		float tobusvoltage=datalist[8].toFloat();
+
+		float frombus_P=datalist[9].toFloat();
+		float frombus_Q=datalist[10].toFloat();
+		float tobus_P=datalist[11].toFloat();
+		float tobus_Q=datalist[12].toFloat();
+
+		float ratio=datalist[13].toFloat();
+
+		//first update bus parameter,   base voltage and voltage
+		iBUS *frombus=this->getBUS(frombusid);
+		if(frombus) {
+				frombus->m_refvoltage=frombusrefvoltage;
+				frombus->m_voltage=frombusvoltage;
+		}
+		iBUS *tobus=this->getBUS(tobusid);
+		if(tobus) {
+				tobus->m_refvoltage=frombusrefvoltage;
+				tobus->m_voltage=frombusvoltage;
+		}
+		//update link data,
+		if(ratio==0)												//branch connection
+		{
+			iBRANCH *branch=getBRANCHfromHash(Link2ID(frombusid,tobusid,ckt));
+			if(!branch) branch=getBRANCHfromHash(Link2ID(tobusid,frombusid,ckt));
+
+			if(branch) 
+			{
+				if( (branch->tobus->Id()==tobusid) && (branch->frombus->Id()==frombusid) )
+				{
+					branch->m_P1=frombus_P/SBase;
+					branch->m_Q1=frombus_Q/SBase;
+					branch->m_P2=tobus_P/SBase;
+					branch->m_Q2=tobus_Q/SBase;
+				}else if( (branch->tobus->Id()==frombusid) && (branch->frombus->Id()==tobusid) )
+				{
+					branch->m_P1=tobus_P/SBase;
+					branch->m_Q1=tobus_Q/SBase;
+					branch->m_P2=frombus_P/SBase;
+					branch->m_Q2=frombus_Q/SBase;
+				}
+			}		
+		}else														//transformer connection
+		{
+			iTRANSFORMER *transformer=getTRANSFORMERfromHash(Link2ID(frombusid,tobusid,0));	
+			if(!transformer) transformer=getTRANSFORMERfromHash(Link2ID(tobusid,frombusid,0));	
+			if(transformer)
+			{
+				if( (transformer->tobus->Id()==tobusid) && (transformer->frombus->Id()==frombusid) )
+				{
+					transformer->m_P1=frombus_P/SBase;
+					transformer->m_Q1=frombus_Q/SBase;
+					transformer->m_P2=tobus_P/SBase;
+					transformer->m_Q2=tobus_Q/SBase;
+				}else if( (transformer->tobus->Id()==frombusid) && (transformer->frombus->Id()==tobusid) )
+				{
+					transformer->m_P1=tobus_P/SBase;
+					transformer->m_Q1=tobus_Q/SBase;
+					transformer->m_P2=frombus_P/SBase;
+					transformer->m_Q2=frombus_Q/SBase;
+				}
+			}
 		}
 	}
 }

@@ -118,12 +118,12 @@ void BranchEditDialog::addlink2Rows(QTableWidget *tablewidget, iLinkData *link)
 	if((link->P1_active()!=0) || (link->Q1_reactive()!=0))
 	{
 		P1Q1item=new QTableWidgetItem();
-		P1Q1item->setText(QString("%1+j%2").arg(link->P1_active()).arg(link->Q1_reactive()));
+		P1Q1item->setText(QString("%1+j%2").arg(link->P1_active(),0,'f',3).arg(link->Q1_reactive(),0,'f',3));
 	}
 	if((link->P2_active()!=0) || (link->Q2_reactive()!=0))
 	{
 		P2Q2item=new QTableWidgetItem();
-		P2Q2item->setText(QString("%1+j%2").arg(link->P2_active()).arg(link->Q2_reactive()));
+		P2Q2item->setText(QString("%1+j%2").arg(link->P2_active(),0,'f',3).arg(link->Q2_reactive(),0,'f',3));
 	}
 	if(P1Q1item) tablewidget->setItem(row, P1_JQ1, P1Q1item);
 	if(P2Q2item) tablewidget->setItem(row, P2_JQ2, P2Q2item);

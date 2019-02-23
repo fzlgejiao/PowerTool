@@ -14,6 +14,8 @@
 #include "arrow.h"
 #include "newdialog.h"
 #include <iostream>
+#include "voltagelevel.h"
+#include "iglobal.h"
 const int InsertTextButton = 10;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
@@ -61,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	setWindowTitle(tr("GWD"));
 	setUnifiedTitleAndToolBarOnMac(true);
 
-	m_nActMode = M_MoveItem;
+	m_nActMode = M_MoveItem;	
 }
 
 MainWindow::~MainWindow()
@@ -895,6 +897,14 @@ void MainWindow::resultFont()
 }
 void MainWindow::voltageLevel()
 {
+	MdiChild* child = activeMdiChild();
+	if(!child)	return;
+
+	VoltageLevel vldialog(this);
+	if(vldialog.exec()==QDialog::Accepted)
+	{
+		
+	}
 }
 void MainWindow::options()
 {
