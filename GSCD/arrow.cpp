@@ -13,7 +13,7 @@
 Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int groupId,
 	QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsLineItem(parent, scene)
-{
+{	
 	setData(ITEM_DATA,(uint)slink);
 	myGroupId	= groupId;
 	myStartItem = startItem;
@@ -22,7 +22,8 @@ Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem,iSLINK* slink,int grou
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
 	myColor = Qt::darkCyan;
-	setPen(QPen(myColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	m_linewidth=3;
+	setPen(QPen(myColor, m_linewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 	m_isarrowshow=true;
 }
 Arrow::~Arrow()
@@ -96,10 +97,11 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 	double totalPowerReactive=0;
 	QStyleOptionGraphicsItem op(*option);
 
+	QPen myPen = pen();
 	// set state to State_None when selected
 	if (option->state & QStyle::State_Selected)
 	{
-		myColor = Qt::blue;
+		myPen.setColor(Qt::blue);
 		op.state = QStyle::State_None;
 	}
 	else
@@ -112,14 +114,12 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWid
 				bChildSelected = true;
 		}
 		if(bChildSelected)
-			myColor = Qt::green;
+			myPen.setColor(Qt::green);
 		else
-			myColor = Qt::darkCyan;
-	}
+			myPen.setColor(myColor);
+	}	
 	
-	QPen myPen = pen();
-	myPen.setColor(myColor);
-	
+	myPen.setWidth(m_linewidth);
 	painter->setBrush(Qt::white);
 
 

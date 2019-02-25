@@ -19,9 +19,10 @@ VoltageLevel::VoltageLevel(QWidget *parent)
 	m_defaultcolor=m_Global.defaultcolor();
 	m_dcwidth=m_Global.dcwidth();
 	
-	connect(this,SIGNAL(colormapChanged(bool)),&m_Global,SIGNAL(colorMapChanged(bool)));
-	connect(this,SIGNAL(warningChanged(bool)),&m_Global,SIGNAL(warningDialog(bool)));
-	connect(this,SIGNAL(levelschanged()),&m_Global,SIGNAL(voltagelevelsChanged()));
+	connect(this,SIGNAL(globalChanged(ushort)),&m_Global,SLOT(Onchanges(ushort)));
+
+	ui.checkBox_colormap->setChecked(m_Global.iscolormap());
+	ui.checkBox_warning->setChecked(m_Global.iswarning());
 
 	ui.pushButton_dccolor->setStyleSheet(QString("color:white;background-color:rgb(%1,%2,%3)").arg(m_dccolor.red()).arg(m_dccolor.green()).arg(m_dccolor.blue()));
 	ui.pushButton_defaultcolor->setStyleSheet(QString("color:white;background-color:rgb(%1,%2,%3)").arg(m_defaultcolor.red()).arg(m_defaultcolor.green()).arg(m_defaultcolor.blue()));
@@ -48,6 +49,7 @@ VoltageLevel::VoltageLevel(QWidget *parent)
 	
 	addLevels2Table();
 	ui.tableWidget->sortByColumn(RefVoltage,Qt::DescendingOrder);			//default to voltage descending
+	ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
 }
 
 VoltageLevel::~VoltageLevel()
@@ -57,11 +59,15 @@ VoltageLevel::~VoltageLevel()
 void VoltageLevel::Oncolormap(bool check)
 {
 	m_iscolormap=check;
+	m_Global.setcolormap(m_iscolormap);
+	ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 	m_changes|=CHG_COLORMAP;
 }
 void VoltageLevel::Onwarning(bool check)
 {
 	m_iswarning=check;
+	m_Global.setwarning(m_iswarning);
+	ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 	m_changes|=CHG_WARNING;
 }
 void VoltageLevel::OnDCColorChanged()
@@ -73,6 +79,8 @@ void VoltageLevel::OnDCColorChanged()
 	QString strcolor=QString("color:white;background-color:rgb(%1,%2,%3)").arg(m_dccolor.red()).arg(m_dccolor.green()).arg(m_dccolor.blue());
 	ui.pushButton_dccolor->setStyleSheet(strcolor);	
 
+	m_Global.setdccolor(m_dccolor);
+	ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 	m_changes|=CHG_DCCOLOR;
 }
 void VoltageLevel::OnDefaultColorChanged()
@@ -84,11 +92,15 @@ void VoltageLevel::OnDefaultColorChanged()
 	QString strcolor=QString("color:white;background-color:rgb(%1,%2,%3)").arg(m_defaultcolor.red()).arg(m_defaultcolor.green()).arg(m_defaultcolor.blue());
 	ui.pushButton_defaultcolor->setStyleSheet(strcolor);	
 
+	m_Global.setdefaultcolor(m_defaultcolor);
+	ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 	m_changes|=CHG_DEFAULTCOLOR;
 }
 void VoltageLevel::OnDcWidthChanged(int index)
 {
 	m_dcwidth=index;
+	m_Global.setdcwidth(m_dcwidth);
+	ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 	m_changes|=CHG_DCWIDTH;
 }
 void VoltageLevel::Onvoltage_edit()
@@ -112,6 +124,8 @@ void VoltageLevel::Onvoltage_edit()
 		if(new_voltage==level->refVoltage() && new_width==level->getwidth()) {
 				level->setcolor(new_color);
 				label->setStyleSheet(QString("background-color:rgb(%1,%2,%3)").arg(new_color.red()).arg(new_color.green()).arg(new_color.blue()));
+				ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
+				m_changes|=CHG_LEVELS;
 				return ;
 		}
 		if(m_Global.editvoltagelevel(level,new_voltage,new_width,new_color))
@@ -123,6 +137,7 @@ void VoltageLevel::Onvoltage_edit()
 			{
 				QMessageBox::warning(this, tr("GSCD"),tr("The width of low voltage can't more than large one!\n Auto change it!"),QMessageBox::Ok);
 			}
+			ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 			m_changes|=CHG_LEVELS;
 		}else
 		{
@@ -155,6 +170,7 @@ void VoltageLevel::Onvoltage_new()
 				QMessageBox::warning(this, tr("GSCD"),tr("The width of low voltage can't more than large one!\n Auto change it!"),QMessageBox::Ok);
 			}
 			addLevel2Table(level);
+			ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 			m_changes|=CHG_LEVELS;
 		}
 	}
@@ -171,7 +187,7 @@ void VoltageLevel::Onvoltage_delete()
 		int selectrow=ui.tableWidget->row(voltageitem);
 		ui.tableWidget->removeRow(selectrow);
 		m_Global.deletevoltagelevel(level);
-
+		ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
 		m_changes|=CHG_LEVELS;
 	}
 	ui.tableWidget->clearSelection();
@@ -182,13 +198,8 @@ void VoltageLevel::OnSave()
 	{
 		ui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
 
-		if(m_changes & CHG_COLORMAP)
-			emit colormapChanged(m_iscolormap);
-		if(m_changes & CHG_WARNING)
-			emit warningChanged(m_iswarning);
-		if(m_changes & CHG_LEVELS)
-			emit levelschanged();
-		
+		if(m_changes!=0) 
+			emit globalChanged(m_changes);
 	}
 }
 

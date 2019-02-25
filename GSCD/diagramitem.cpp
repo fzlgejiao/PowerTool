@@ -19,6 +19,10 @@ DiagramItem::DiagramItem(iData* data, QGraphicsItem *parent, QGraphicsScene *sce
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
+
+	m_color=QColor(Qt::darkCyan);
+
+	setPen(QPen(m_color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
 //! [0]
 DiagramItem::~DiagramItem()
@@ -115,11 +119,11 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
 	QStyleOptionGraphicsItem op(*option);
 	//op.initFrom(widget);
-
+	QPen mypen=pen();
 	// set state to State_None when selected
 	if (option->state & QStyle::State_Selected)
 	{
-		setPen(QPen(Qt::blue,1));		
+		mypen.setColor(Qt::blue);		
 		op.state = QStyle::State_None;
 	}
 	else
@@ -132,12 +136,13 @@ void DiagramItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 				bChildSelected = true;
 		}
 		if(bChildSelected)
-			setPen(QPen(Qt::green,1));
+			mypen.setColor(Qt::green);		
 		else
-			setPen(QPen(Qt::darkCyan,1));
+			mypen.setColor(m_color);
 	}
 
 	// call default func to draw
+	setPen(mypen);
 	QGraphicsPathItem::paint(painter, &op, widget);	
 }
 void DiagramItem::updateData()

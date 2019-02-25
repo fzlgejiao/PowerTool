@@ -45,6 +45,8 @@ public:
 
     void updatePosition();
 
+	void setWidth(int width){m_linewidth = width; }
+       
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 	void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
@@ -57,6 +59,7 @@ private:
     DiagramItem*	myEndItem;
 	DiagramTextItem* myTextItem;
     QColor			myColor;
+	int				m_linewidth;
     QPolygonF		arrowHead;
 	QPolygonF		arrowLine;
 	int				myGroupId;

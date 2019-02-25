@@ -44,6 +44,8 @@ public:
 	iData* myData();
 	void updateData();
 
+	void setcolor(QColor color){m_color=color;}
+
 protected:
 	void mousePressEvent ( QGraphicsSceneMouseEvent * event );
 	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
@@ -56,6 +58,7 @@ private:
    // QPolygonF		myPolygon;
 	QPainterPath	myPath;
     QList<Arrow *>	arrows;		
+	QColor m_color;
 	
 signals:
 

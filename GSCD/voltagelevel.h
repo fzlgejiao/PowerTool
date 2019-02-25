@@ -17,13 +17,6 @@ enum LevelColumns
 	VoltageLevelColumnCnt
 };
 
-#define	CHG_COLORMAP		0x01
-#define	CHG_WARNING 		0x02
-#define	CHG_DCWIDTH		    0x04
-#define	CHG_DCCOLOR 		0x08
-#define	CHG_DEFAULTCOLOR 	0x10
-#define	CHG_LEVELS 			0x20
-
 class VoltageItem:public QTableWidgetItem
 {
 public:
@@ -82,9 +75,8 @@ private:
 	ushort m_changes;
 
 signals:
-	void colormapChanged(bool iscolor);
-	void warningChanged(bool iswarning);
-	void levelschanged();
+	void globalChanged(ushort changes);
+	
 };
 
 

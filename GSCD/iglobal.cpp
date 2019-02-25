@@ -21,6 +21,7 @@ iGlobal::iGlobal(QObject *parent)
 	: QObject(parent)
 	,defaultGlobalFile("./iGlobal.xml")
 {
+	m_changes=0;
 	m_error=NoError;
 	m_iscolormap=false;
 	m_iswarning=false;

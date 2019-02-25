@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Global version="1.0">
-    <levels/>
+    <levels>
+        <level voltage="0" width="0" color="#000000"/>
+        <level voltage="21.6" width="1" color="#005500"/>
+        <level voltage="22" width="1" color="#aa5500"/>
+        <level voltage="230" width="1" color="#0055ff"/>
+        <level voltage="500" width="3" color="#ff0000"/>
+    </levels>
     <options>
         <colormap>false</colormap>
         <warning>false</warning>

@@ -50,6 +50,7 @@ QString iNodeData::getCompensation()
 //--------------------------------------------------------------------------------------------------
 iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 	:iData(id,parent)
+	,m_Global(iGlobal::Instance())
 {
 	m_Name = name;
 	m_Value= "value";
@@ -61,7 +62,7 @@ iSTAT::iSTAT(int id,const QString& name,QObject *parent)
 	m_power_showtype=VALUE_ADDUP;
 	m_load_showtype=VALUE_ADDUP;
 	is_loadshown=false;
-	is_compensationshown=false;	
+	is_compensationshown=false;		
 }
 iSTAT::~iSTAT()
 {
@@ -69,6 +70,73 @@ iSTAT::~iSTAT()
 	{
 		node->statRemoved();
 	}
+}
+void iSTAT::setItem(DiagramItem* item)
+{
+	m_itemStat = item;
+	if(!item) return;
+	connect(&m_Global,SIGNAL(globalChanged( )),this,SLOT(OnGlobalChanged( )));	
+	if(m_Global.iscolormap())
+	{		
+		CVoltageLevel *match=findmatchvoltagelevel();
+		if(match)
+			m_itemStat->setcolor(match->getcolor());
+		else 
+			m_itemStat->setcolor(m_Global.defaultcolor());
+	}
+}
+void iSTAT::OnGlobalChanged( )
+{
+	ushort changes=m_Global.changes();
+	if(changes & CHG_LEVELS | CHG_DEFAULTCOLOR |CHG_COLORMAP)
+	{
+		if(!m_Global.iscolormap()) m_itemStat->setcolor(Qt::darkCyan);
+		else
+		{
+			CVoltageLevel *match=findmatchvoltagelevel();
+			if(match)
+				m_itemStat->setcolor(match->getcolor());
+			else 
+				m_itemStat->setcolor(m_Global.defaultcolor());
+		}
+	}
+}
+float iSTAT::myMaxvoltageNode()
+{
+	float max=0;
+	foreach(iNodeData *node,m_nodeDatas)
+	{
+		if(node->GetRefVoltage() > max)
+			max=node->GetRefVoltage();
+	}
+	return max;
+}
+CVoltageLevel * iSTAT::findmatchvoltagelevel()
+{
+	QList<CVoltageLevel *> levels=m_Global.getVoltagelevels();
+
+	if(levels.count()==0) return NULL;
+	float max=	myMaxvoltageNode();
+	if(max==0) return NULL;
+	
+	foreach(CVoltageLevel *level,levels)			//if equal
+	{
+		if(level->refVoltage()==max)
+			return  level;	
+	}
+	foreach(CVoltageLevel *level,levels)
+	{
+		float v1=level->refVoltage();
+		if( max*1.1 >= v1 && v1 > max)	//if level (max,max*10%], match
+			return level;
+	}
+	foreach(CVoltageLevel *level,levels)
+	{
+		float v2=level->refVoltage();
+		if(max > v2  && v2 >= max*0.9 )	//if level [max*90,max), match
+			return level;
+	}
+	return NULL;
 }
 void iSTAT::setNodes(const QList<iNodeData *>& listNodes)
 {
@@ -353,12 +421,101 @@ void iSTAT::OncontrolpanelChanged(ControlPanel &settings,uint changes)
 //--------------------------------------------------------------------------------------------------
 iSLINK::iSLINK(int id,iSTAT* startSTAT,iSTAT* endSTAT,QObject *parent)
 	:iData(id,parent)
+	,m_Global(iGlobal::Instance())
 {
 	m_startSTAT	= startSTAT;
 	m_endSTAT	= endSTAT;
 	m_startItem = NULL;
 	m_endItem	= NULL;
 	m_arrow=NULL;
+}
+void iSLINK::setArrow(Arrow *arrow)
+{
+	m_arrow=arrow;
+	if(!arrow) return;
+	connect(&m_Global,SIGNAL(globalChanged( )),this,SLOT(OnGlobalChanged( )));	
+	if(m_Global.iscolormap())
+	{		
+		CVoltageLevel *match=findmatchvoltagelevel();
+		if(match)
+		{
+			m_arrow->setColor(match->getcolor());
+			m_arrow->setWidth(match->getwidth());
+		}
+		else 
+		{
+			m_arrow->setColor(m_Global.defaultcolor());		
+			m_arrow->setWidth(0);
+		}
+	}
+}
+void iSLINK::OnGlobalChanged( )
+{
+	ushort changes=m_Global.changes();
+	if(changes & CHG_LEVELS | CHG_DEFAULTCOLOR |CHG_COLORMAP)
+	{
+		if(!m_Global.iscolormap()) 
+			{
+				m_arrow->setColor(Qt::darkCyan);
+				m_arrow->setWidth(3);
+		}
+		else
+		{
+			CVoltageLevel *match=findmatchvoltagelevel();
+			if(match)
+			{
+				m_arrow->setColor(match->getcolor());
+				m_arrow->setWidth(match->getwidth());
+			}
+			else 
+			{
+				m_arrow->setColor(m_Global.defaultcolor());
+				m_arrow->setWidth(0);
+			}
+		}
+	}
+}
+CVoltageLevel * iSLINK::findmatchvoltagelevel()
+{
+	QList<CVoltageLevel *> levels=m_Global.getVoltagelevels();
+
+	if(levels.count()==0) return NULL;
+	float max=	myMaxvoltage();
+	if(max==0) return NULL;
+		
+	foreach(CVoltageLevel *level,levels)			//if equal
+	{
+		if(level->refVoltage()==max)
+			return  level;	
+	}
+	foreach(CVoltageLevel *level,levels)
+	{
+		float v1=level->refVoltage();
+		if( max*1.1 >= v1 && v1 > max)	//if level in (max,max*110%], match
+			return level;
+	}
+	foreach(CVoltageLevel *level,levels)
+	{
+		float v2=level->refVoltage();
+		if(max > v2  && v2 >= max*0.9 )	//if level in [max*90%,max), match
+			return level;
+	}
+	return NULL;
+}
+float iSLINK::myMaxvoltage()
+{
+	float max=0;
+	foreach(iNodeData *node,m_startSTAT->nodeDatas())
+	{
+		if(node->GetRefVoltage() > max)
+			max=node->GetRefVoltage();
+	}
+	foreach(iNodeData *node,m_endSTAT->nodeDatas())
+	{
+		if(node->GetRefVoltage() > max)
+			max=node->GetRefVoltage();
+	}
+	return max;
 }
 void iSLINK::addLinkData(int groupId,iLinkData *linkData)
 {

@@ -246,7 +246,7 @@ public:
 	//void    removeNodes(const QList<iNodeData *>& listNodes);
 	QList<iNodeData *>& nodeDatas(){return m_nodeDatas;}
 
-	void	setItem(DiagramItem* item){m_itemStat = item;}
+	void	setItem(DiagramItem* item);
 	DiagramItem* myItem(){return m_itemStat;}
 
 	void	setItemName(DiagramTextItem* item){m_itemName = item;}
@@ -272,6 +272,7 @@ public:
 public slots:
 		void OncontrolpanelChanged(ControlPanel &settings,uint changes);
 		void OnapplyNameFont2all(QFont &font);
+		void OnGlobalChanged( );
 
 private:
 	friend class iDoc;
@@ -291,6 +292,9 @@ private:
 		
 	bool is_loadshown;
 	bool is_compensationshown;
+	iGlobal &m_Global;
+	float myMaxvoltageNode();
+	CVoltageLevel * findmatchvoltagelevel();
 };
 
 class Arrow;
@@ -317,13 +321,14 @@ public:
 	iSTAT*			startStat(){return m_startSTAT;}
 	iSTAT*			endStat(){return m_endSTAT;}
 
-	void setArrow(Arrow *arrow){m_arrow=arrow;}
+	void setArrow(Arrow *arrow);
 	Arrow * myArrow() {return m_arrow;}
 
 	QString linkvalue(double sbase,UNIT_TYPE unit,bool showReactivePower);
 	QString linkresistance();
 public slots:
 	void OncontrolpanelChanged(ControlPanel &,uint);
+	void OnGlobalChanged();
 
 private:
 	friend class iDoc;
@@ -335,6 +340,9 @@ private:
 	DiagramItem*	m_endItem;
 	QList<iLinkData *>					m_linkDatas;
 	QMap<int,QList<iLinkData *> >		m_linkGroups;												//link groups, one group for one arrow(can have more than one arrow line)
+	iGlobal &m_Global;
+	float myMaxvoltage();
+	CVoltageLevel * findmatchvoltagelevel();
 };
 
 class iBUS : public iNodeData
