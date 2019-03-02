@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>494</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,30 +93,15 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QTableWidget" name="tableWidget_added">
+  <widget class="QTableView" name="tableView_added">
    <property name="geometry">
     <rect>
      <x>431</x>
      <y>93</y>
      <width>280</width>
-     <height>349</height>
+     <height>350</height>
     </rect>
    </property>
-   <column>
-    <property name="text">
-     <string>ID</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Name</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>VB</string>
-    </property>
-   </column>
   </widget>
   <widget class="QLineEdit" name="lineEdit_area">
    <property name="geometry">
@@ -210,36 +195,21 @@
     <string>&lt;Remove</string>
    </property>
   </widget>
-  <widget class="QTableWidget" name="tableWidget_hidden">
+  <widget class="QTableView" name="tableView_hidden">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>93</y>
      <width>280</width>
-     <height>221</height>
+     <height>210</height>
     </rect>
    </property>
-   <column>
-    <property name="text">
-     <string>ID</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Name</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>VB</string>
-    </property>
-   </column>
   </widget>
   <widget class="QLabel" name="label_branch">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>330</y>
+     <y>355</y>
      <width>281</width>
      <height>19</height>
     </rect>
@@ -248,30 +218,15 @@
     <string>Connected Buses:</string>
    </property>
   </widget>
-  <widget class="QTableWidget" name="tableWidget_branch">
+  <widget class="QTableView" name="tableView_branch">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>357</y>
+     <y>376</y>
      <width>280</width>
-     <height>121</height>
+     <height>105</height>
     </rect>
    </property>
-   <column>
-    <property name="text">
-     <string>ID</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Name</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>VB</string>
-    </property>
-   </column>
   </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
@@ -335,7 +290,7 @@
    <property name="geometry">
     <rect>
      <x>300</x>
-     <y>400</y>
+     <y>420</y>
      <width>118</width>
      <height>23</height>
     </rect>
@@ -362,7 +317,7 @@
     <rect>
      <x>514</x>
      <y>454</y>
-     <width>195</width>
+     <width>198</width>
      <height>23</height>
     </rect>
    </property>
@@ -442,8 +397,80 @@
     </property>
    </item>
   </widget>
+  <widget class="QLineEdit" name="lineEdit_filter">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>310</y>
+     <width>161</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>Filter</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_filter">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>310</y>
+     <width>90</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <item>
+    <property name="text">
+     <string>ID</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Name</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>VB</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="Line" name="line_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>345</y>
+     <width>280</width>
+     <height>10</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>24</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="mainwindow.qrc">:/images/search.png</pixmap>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="mainwindow.qrc"/>
+ </resources>
  <connections/>
 </ui>

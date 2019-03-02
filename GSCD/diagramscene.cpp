@@ -624,6 +624,8 @@ void DiagramScene::editStation(DiagramItem *item,iSTAT* stat)
 		//update station name
 		stat->itemName()->setFont(dlg.GetFont());
 		stat->itemName()->setPlainText(stat->nodeVoltage(myDoc->getControlPanel().isShowVoltageAngle,myDoc->getControlPanel().unittype) + stat->name());
+		//update value content
+		stat->itemValue()->setPlainText(stat->value(myDoc->sBase(),myDoc->getControlPanel().unittype,myDoc->getControlPanel().isShowReactivePowerValue));
 	}
 
 	//change links of station due to nodes changed

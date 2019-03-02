@@ -35,5 +35,6 @@
         <file alias="factsgray.png">Resources/images/F_gray.png</file>
         <file alias="factsyes.png">Resources/images/F_yes.png</file>
         <file alias="yes.png">Resources/images/yes.png</file>
+        <file alias="search.png">Resources/images/search.png</file>
     </qresource>
 </RCC>

@@ -8,7 +8,7 @@
         <level voltage="500" width="3" color="#ff0000"/>
     </levels>
     <options>
-        <colormap>false</colormap>
+        <colormap>true</colormap>
         <warning>false</warning>
         <dcwidth>0</dcwidth>
         <dccolor>#000000</dccolor>
