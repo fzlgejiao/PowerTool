@@ -168,21 +168,20 @@ bool iDoc::readPfFile(const QString& fileName)
 		//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
 		QString extension=fi.suffix();
 		QString pffile=fi.absoluteFilePath().replace(extension,"csv");
-
-		if(QFile::exists(pffile))
-		{
-			//ParserPowerFlow(pffile);
-			ParserNewPowerFlow(pffile);
-			setPfFile(pffile);
-			return true;
-		}
-		else	
-		{
-			m_wanningmessage.append(tr("Can't found power flow file,must have the same directory of the data file,and has <*.csv> extension!"));		
-			//QMessageBox::warning(NULL,tr("Message Log"),tr("Can't found power flow file,must have the same directory of the data file,and has <*.txt> extension"), QMessageBox::Yes,QMessageBox::No);
-			return false;
-		}	
 	}
+	if(QFile::exists(pffile))
+	{
+		//ParserPowerFlow(pffile);
+		ParserNewPowerFlow(pffile);
+		setPfFile(pffile);
+		return true;
+	}
+	else	
+	{
+		m_wanningmessage.append(tr("Can't found power flow file,must have the same directory of the data file,and has <*.csv> extension!"));		
+		//QMessageBox::warning(NULL,tr("Message Log"),tr("Can't found power flow file,must have the same directory of the data file,and has <*.txt> extension"), QMessageBox::Yes,QMessageBox::No);
+		return false;
+	}	
 }
 
 void iDoc::GetBaseParameter(QFile& file)

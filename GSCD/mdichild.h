@@ -17,8 +17,8 @@ public:
 	~MdiChild();
 
     void	newFile(const QString& datafile);
-    bool	loadFile(const QString &mapFile,const QString& dataFile);
-	bool	loadFile(const QString &mapFile,const QString& dataFile,const QString& pfFile);
+    bool	loadFile(const QString &mapFile,const QString& dataFile);								//laod files: map,data. pf is from same name of data file
+	bool	loadFile(const QString &mapFile,const QString& dataFile,const QString& pfFile);			//load files: map,data and pf
     bool	save();
     bool	saveAs();
     bool	saveFile(const QString &fileName);
