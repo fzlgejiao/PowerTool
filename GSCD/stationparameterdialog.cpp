@@ -122,3 +122,14 @@ void StationParameterDialog::OnOk()
 	}
 	accept();
 }
+void StationParameterDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

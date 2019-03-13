@@ -13,6 +13,9 @@ public:
 	~ScaleDialog();
 	int GetScale() { return m_scale;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private slots:
 	void OnScaleSliderChanged(int value);
 

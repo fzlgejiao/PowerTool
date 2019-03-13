@@ -108,4 +108,15 @@ void TextDialog::OnOK()
 	}
 	this->accept();
 }
+void TextDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}
 

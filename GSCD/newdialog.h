@@ -13,6 +13,9 @@ public:
 	~NewDialog();
 	QString FileName(){return m_szFile;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private:
 	Ui::NewDialog ui;
 	QString	m_szFile;

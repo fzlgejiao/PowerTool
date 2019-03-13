@@ -97,3 +97,14 @@ void StationNameDialog::OnOk()
 		emit apply2all(m_font);
 	accept();
 }
+void StationNameDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

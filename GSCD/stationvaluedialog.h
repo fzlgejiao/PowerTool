@@ -18,6 +18,8 @@ public:
 	~StationValueDialog();
 	bool IsShowCompensation(){return m_showcompensation;}
 	
+protected:
+   virtual void changeEvent(QEvent *e);
 
 private slots:
 		void OngroupLoadtoggled(bool toggle);

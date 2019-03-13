@@ -57,3 +57,14 @@ void EditVoltageLevel::OnOK()
 	}*/
 	this->accept();
 }
+void EditVoltageLevel::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

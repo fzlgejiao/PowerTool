@@ -31,3 +31,14 @@ void ScaleDialog::OnScaleSliderChanged(int value)
 	m_scale=value;
 	ui.lineEdit_scale->setText(QString("%1").arg(value));
 }
+void ScaleDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

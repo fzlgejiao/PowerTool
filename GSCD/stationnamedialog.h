@@ -18,6 +18,9 @@ public:
 	QFont GetFont() {return m_font;}
 	bool IsApplyAll(){return m_IsApplyAll;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 signals:
 	void apply2all(QFont & font);
 

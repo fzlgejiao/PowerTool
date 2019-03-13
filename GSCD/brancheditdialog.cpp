@@ -206,3 +206,14 @@ void BranchEditDialog::addlink2tree(QTreeWidget *treewidget,  QList<iLinkData * 
 
 	if(items.count()>0) treewidget->insertTopLevelItems(index, items);
 }
+void BranchEditDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

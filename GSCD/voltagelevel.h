@@ -47,6 +47,9 @@ public:
 	VoltageLevel(QWidget *parent = 0);
 	~VoltageLevel();
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private slots:
 		void Onvoltage_edit();
 		void Onvoltage_new();

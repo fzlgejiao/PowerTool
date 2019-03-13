@@ -23,3 +23,15 @@ void NewDialog::OnBrowse()
 	if(m_szFile.isEmpty() == false)
 		ui.leFile->setText(m_szFile);
 }
+void NewDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}
+

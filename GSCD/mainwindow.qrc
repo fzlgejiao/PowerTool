@@ -37,4 +37,8 @@
         <file alias="yes.png">Resources/images/yes.png</file>
         <file alias="search.png">Resources/images/search.png</file>
     </qresource>
+    <qresource prefix="/language">
+        <file alias="GSCD_EN.qm">GSCD_EN.qm</file>
+        <file alias="GSCD_CN.qm">GSCD_CN.qm</file>
+    </qresource>
 </RCC>

@@ -20,7 +20,8 @@ public:
 	bool HasBorder() {return hasborder;}
 	QColor GetTextcolor(){return m_color;}
 	Qt::Alignment GetAlignmode(){return m_alignmode;}
-
+protected:
+   virtual void changeEvent(QEvent *e);
 private slots:
 	void OnFontdialog();
 	void OnColorChanged();

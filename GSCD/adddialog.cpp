@@ -597,7 +597,7 @@ void AddDialog::OnBranchNodeAdd()
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 		branchnodemodel->clear();
 		branchmodelproxy->clear();
-		ui.label_branch->setText("Connected Buses ....");
+		ui.label_branch->setText(tr("Connected Buses ...."));
 		emit hiddenmodelchanged();
 		emit addedmodelchanged();
 		m_changes|=CHG_STAT_DATA;
@@ -622,7 +622,7 @@ void AddDialog::OnAdd(const QModelIndex & index)
 		ui.tableView_hidden->clearSelection();
 		branchnodemodel->clear();
 		branchmodelproxy->clear();
-		ui.label_branch->setText("Connected Buses ....");
+		ui.label_branch->setText(tr("Connected Buses ...."));
 
 		emit hiddenmodelchanged();
 		emit addedmodelchanged();
@@ -655,7 +655,7 @@ void AddDialog::OnAddAll()
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);	
 	branchnodemodel->clear();
 	branchmodelproxy->clear();
-	ui.label_branch->setText("Connected Buses ....");
+	ui.label_branch->setText(tr("Connected Buses ...."));
 
 	emit hiddenmodelchanged();
 	emit addedmodelchanged();
@@ -680,7 +680,7 @@ void AddDialog::OnRevoke(const QModelIndex & index)
 		ui.tableView_added->clearSelection();
 		branchnodemodel->clear();
 		branchmodelproxy->clear();
-		ui.label_branch->setText("Connected Buses ....");
+		ui.label_branch->setText(tr("Connected Buses ...."));
 
 		emit hiddenmodelchanged();
 		emit addedmodelchanged();
@@ -713,7 +713,7 @@ void AddDialog::OnRevokeAll()
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);	
 	branchnodemodel->clear();
 	branchmodelproxy->clear();
-	ui.label_branch->setText("Connected Buses ....");
+	ui.label_branch->setText(tr("Connected Buses ...."));
 
 	emit hiddenmodelchanged();
 	emit addedmodelchanged();
@@ -738,4 +738,15 @@ void AddDialog::OnBranchnodeActived(const QModelIndex & index)
 {		
 	QModelIndex idindex=branchmodelproxy->index(index.row(),ID);
 	branchnodemodel->toggleicontype(branchmodelproxy->mapToSource(idindex));	
+}
+void AddDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
 }

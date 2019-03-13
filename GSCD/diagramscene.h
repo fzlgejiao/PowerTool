@@ -74,7 +74,7 @@ protected:
 	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);	
 	void drawBackground ( QPainter * painter, const QRectF & rect );
 	void procItem(ACT_TYPE act,QGraphicsItem* item);
-
+	
 	//actions for station
 	void editStation(DiagramItem *item,iSTAT* stat);
 	void viewStation(DiagramItem *item,iSTAT* stat);
@@ -94,6 +94,7 @@ protected:
 
 private:
     bool isItemChange(int type);
+	
 
 	MainWindow* pMain;
 	iDoc*		myDoc;
@@ -124,7 +125,7 @@ private:
 public slots:
 	void addStation(iSTAT* stat,const QPointF& posStat,const QFont& fontName,QPointF& posName = QPointF(10,10),QPointF& posValue = QPointF(10,-20));
 	void addNote(iNote* note,const QPointF& pos,const QSizeF& size);
-
+	void languagechangeEvent();
 signals:
 	void modeDone();
 	void applyNameFont2all(QFont &font);

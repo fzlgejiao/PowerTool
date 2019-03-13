@@ -90,7 +90,7 @@ DiagramScene::DiagramScene(iDoc* doc,QObject *parent)
 
 	connect(doc, SIGNAL(statAdded(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)),	this, SLOT(addStation(iSTAT*,const QPointF&,const QFont&,QPointF&,QPointF&)));
 	connect(doc, SIGNAL(noteAdded(iNote*,const QPointF&,const QSizeF&)),	this, SLOT(addNote(iNote*,const QPointF&,const QSizeF&)));
-	
+	connect(pMain,SIGNAL(mainlanguagechanged()),this,SLOT(languagechangeEvent()));
 }
 //! [0]
 
@@ -760,4 +760,17 @@ void DiagramScene::selectAllStations()
 void DiagramScene::defAllPositions()
 {
 	emit allDefPositioned();																		//tell all text item back to def position
+}
+void DiagramScene::languagechangeEvent()
+{
+	propertyAction->setText(tr("&Properties..."));
+	propertyAction->setStatusTip(tr("Show object property"));
+	deleteAction->setText(tr("&Delete"));
+	deleteAction->setStatusTip(tr("Delete item from diagram"));
+	editStationAction->setText(tr("&Edit Station..."));
+	editStationAction->setStatusTip(tr("Edit station"));
+	editSLinkAction->setText(tr("&Edit link..."));
+	editSLinkAction->setStatusTip(tr("Edit link"));
+	defPositionAction->setText(tr("&Return to default position"));
+	defPositionAction->setStatusTip(tr("Return to default position"));
 }

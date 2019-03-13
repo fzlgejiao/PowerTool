@@ -362,6 +362,26 @@ void MainWindow::createActions()
 	optionsAction->setStatusTip(tr("options"));
 	connect(optionsAction, SIGNAL(triggered()),this, SLOT(options()));
 
+	languageAction = new QAction(tr("&Language"), this);
+	languageAction->setStatusTip(tr("change language"));
+	
+	englishAction = new QAction(("English"), this);
+	englishAction->setStatusTip(("change language to english"));	
+	englishAction->setCheckable(true);
+
+	chineseAction = new QAction(QString::fromLocal8Bit("中文"), this);
+	chineseAction->setStatusTip(QString::fromLocal8Bit("切换到中文"));
+	chineseAction->setCheckable(true);
+
+	languageGroup = new QActionGroup(this);
+	languageGroup->setExclusive(true);
+	languageGroup->addAction(englishAction);
+	languageGroup->addAction(chineseAction);
+	connect(languageGroup, SIGNAL(triggered(QAction *)), this, SLOT(OnLanguageChanged(QAction *)));
+	if(iGlobal::Instance().getlanguage()==Chinese)
+		chineseAction->setChecked(true);
+	else 
+		englishAction->setChecked(true);
 	//actions for menu 'window'
 	closeAct = new QAction(tr("Cl&ose"), this);
 	closeAct->setStatusTip(tr("Close the active window"));
@@ -457,8 +477,12 @@ void MainWindow::createMenus()
 	settingMenu->addAction(imageAreaAction);
 	settingMenu->addAction(resultFontAction);
 	settingMenu->addAction(voltageLevelAction);
-	settingMenu->addAction(optionsAction);
-
+	
+	QMenu *languagemenu=new QMenu(this);
+	languagemenu->addAction(englishAction);
+	languagemenu->addAction(chineseAction);
+	languageAction->setMenu(languagemenu);
+	settingMenu->addAction(languageAction);
 
 	windowMenu = menuBar()->addMenu(tr("&Window"));
 	updateWindowMenu();
@@ -487,13 +511,13 @@ void MainWindow::createToolBars()
 	QToolButton *btnAddStation = new QToolButton;
 	btnAddStation->setCheckable(true);
 	btnAddStation->setIcon(QIcon(":/images/addnet.png"));
-	btnAddStation->setStatusTip("Add A New Station");
+	btnAddStation->setStatusTip(tr("Add A New Station"));
 	btnAddStation->setShortcut(tr("Add Station"));
 
 	QToolButton *btnAddNote = new QToolButton;
 	btnAddNote->setCheckable(true);
 	btnAddNote->setIcon(QIcon(":/images/addcomment.png"));
-	btnAddNote->setStatusTip("Add A Text Note");
+	btnAddNote->setStatusTip(tr("Add A Text Note"));
 	btnAddNote->setShortcut(tr("Add Note"));
 
 	buttonModeGroup = new QButtonGroup(this);
@@ -1106,5 +1130,112 @@ void MainWindow::openCmdFiles(const QString& mapFile,const QString& dataFile,con
 	else 
 	{
 		child->close();
+	}
+}
+
+void MainWindow::OnLanguageChanged(QAction *action)
+{
+	if(action == chineseAction)
+	{
+		iGlobal::Instance().setlanguage(Chinese);
+	}
+	else
+	{
+		iGlobal::Instance().setlanguage(English);
+	}
+	action->setChecked(true);
+}
+
+void MainWindow::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{			
+		emit mainlanguagechanged();
+		setWindowTitle(tr("GSCD"));
+		//file menu
+		fileMenu->setTitle(tr("&File"));
+		newAct->setText(tr("&New"));
+		newAct->setStatusTip(tr("Create a new file"));
+		openAct->setText(tr("&Open..."));
+		openAct->setStatusTip(tr("Open an existing file"));
+		saveAct->setText(tr("&Save"));
+		saveAct->setStatusTip(tr("Save the document to disk"));
+		saveAsAct->setText(tr("Save &As..."));
+		saveAsAct->setStatusTip(tr("Save the document under a new name"));
+		printAct->setText(tr("&Print..."));
+		printAct->setStatusTip(tr("Print the current document"));
+		previewAct->setText(tr("Print preview..."));
+		previewAct->setStatusTip(tr("Preview the current document"));
+		exitAct->setText(tr("E&xit"));
+		exitAct->setStatusTip(tr("Exit the application"));
+		//edit menu
+		editMenu->setTitle(tr("&Edit"));
+		addStationAction->setText(tr("&Add Station"));
+		addStationAction->setStatusTip(tr("Add a Station"));
+		addNoteAction->setText(tr("Add &Note"));
+		addNoteAction->setStatusTip(tr("Add a Note"));
+		deleteAction->setText(tr("&Delete"));
+		deleteAction->setStatusTip(tr("Delete selected object"));
+		editObjectAction->setText(tr("&Edit Object..."));
+		editObjectAction->setStatusTip(tr("Edit object"));
+		//view menu
+		viewMenu->setTitle(tr("&View"));
+		toolbarAct->setText(tr("Show &Toolbar"));
+		toolbarAct->setStatusTip(tr("Show or hide Toolbar"));
+		statusbarAct->setText(tr("Show &Statusbar"));
+		statusbarAct->setStatusTip(tr("Show or hide Statusbar"));
+		scaledialogAction->setText(tr("&Scaling..."));
+		scaledialogAction->setStatusTip(tr("Change the scale"));
+		propertyAction->setText(tr("&Properties..."));
+		propertyAction->setStatusTip(tr("Show object property"));
+		controlpanelAction->setText(tr("&Control Panel..."));
+		controlpanelAction->setStatusTip(tr("Control Panel Dialog"));
+		//setting menu
+		settingMenu->setTitle(tr("&Settings"));
+		imageAreaAction->setText(tr("&Image Area..."));			
+		imageAreaAction->setStatusTip(tr("Image area"));
+		resultFontAction->setText(tr("&Result Font..."));
+		resultFontAction->setStatusTip(tr("Result font"));
+		voltageLevelAction->setText(tr("&Voltage Level..."));			
+		voltageLevelAction->setStatusTip(tr("Voltage level"));
+		languageAction->setText(tr("&Language"));				
+		languageAction->setStatusTip(tr("change language"));
+		//window menu
+		windowMenu->setTitle(tr("&Window"));
+		closeAct->setText(tr("Cl&ose"));	
+		closeAct->setStatusTip(tr("Close the active window"));
+		closeAllAct->setText(tr("Close &All"));			
+		closeAllAct->setStatusTip(tr("Close all the windows"));
+		tileAct->setText(tr("&Tile"));			
+		tileAct->setStatusTip(tr("Tile the windows"));
+		cascadeAct->setText(tr("&Cascade"));
+		cascadeAct->setStatusTip(tr("Cascade the windows"));
+		//help menu
+		helpMenu->setTitle(tr("&Help"));
+		aboutAct->setText(tr("&About"));		
+		aboutAct->setStatusTip(tr("Show the application's About box"));
+		//scene context menu
+		selectAllAction->setText(tr("Select all Stations"));		
+		selectAllAction->setStatusTip(tr("Select all Stations"));
+		defAllPositionAction->setText(tr("Return labels to default position"));
+		defAllPositionAction->setStatusTip(tr("Return labels to default position"));
+		//toolbar 
+		zoomOutAction->setText(tr("Zoom &Out"));
+		zoomOutAction->setStatusTip(tr("Zoom out"));
+		zoomInAction->setText(tr("Zoom &In"));
+		zoomInAction->setStatusTip(tr("Zoom in"));
+		fitwidthAction->setText(tr("&Fit In View"));
+		fitwidthAction->setStatusTip(tr("Fit In View"));
+		arrowCursor->setText(tr("&Select Mode"));
+		arrowCursor->setStatusTip(tr("Select Mode"));
+		handCursor->setText(tr("&Drag Mode"));
+		handCursor->setStatusTip(tr("Drag Mode"));
+
+		buttonModeGroup->button(M_AddStation)->setStatusTip(tr("Add A New Station"));
+		buttonModeGroup->button(M_AddNote)->setStatusTip(tr("Add A Text Note"));		
+	}
+	else
+	{
+		QWidget::changeEvent(e);
 	}
 }

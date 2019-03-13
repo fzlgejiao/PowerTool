@@ -35,6 +35,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 	void keyPressEvent(QKeyEvent *event);
 	QList<QGraphicsItem *> selectedItems();
+	virtual void changeEvent(QEvent *e);
 
 private:
     void createActions();
@@ -94,6 +95,10 @@ private:
 	QAction *resultFontAction;
 	QAction *voltageLevelAction;
 	QAction *optionsAction;
+	QAction *languageAction;
+	QAction *englishAction;
+	QAction *chineseAction;
+	QActionGroup *languageGroup;
 
 	//actions for 'Window' menu
     QAction *closeAct;
@@ -188,7 +193,7 @@ private slots:
 	void resultFont();
 	void voltageLevel();
 	void options();
-
+	void OnLanguageChanged(QAction *action);
 	//window menu
     void updateWindowMenu();
 
@@ -222,6 +227,7 @@ private slots:
     void paste();
 signals:
  //   void scaleChanged(const QString &scale);
+	void mainlanguagechanged();
 };
 
 #endif // MAINWINDOW_H

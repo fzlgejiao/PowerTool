@@ -273,3 +273,14 @@ void VoltageLevel::addLevel2Table(CVoltageLevel * level)
 	int width_row=ui.tableWidget->row(item1);	
 	ui.tableWidget->setCellWidget(width_row,Color,widget);
 }
+void VoltageLevel::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

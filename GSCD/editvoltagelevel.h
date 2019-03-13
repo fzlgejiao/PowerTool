@@ -18,6 +18,9 @@ public:
 	int width(){return ui.comboBox_linewidth->currentIndex();}
 	QColor color(){return m_color;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private slots:
 	void OnColorChanged();
 	void OnOK();

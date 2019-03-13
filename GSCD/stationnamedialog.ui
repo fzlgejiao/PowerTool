@@ -22,14 +22,6 @@
      <height>61</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
    </property>
@@ -49,12 +41,6 @@
      <height>61</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>9</pointsize>
-    </font>
-   </property>
    <property name="readOnly">
     <bool>true</bool>
    </property>
@@ -67,14 +53,6 @@
      <width>111</width>
      <height>23</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
    <property name="text">
     <string>Clear</string>
@@ -89,14 +67,6 @@
      <height>16</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
     <string>Voltage Shown Nodes:</string>
    </property>
@@ -109,14 +79,6 @@
      <width>93</width>
      <height>23</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
    <property name="text">
     <string>Font..</string>
@@ -131,14 +93,6 @@
      <height>24</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
-   </property>
    <property name="text">
     <string>Apply font to all Stations</string>
    </property>
@@ -151,14 +105,6 @@
      <width>38</width>
      <height>16</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
    <property name="frameShadow">
     <enum>QFrame::Plain</enum>
@@ -175,14 +121,6 @@
      <width>176</width>
      <height>22</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>MS Shell Dlg 2</family>
-     <pointsize>8</pointsize>
-     <weight>50</weight>
-     <bold>false</bold>
-    </font>
    </property>
   </widget>
   <widget class="QListWidget" name="lwNodes">

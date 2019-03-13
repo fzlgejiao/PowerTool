@@ -29,6 +29,9 @@ public:
 	~StationParameterDialog();
 	QString GetStationName(){return ui.lineEdit_name->text().trimmed();}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private  slots:
 	void OnShowVoltage();
 	void OnPowerFlow();

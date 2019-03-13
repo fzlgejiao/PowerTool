@@ -2,9 +2,9 @@
 #include <QDebug>
 #include <iostream>
 #include <QFile>
-
-
-
+#include <QApplication>
+#include <QtXml>
+#include <QFont>
 CVoltageLevel::CVoltageLevel(float voltage,int width,QColor color)
 {	
 	m_refvoltage=voltage;
@@ -21,6 +21,8 @@ iGlobal::iGlobal(QObject *parent)
 	: QObject(parent)
 	,defaultGlobalFile("./iGlobal.xml")
 {
+	m_language=Chinese;
+	trans=new QTranslator(this);
 	m_changes=0;
 	m_error=NoError;
 	m_iscolormap=false;
@@ -30,7 +32,16 @@ iGlobal::iGlobal(QObject *parent)
 	m_defaultcolor=QColor(Qt::black);
 	voltageLevels.clear();
 	if(readGlobalXmlfile())
-		qSort(voltageLevels.begin(),voltageLevels.end(),LevelvoltageAscending);
+	{ 
+		qSort(voltageLevels.begin(),voltageLevels.end(),LevelvoltageAscending);		
+	}
+	if(m_language==Chinese)	
+		trans->load("GSCD_CN.qm",":/language");	
+	else
+		trans->load("GSCD_EN.qm",":/language");
+	QApplication::installTranslator(trans);
+	QFont font("Arial",10);	
+	QApplication::setFont(font);
 }
 
 iGlobal::~iGlobal()
@@ -131,6 +142,7 @@ bool iGlobal::saveGlobal2Xml()
 	xmlWriter.writeTextElement("dcwidth", QString::number(m_dcwidth));
 	xmlWriter.writeTextElement("dccolor", m_dccolor.name());
 	xmlWriter.writeTextElement("defaultcolor", m_defaultcolor.name());
+	xmlWriter.writeTextElement("language", QString::number(m_language));
 	xmlWriter.writeEndElement();
 	//******************Options------end************/
 	xmlWriter.writeEndElement();								//match root element("Global");
@@ -193,6 +205,8 @@ void iGlobal::readOptions()
 				m_dccolor=globalxmlReader.readElementText(QXmlStreamReader::SkipChildElements);
 			else if(globalxmlReader.name()=="defaultcolor")
 				m_defaultcolor=globalxmlReader.readElementText(QXmlStreamReader::SkipChildElements);
+			else if(globalxmlReader.name()=="language")
+				m_language=(Language)globalxmlReader.readElementText(QXmlStreamReader::SkipChildElements).toInt();
 			else 
 				globalxmlReader.raiseError("Unknown options element ");    
 		} 		
@@ -273,6 +287,55 @@ void iGlobal::widthValidated(CVoltageLevel *newlevel)
 			m_error=WidthError;
 		}
 	}
+}
+void iGlobal::setlanguage(Language lan)
+{
+	if(m_language==lan) return ;
+	m_language=lan;
+	//save to XML file
+	QFile file(defaultGlobalFile);
+	QDomDocument  root;
+	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+         std::cerr << "Error: Cannot open file "                
+                  << qPrintable(file.errorString()) << std::endl;
+		return ;
+    }
+	if(!root.setContent(&file)) 
+	{
+		file.close();
+		return ;
+	}
+	file.close();
+	QDomNodeList lan_node=root.documentElement().elementsByTagName("language");
+	if(lan_node.size()>1) return ;
+	else if(lan_node.size()==0)					//if language option is not exist ,new it
+	{
+		QDomElement root_el=root.documentElement();
+		QDomElement option_el=root.documentElement().elementsByTagName("options").at(0).toElement();
+		QDomElement lan_el=root.createElement("language");
+		lan_el.appendChild(root.createTextNode(QString::number(m_language)));
+		option_el.appendChild(lan_el);
+		root_el.appendChild(option_el);
+	}else
+	{
+		QDomNode oldnode=lan_node.at(0).firstChild();
+		QDomElement el = lan_node.at(0).toElement();
+		el.firstChild().setNodeValue(QString::number(m_language));
+		QDomNode newnode = el.firstChild(); 
+		el.replaceChild(newnode,oldnode);
+	}
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		return ;
+	}
+	QTextStream out(&file);
+	root.save(out,4);
+	file.close();
+	//set application to target language	 
+	if(m_language==Chinese)	
+		trans->load("GSCD_CN.qm",":/language");	
+	else
+		trans->load("GSCD_EN.qm",":/language");	
 }
 
 

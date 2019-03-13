@@ -32,6 +32,9 @@ public:
 	~BranchEditDialog();
 	bool enbaleParalleLine(){return m_enableparalleline;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private slots:
 	void OntreeitemPressed(QTreeWidgetItem *item,int column);
 	void OnaddGroup();

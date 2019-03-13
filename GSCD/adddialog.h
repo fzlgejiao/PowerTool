@@ -107,6 +107,8 @@ public:
 	STAT_TYPE getstationtype(){return m_type;}
 	ushort	changes(){return m_changes;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
 
 private slots:
 		void OnHiddenTableActived(const QModelIndex & index);

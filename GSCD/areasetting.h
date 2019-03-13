@@ -14,6 +14,9 @@ public:
 	~AreaSetting();
 	QSize  getAreasize();
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private slots:
 		
 private:

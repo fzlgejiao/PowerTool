@@ -74,3 +74,14 @@ void StationValueDialog::OnloadTypeChanged()
 	else 
 		m_stat->setLoadType(VALUE_ADDUP);
 }
+void StationValueDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}

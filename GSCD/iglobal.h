@@ -6,7 +6,7 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <QColor>
-
+#include <QTranslator>
 
 #define	CHG_COLORMAP		0x01
 #define	CHG_WARNING 		0x02
@@ -21,6 +21,13 @@ typedef enum
 	VoltageError,
 	WidthError
 }ErrorType;
+
+typedef enum 
+{
+	English =0,
+	Chinese,
+	Lan_Cnt
+}Language;
 
 class CVoltageLevel
 {
@@ -92,6 +99,9 @@ public:
 	 ushort changes(){return m_changes;}
 	 inline ErrorType errors(){ ErrorType temp=m_error; m_error=NoError;return temp;}
 
+	 Language getlanguage() {return m_language;}
+	 void setlanguage(Language lan);
+
 public slots:
 	 void Onchanges(ushort changes){emit globalChanged(); m_changes=changes;}
 
@@ -111,7 +121,8 @@ private:
 	void widthValidated(CVoltageLevel *level);	
 	CVoltageLevel * findlevel(float voltage);
 	ushort m_changes;	
-
+	Language m_language;
+	QTranslator *trans;
 signals:
 	void globalChanged(void);
 };

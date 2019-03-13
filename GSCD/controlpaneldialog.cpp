@@ -129,3 +129,15 @@ void ControlPanelDialog::Onshowallvoltagetoggled(bool toggle)
 	m_panel.isShowAllNodeVoltage=toggle;
 	m_changes|=CHG_CONTROLPANEL_SHOWALLVOLTAGE;
 }
+void ControlPanelDialog::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}
+

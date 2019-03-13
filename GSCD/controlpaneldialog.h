@@ -26,6 +26,9 @@ public:
 	ControlPanel getControlPanel(){return m_panel;}
 	uint getchanges(){return m_changes;}
 
+protected:
+   virtual void changeEvent(QEvent *e);
+
 private slots:
 		void Onshowtypechanged();
 		void Onunitchanged();

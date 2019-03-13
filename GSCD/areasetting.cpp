@@ -36,4 +36,14 @@ QSize  AreaSetting::getAreasize()
 
 	return size;
 }
-
+void AreaSetting::changeEvent(QEvent *e)
+{
+	if(e->type() == QEvent::LanguageChange)
+	{
+		ui.retranslateUi(this);	
+	}
+	else
+	{
+		QWidget::changeEvent(e);
+	}
+}
