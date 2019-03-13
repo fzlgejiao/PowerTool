@@ -87,7 +87,7 @@ bool MdiChild::loadFile(const QString &mapFile,const QString& dataFile)
     	
 	//read data and map file
 	bool bRet1 = m_doc->readDataFile(dataFile);														//read data from data file
-	bool ispfok= m_doc->readPfFile();																//read pf data from pf file							
+	bool ispfok= m_doc->readPfFile();																//read pf data from pf file(with same prefix file name)							
 	bool bRet2 = m_doc->readMapFile(mapFile);														//read map from map file
 	if(dataFile != m_doc->dataFile())																//data file name changed
 	{
