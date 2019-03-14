@@ -288,9 +288,9 @@ void iGlobal::widthValidated(CVoltageLevel *newlevel)
 		}
 	}
 }
-void iGlobal::setlanguage(Language lan)
+bool iGlobal::setlanguage(Language lan)
 {
-	if(m_language==lan) return ;
+	if(m_language==lan) return false;
 	m_language=lan;
 	//save to XML file
 	QFile file(defaultGlobalFile);
@@ -298,16 +298,16 @@ void iGlobal::setlanguage(Language lan)
 	if (!file.open(QFile::ReadOnly | QFile::Text)) {
          std::cerr << "Error: Cannot open file "                
                   << qPrintable(file.errorString()) << std::endl;
-		return ;
+		return false;
     }
 	if(!root.setContent(&file)) 
 	{
 		file.close();
-		return ;
+		return false;
 	}
 	file.close();
 	QDomNodeList lan_node=root.documentElement().elementsByTagName("language");
-	if(lan_node.size()>1) return ;
+	if(lan_node.size()>1) return false;
 	else if(lan_node.size()==0)					//if language option is not exist ,new it
 	{
 		QDomElement root_el=root.documentElement();
@@ -316,17 +316,18 @@ void iGlobal::setlanguage(Language lan)
 		lan_el.appendChild(root.createTextNode(QString::number(m_language)));
 		option_el.appendChild(lan_el);
 		root_el.appendChild(option_el);
-	}else
+	}else if(lan_node.size()==1)	
 	{
 		QDomNode oldnode=lan_node.at(0).firstChild();
 		QDomElement el = lan_node.at(0).toElement();
 		el.firstChild().setNodeValue(QString::number(m_language));
 		QDomNode newnode = el.firstChild(); 
 		el.replaceChild(newnode,oldnode);
-	}
+	}else 
+		return false;
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
 	{
-		return ;
+		return false;
 	}
 	QTextStream out(&file);
 	root.save(out,4);
@@ -336,6 +337,8 @@ void iGlobal::setlanguage(Language lan)
 		trans->load("GSCD_CN.qm",":/language");	
 	else
 		trans->load("GSCD_EN.qm",":/language");	
+
+	return true;
 }
 
 

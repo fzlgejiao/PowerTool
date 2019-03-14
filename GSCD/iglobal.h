@@ -100,7 +100,7 @@ public:
 	 inline ErrorType errors(){ ErrorType temp=m_error; m_error=NoError;return temp;}
 
 	 Language getlanguage() {return m_language;}
-	 void setlanguage(Language lan);
+	 bool setlanguage(Language lan);
 
 public slots:
 	 void Onchanges(ushort changes){emit globalChanged(); m_changes=changes;}

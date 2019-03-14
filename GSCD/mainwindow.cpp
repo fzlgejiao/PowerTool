@@ -1137,13 +1137,14 @@ void MainWindow::OnLanguageChanged(QAction *action)
 {
 	if(action == chineseAction)
 	{
-		iGlobal::Instance().setlanguage(Chinese);
+		if(iGlobal::Instance().setlanguage(Chinese))
+			action->setChecked(true);
 	}
 	else
 	{
-		iGlobal::Instance().setlanguage(English);
-	}
-	action->setChecked(true);
+		if(iGlobal::Instance().setlanguage(English))
+			action->setChecked(true);
+	}	
 }
 
 void MainWindow::changeEvent(QEvent *e)
