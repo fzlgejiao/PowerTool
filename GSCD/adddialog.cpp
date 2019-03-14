@@ -261,11 +261,13 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 
 		//prepare  added model 
 		foreach(iNodeData *node,m_editstation->nodeDatas())
-		{
-			QString name="";
+		{		
 			int areaid=((iBUS *)node)->belongedArea();
-			name=m_doc->getAREA(areaid)->name();
-			addedmodel->insertmyrow(0,node,NoIcon,name);
+			iAREA *area=m_doc->getAREA(areaid);
+			if(area)
+				addedmodel->insertmyrow(0,node,NoIcon,area->name());
+			else
+				addedmodel->insertmyrow(0,node,NoIcon,"");
 		}		
 	}else
 	{
@@ -276,11 +278,13 @@ AddDialog::AddDialog(iDoc *idoc,iSTAT * editstation,QWidget *parent)
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
 	foreach(iNodeData *node ,hiddennodelist)
-	{
-		QString name="";
+	{		
 		int areaid=((iBUS *)node)->belongedArea();
-		name=m_doc->getAREA(areaid)->name();
-		hiddenmodel->insertmyrow(0,node,NoIcon,name);
+		iAREA *area=m_doc->getAREA(areaid);
+		if(area)					
+			hiddenmodel->insertmyrow(0,node,NoIcon,area->name());
+		else 
+			hiddenmodel->insertmyrow(0,node,NoIcon,"");
 	}
 
 	connect(ui.pushButton_add,SIGNAL(clicked()),this,SLOT(OnClickAdd()));
