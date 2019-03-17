@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Global version="1.0">
+    <levels>
+        <level width="0" voltage="0" color="#000000"/>
+        <level width="1" voltage="21.6" color="#005500"/>
+        <level width="1" voltage="22" color="#aa5500"/>
+        <level width="1" voltage="230" color="#0055ff"/>
+        <level width="3" voltage="500" color="#ff0000"/>
+    </levels>
+    <options>
+        <colormap>true</colormap>
+        <warning>false</warning>
+        <dcwidth>0</dcwidth>
+        <dccolor>#000000</dccolor>
+        <defaultcolor>#000000</defaultcolor>
+        <language>1</language>
+    </options>
+</Global>

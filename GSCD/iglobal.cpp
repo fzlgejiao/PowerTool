@@ -19,7 +19,7 @@ bool LevelvoltageAscending(CVoltageLevel *level1,CVoltageLevel *level2)
 
 iGlobal::iGlobal(QObject *parent)
 	: QObject(parent)
-	,defaultGlobalFile("./iGlobal.xml")
+	,defaultGlobalFile("./GSCD.xml")
 {
 	m_language=Chinese;
 	trans=new QTranslator(this);
@@ -40,7 +40,7 @@ iGlobal::iGlobal(QObject *parent)
 	else
 		trans->load("GSCD_EN.qm",":/language");
 	QApplication::installTranslator(trans);
-	QFont font("Arial",10);	
+	QFont font("Arial",9);	
 	QApplication::setFont(font);
 }
 
