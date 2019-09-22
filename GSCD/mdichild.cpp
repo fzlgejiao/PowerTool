@@ -38,8 +38,10 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 		
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 	setResizeAnchor(QGraphicsView::AnchorUnderMouse);	
+	//QGraphicsView::setRenderHints(QPainter::Antialiasing | QPainter::HighQualityAntialiasing);
 	//m_scene->addEllipse(QRectF(0,0,200,200),QPen(Qt::green, 1, Qt::SolidLine));	
 	//m_scene->addEllipse(QRectF(500,500,100,100),QPen(Qt::red, 1, Qt::SolidLine));	
+	connect(this,SIGNAL(scaleChanged(int)),m_scene,SIGNAL(scaleChanged(int)));
 }
 MdiChild::~MdiChild()
 {
@@ -272,11 +274,14 @@ void MdiChild::wheelEvent(QWheelEvent * wheelEvent)
 	
 		qreal factor = transform().scale(ss, ss).mapRect(QRectF(0, 0, 1, 1)).width();
 		m_scale=factor*100;											//this  scale is in percent mode		
-		if((m_scale<scale_min)||(m_scale>scale_max)) return;	
-		emit scaleChanged(m_scale);
+		if((m_scale<scale_min)||(m_scale>scale_max)) 
+			return;	
+
 		scale(ss,ss);
 		wheelEvent->accept();
-	}else if(wheelEvent->modifiers()  == Qt::ShiftModifier)	//Shift + wheel . horizontal scrollbar
+		emit scaleChanged(m_scale);
+	}
+	else if(wheelEvent->modifiers()  == Qt::ShiftModifier)	//Shift + wheel . horizontal scrollbar
 	{		
 		if(this->horizontalScrollBar()->isVisible())
 		{

@@ -30,6 +30,7 @@ public:
 
 public slots:
 	void backToDefaultPos(){setPos(defPos);}
+	void setScale(int scale){m_nScale = scale;}
 
 
 signals:
@@ -43,6 +44,7 @@ protected:
 
 private:
 	QPointF		defPos;
+	int			m_nScale;
 };
 
 #endif

@@ -167,7 +167,7 @@ bool iDoc::readPfFile(const QString& fileName)
 		QFileInfo fi(m_szDataFile);
 		//to do ; find the Power flow file . must the same directory and same name, but different extension name (*.txt)
 		QString extension=fi.suffix();
-		QString pffile=fi.absoluteFilePath().replace(extension,"csv");
+		pffile=fi.absoluteFilePath().replace(extension,"csv");
 	}
 	if(QFile::exists(pffile))
 	{

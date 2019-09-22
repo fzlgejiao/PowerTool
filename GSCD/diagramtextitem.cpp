@@ -13,11 +13,14 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
     setFlag(QGraphicsItem::ItemIsSelectable);
     //setFlag(QGraphicsItem::ItemIsFocusable);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges);
-	setCacheMode(QGraphicsItem::ItemCoordinateCache);
+	//setCacheMode(QGraphicsItem::ItemCoordinateCache);
+	//setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 		
 	defPos = QPointF(10,10);
+	m_nScale = 1;
 
 	connect(scene, SIGNAL(allDefPositioned()),	this, SLOT(backToDefaultPos()));
+	connect(scene, SIGNAL(scaleChanged(int)),	this, SLOT(setScale(int)));
 }
 //! [0]
 
@@ -49,6 +52,7 @@ void DiagramTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
+
 void DiagramTextItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	QStyleOptionGraphicsItem op(*option);

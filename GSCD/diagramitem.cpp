@@ -76,7 +76,7 @@ QPixmap DiagramItem::image() const
 QVariant DiagramItem::itemChange(GraphicsItemChange change,
                      const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemPositionChange) {
+    if (change == QGraphicsItem::ItemPositionHasChanged) {
         foreach (Arrow *arrow, arrows) {
             arrow->updatePosition();
         }
