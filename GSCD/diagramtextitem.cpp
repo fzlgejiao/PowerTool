@@ -20,7 +20,6 @@ DiagramTextItem::DiagramTextItem(QGraphicsItem *parent, QGraphicsScene *scene)
 	m_nScale = 1;
 
 	connect(scene, SIGNAL(allDefPositioned()),	this, SLOT(backToDefaultPos()));
-	connect(scene, SIGNAL(scaleChanged(int)),	this, SLOT(setScale(int)));
 }
 //! [0]
 

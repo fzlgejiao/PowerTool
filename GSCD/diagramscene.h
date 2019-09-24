@@ -130,7 +130,6 @@ signals:
 	void modeDone();
 	void applyNameFont2all(QFont &font);
 	void allDefPositioned();
-	void scaleChanged(int scale);
 };
 //! [0]
 

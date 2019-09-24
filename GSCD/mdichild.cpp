@@ -41,7 +41,6 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	//QGraphicsView::setRenderHints(QPainter::Antialiasing | QPainter::HighQualityAntialiasing);
 	//m_scene->addEllipse(QRectF(0,0,200,200),QPen(Qt::green, 1, Qt::SolidLine));	
 	//m_scene->addEllipse(QRectF(500,500,100,100),QPen(Qt::red, 1, Qt::SolidLine));	
-	connect(this,SIGNAL(scaleChanged(int)),m_scene,SIGNAL(scaleChanged(int)));
 }
 MdiChild::~MdiChild()
 {

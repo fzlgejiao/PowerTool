@@ -30,8 +30,6 @@ public:
 
 public slots:
 	void backToDefaultPos(){setPos(defPos);}
-	void setScale(int scale){m_nScale = scale;}
-
 
 signals:
     void selectedChange(QGraphicsItem *item);

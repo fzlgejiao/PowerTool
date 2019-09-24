@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	a.setApplicationName(QObject::tr("GSCD"));
-	a.setApplicationVersion(QObject::tr("X00.00.10"));		
+	a.setApplicationVersion(QObject::tr("X00.00.11"));		
 
 	QString szMap,szRaw,szPF;
 	QStringList	argvs = QApplication::arguments();
