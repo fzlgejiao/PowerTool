@@ -29,7 +29,7 @@ MdiChild::MdiChild(QGraphicsScene * scene,iDoc* doc)
 	m_scene->setSceneRect(0, 0, width, height);												
 	setScene(m_scene);
 	setCacheMode(CacheBackground);
-	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+	setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     scale(qreal(m_scale/100.0), qreal(m_scale/100.0));
 	
 	setDragMode(QGraphicsView::NoDrag);

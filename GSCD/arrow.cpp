@@ -78,12 +78,12 @@ void Arrow::updatePosition()
 	setLine(line);
 
 	//rotate line text item
-	//if(myTextItem)
-	//{
-	//	float degree = ::atanf((endPoint.y() - startPoint.y())/(endPoint.x() - startPoint.x()));
-	//	myTextItem->setRotation(degree*180/M_PI);
-	//	//qDebug(qPrintable(QString("degree::%1").arg(degree,4,'f',1)));
-	//}
+	if(myTextItem)
+	{
+		float degree = ::atanf((endPoint.y() - startPoint.y())/(endPoint.x() - startPoint.x()));
+		myTextItem->setRotation(degree*180/M_PI);
+		//qDebug(qPrintable(QString("degree::%1").arg(degree,4,'f',1)));
+	}
 
 }
 //! [3]
